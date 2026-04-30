@@ -1,16 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { Save } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Save, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import type { Product } from "@/lib/products";
 
-export function ProductForm() {
+type ProductFormProps = {
+  product?: Product | null;
+  onSaved?: () => void;
+  onCancelEdit?: () => void;
+};
+
+export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const isEditing = Boolean(product);
+
+  useEffect(() => {
+    setMessage("");
+    if (product) {
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [product]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -21,8 +37,8 @@ export function ProductForm() {
     const monthValue = String(formData.get("periodeProduksi") ?? "");
     const [year, month] = monthValue.split("-");
 
-    const response = await fetch("/api/products", {
-      method: "POST",
+    const response = await fetch(isEditing ? `/api/products/${product?.id}` : "/api/products", {
+      method: isEditing ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: formData.get("name"),
@@ -54,16 +70,19 @@ export function ProductForm() {
       return;
     }
 
-    setMessage("Produk berhasil disimpan. Refresh halaman untuk melihat data terbaru.");
-    event.currentTarget.reset();
+    setMessage(isEditing ? "Produk berhasil diperbarui." : "Produk berhasil disimpan.");
+    if (!isEditing) {
+      event.currentTarget.reset();
+    }
     setIsLoading(false);
+    onSaved?.();
   }
 
   return (
-    <form className="grid gap-5" onSubmit={onSubmit}>
+    <form ref={formRef} key={product?.id ?? "new-product"} className="grid gap-5" onSubmit={onSubmit}>
       <div className="grid gap-5 md:grid-cols-2">
-        <Field label="Nama Produk" id="name" placeholder="Gamis Seragam Biru" />
-        <Field label="Kategori" id="category" placeholder="Gamis" />
+        <Field label="Nama Produk" id="name" placeholder="Gamis Seragam Biru" defaultValue={product?.name} />
+        <Field label="Kategori" id="category" placeholder="Gamis" defaultValue={product?.category} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="description">Deskripsi</Label>
@@ -71,21 +90,27 @@ export function ProductForm() {
           id="description"
           name="description"
           placeholder="Detail bahan, ukuran, model, dan catatan produksi..."
+          defaultValue={product?.description}
         />
       </div>
       <div className="grid gap-5 md:grid-cols-3">
-        <Field label="Kode Produksi" id="kodeProduksi" placeholder="GMS-1024-01" />
-        <Field label="Periode" id="periodeProduksi" type="month" />
-        <Field label="Harga" id="harga" type="number" placeholder="150000" />
+        <Field label="Kode Produksi" id="kodeProduksi" placeholder="GMS-1024-01" defaultValue={product?.kodeProduksi} />
+        <Field
+          label="Periode"
+          id="periodeProduksi"
+          type="month"
+          defaultValue={toMonthInputValue(product?.periodeProduksi)}
+        />
+        <Field label="Harga" id="harga" type="number" placeholder="150000" defaultValue={product?.harga ? String(product.harga) : undefined} />
       </div>
       <div className="grid gap-5 md:grid-cols-3">
-        <SelectField label="Media Type" id="mediaType" options={["image", "video"]} />
-        <SelectField label="Status" id="stockStatus" options={["Ready", "Preorder", "Terbatas"]} />
-        <Field label="Material" id="material" placeholder="Toyobo premium" />
+        <SelectField label="Media Type" id="mediaType" options={["image", "video"]} defaultValue={product?.mediaType} />
+        <SelectField label="Status" id="stockStatus" options={["Ready", "Preorder", "Terbatas"]} defaultValue={product?.stockStatus} />
+        <Field label="Material" id="material" placeholder="Toyobo premium" defaultValue={product?.material} />
       </div>
       <div className="grid gap-5 md:grid-cols-2">
-        <Field label="Ukuran" id="sizes" placeholder="S, M, L, XL" />
-        <Field label="Warna" id="colors" placeholder="Sky Blue, Navy" />
+        <Field label="Ukuran" id="sizes" placeholder="S, M, L, XL" defaultValue={product?.sizes.join(", ")} />
+        <Field label="Warna" id="colors" placeholder="Sky Blue, Navy" defaultValue={product?.colors.join(", ")} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="mediaUrl">Link Gambar / Video</Label>
@@ -93,6 +118,7 @@ export function ProductForm() {
           id="mediaUrl"
           name="mediaUrl"
           placeholder="https://www.instagram.com/reel/..."
+          defaultValue={product?.mediaUrl}
         />
       </div>
       {message ? (
@@ -103,11 +129,18 @@ export function ProductForm() {
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button disabled={isLoading}>
           <Save />
-          {isLoading ? "Menyimpan..." : "Simpan Produk"}
+          {isLoading ? "Menyimpan..." : isEditing ? "Update Produk" : "Simpan Produk"}
         </Button>
-        <Button type="button" variant="outline">
-          Preview
-        </Button>
+        {isEditing ? (
+          <Button type="button" variant="outline" onClick={onCancelEdit}>
+            <X />
+            Batal Edit
+          </Button>
+        ) : (
+          <Button type="button" variant="outline">
+            Preview
+          </Button>
+        )}
       </div>
     </form>
   );
@@ -118,27 +151,40 @@ function Field({
   id,
   type = "text",
   placeholder,
+  defaultValue,
 }: {
   label: string;
   id: string;
   type?: string;
   placeholder?: string;
+  defaultValue?: string;
 }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
-      <Input id={id} name={id} type={type} placeholder={placeholder} />
+      <Input id={id} name={id} type={type} placeholder={placeholder} defaultValue={defaultValue} />
     </div>
   );
 }
 
-function SelectField({ label, id, options }: { label: string; id: string; options: string[] }) {
+function SelectField({
+  label,
+  id,
+  options,
+  defaultValue,
+}: {
+  label: string;
+  id: string;
+  options: string[];
+  defaultValue?: string;
+}) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       <select
         id={id}
         name={id}
+        defaultValue={defaultValue}
         className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-100"
       >
         {options.map((option) => (
@@ -147,4 +193,13 @@ function SelectField({ label, id, options }: { label: string; id: string; option
       </select>
     </div>
   );
+}
+
+function toMonthInputValue(value?: string) {
+  if (!value) {
+    return undefined;
+  }
+
+  const [month, year] = value.split("-");
+  return month && year ? `${year}-${month}` : undefined;
 }
