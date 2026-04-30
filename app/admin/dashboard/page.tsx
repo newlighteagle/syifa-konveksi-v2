@@ -15,6 +15,7 @@ export default async function AdminDashboardPage() {
   const products = await listProducts();
   const totalViews = products.reduce((sum, product) => sum + product.views, 0);
   const totalValue = products.reduce((sum, product) => sum + product.harga, 0);
+  const readyStock = products.filter((product) => product.stockStatus === "Ready").length;
 
   return (
     <AdminShell title="Dashboard">
@@ -37,7 +38,7 @@ export default async function AdminDashboardPage() {
       <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         <Metric icon={<Boxes />} label="Total produk" value={`${products.length}`} />
         <Metric icon={<Eye />} label="Total dilihat" value={totalViews.toLocaleString("id-ID")} />
-        <Metric icon={<PackageCheck />} label="Ready stock" value="3 produk" />
+        <Metric icon={<PackageCheck />} label="Ready stock" value={`${readyStock} produk`} />
         <Metric icon={<TrendingUp />} label="Nilai katalog" value={formatRupiah(totalValue)} />
       </div>
 
