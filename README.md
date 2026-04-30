@@ -21,12 +21,12 @@ npm run db:push
 npm run db:seed
 ```
 
-Default seeded admin:
+Seeded admin credentials are controlled by your environment variables:
 
-- Email: `admin@syifakonveksi.com`
-- Password: `admin12345`
+- `SEED_ADMIN_EMAIL`
+- `SEED_ADMIN_PASSWORD`
 
-Without `DATABASE_URL`, the app uses mock product data for read-only catalog pages and demo login fallback.
+Without `DATABASE_URL`, the app uses mock product data for read-only catalog pages and local fallback login.
 
 ## API Routes
 

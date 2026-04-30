@@ -21,17 +21,17 @@ export async function POST(request: Request) {
     try {
       user = await prisma.user.findUnique({ where: { email } });
     } catch (error) {
-      console.error("Falling back to demo admin login:", error);
+      console.error("Falling back to local admin login:", error);
     }
   }
 
   if (!user) {
     const fallbackEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@syifakonveksi.com";
-    const fallbackPassword = process.env.SEED_ADMIN_PASSWORD ?? "admin12345";
+    const fallbackPassword = process.env.SEED_ADMIN_PASSWORD ?? "";
 
     if (email === fallbackEmail) {
       user = {
-        id: "demo-admin",
+        id: "local-admin",
         email: fallbackEmail,
         name: "Syifa Admin",
         passwordHash: await bcrypt.hash(fallbackPassword, 10),

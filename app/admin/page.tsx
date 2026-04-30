@@ -15,7 +15,7 @@ export default function AdminLoginPage() {
             </span>
             <h1 className="mt-6 text-2xl font-extrabold text-slate-950">Masuk Admin</h1>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Akses frontend demo untuk mengelola katalog Syifa Konveksi.
+              Akses aman untuk mengelola katalog Syifa Konveksi.
             </p>
           </div>
 

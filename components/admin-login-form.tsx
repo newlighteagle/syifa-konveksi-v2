@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
 
@@ -49,23 +50,22 @@ export function AdminLoginForm() {
             id="email"
             name="email"
             type="email"
-            defaultValue="admin@syifakonveksi.com"
+            placeholder="admin@syifakonveksi.com"
+            autoComplete="email"
             className="pl-10"
           />
         </div>
       </div>
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="password">Password</Label>
-          <span className="text-xs font-semibold text-slate-400">Demo: admin12345</span>
-        </div>
+        <Label htmlFor="password">Password</Label>
         <div className="relative">
           <LockKeyhole className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
           <Input
             id="password"
             name="password"
             type="password"
-            defaultValue="admin12345"
+            placeholder="Masukkan password"
+            autoComplete="current-password"
             className="pl-10"
           />
         </div>
@@ -75,10 +75,15 @@ export function AdminLoginForm() {
           {message}
         </p>
       ) : null}
-      <Button className="w-full" disabled={isLoading}>
-        {isLoading ? "Memeriksa..." : "Masuk"}
-        <ArrowRight />
-      </Button>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Button asChild type="button" variant="outline">
+          <Link href="/">Batal</Link>
+        </Button>
+        <Button disabled={isLoading}>
+          {isLoading ? "Memeriksa..." : "Masuk"}
+          <ArrowRight />
+        </Button>
+      </div>
     </form>
   );
 }
