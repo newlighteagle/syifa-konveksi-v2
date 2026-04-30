@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
 import { ArrowLeft, Calendar, CheckCircle2, MessageCircle, PlayCircle, Shirt, Tag } from "lucide-react";
 import { notFound } from "next/navigation";
 
+import { ProductDetailMedia, ProductCardMedia } from "@/components/product-media";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,21 +43,12 @@ export default async function ProductDetailPage({
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <section className="space-y-4">
             <div className="relative aspect-[4/5] overflow-hidden rounded-lg border border-slate-200 bg-sky-50 shadow-soft lg:aspect-[5/4]">
-              <Image
-                src={product.mediaUrl}
-                alt={product.name}
-                fill
+              <ProductDetailMedia
+                name={product.name}
+                mediaType={product.mediaType}
+                mediaUrl={product.mediaUrl}
                 priority
-                sizes="(min-width: 1024px) 60vw, 100vw"
-                className="object-cover"
               />
-              {product.mediaType === "video" ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-slate-950/20">
-                  <span className="flex size-16 items-center justify-center rounded-full bg-white/90 text-sky-700 shadow-airy">
-                    <PlayCircle className="size-8" />
-                  </span>
-                </div>
-              ) : null}
             </div>
             <div className="grid grid-cols-3 gap-3">
               {[0, 1, 2].map((item) => (
@@ -65,12 +56,10 @@ export default async function ProductDetailPage({
                   key={item}
                   className="relative aspect-[4/3] overflow-hidden rounded-lg border border-slate-200 bg-white"
                 >
-                  <Image
-                    src={product.mediaUrl}
-                    alt={`${product.name} thumbnail ${item + 1}`}
-                    fill
-                    sizes="33vw"
-                    className="object-cover"
+                  <ProductCardMedia
+                    name={`${product.name} thumbnail ${item + 1}`}
+                    mediaType={product.mediaType}
+                    mediaUrl={product.mediaUrl}
                   />
                 </div>
               ))}

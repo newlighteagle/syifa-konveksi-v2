@@ -89,7 +89,11 @@ export function ProductForm() {
       </div>
       <div className="space-y-2">
         <Label htmlFor="mediaUrl">Link Gambar / Video</Label>
-        <Input id="mediaUrl" name="mediaUrl" placeholder="https://images.unsplash.com/..." />
+        <Input
+          id="mediaUrl"
+          name="mediaUrl"
+          placeholder="https://www.instagram.com/reel/..."
+        />
       </div>
       {message ? (
         <p className="rounded-lg bg-sky-50 px-3 py-2 text-sm font-semibold text-sky-800">

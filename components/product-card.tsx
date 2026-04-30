@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, PlayCircle } from "lucide-react";
 
+import { ProductCardMedia } from "@/components/product-media";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatRupiah } from "@/lib/utils";
@@ -12,12 +12,10 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-airy">
       <Link href={`/products/${product.id}`} className="block">
         <div className="relative aspect-[4/3] overflow-hidden bg-sky-50">
-          <Image
-            src={product.mediaUrl}
-            alt={product.name}
-            fill
-            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-            className="object-cover transition duration-500 group-hover:scale-105"
+          <ProductCardMedia
+            name={product.name}
+            mediaType={product.mediaType}
+            mediaUrl={product.mediaUrl}
           />
           <div className="absolute left-4 top-4 flex gap-2">
             <Badge>{product.category}</Badge>
