@@ -1,10 +1,7 @@
-import Link from "next/link";
-import { ArrowRight, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { AdminLoginForm } from "@/components/admin-login-form";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 export default function AdminLoginPage() {
   return (
@@ -22,38 +19,7 @@ export default function AdminLoginPage() {
             </p>
           </div>
 
-          <form className="mt-8 space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="admin@syifakonveksi.com"
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <a className="text-xs font-semibold text-sky-700" href="#">
-                  Lupa?
-                </a>
-              </div>
-              <div className="relative">
-                <LockKeyhole className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-                <Input id="password" type="password" placeholder="Masukkan password" className="pl-10" />
-              </div>
-            </div>
-            <Button asChild className="w-full">
-              <Link href="/admin/dashboard">
-                Masuk
-                <ArrowRight />
-              </Link>
-            </Button>
-          </form>
+          <AdminLoginForm />
         </CardContent>
         <div className="border-t border-slate-100 bg-slate-50 px-8 py-4 text-center text-xs font-semibold text-slate-500">
           Secure Admin Access

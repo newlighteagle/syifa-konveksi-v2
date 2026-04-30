@@ -2,13 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 import type React from "react";
 import { ArrowLeft, Calendar, CheckCircle2, MessageCircle, PlayCircle, Shirt, Tag } from "lucide-react";
+import { notFound } from "next/navigation";
 
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getProduct, products } from "@/lib/products";
+import { getProductBySlug } from "@/lib/product-service";
+import { products } from "@/lib/products";
 import { formatRupiah } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return products.map((product) => ({ id: product.id }));
@@ -20,7 +24,11 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const product = getProduct(id);
+  const product = await getProductBySlug(id);
+
+  if (!product) {
+    notFound();
+  }
 
   return (
     <main className="min-h-screen bg-background">

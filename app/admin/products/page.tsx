@@ -1,18 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Edit3, ImagePlus, PlusCircle, Save, Trash2 } from "lucide-react";
+import { Edit3, PlusCircle, Trash2 } from "lucide-react";
 
 import { AdminShell } from "@/components/admin-shell";
+import { ProductForm } from "@/components/product-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { products } from "@/lib/products";
+import { listProducts } from "@/lib/product-service";
 import { formatRupiah } from "@/lib/utils";
 
-export default function AdminProductsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminProductsPage() {
+  const products = await listProducts();
+
   return (
     <AdminShell title="Kelola Produk">
       <div className="flex flex-col gap-6 xl:grid xl:grid-cols-[1fr_0.85fr]">
@@ -31,46 +33,7 @@ export default function AdminProductsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form className="grid gap-5">
-                <div className="grid gap-5 md:grid-cols-2">
-                  <Field label="Nama Produk" id="name" placeholder="Gamis Seragam Biru" />
-                  <Field label="Kode Produksi" id="code" placeholder="GMS-1024-01" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Deskripsi</Label>
-                  <Textarea id="description" placeholder="Detail bahan, ukuran, model, dan catatan produksi..." />
-                </div>
-                <div className="grid gap-5 md:grid-cols-3">
-                  <Field label="Periode" id="period" type="month" />
-                  <Field label="Harga" id="price" type="number" placeholder="150000" />
-                  <div className="space-y-2">
-                    <Label htmlFor="mediaType">Media Type</Label>
-                    <select
-                      id="mediaType"
-                      className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-100"
-                    >
-                      <option>image</option>
-                      <option>video</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="mediaUrl">Link Gambar / Video Instagram</Label>
-                  <div className="relative">
-                    <ImagePlus className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-                    <Input id="mediaUrl" placeholder="https://instagram.com/..." className="pl-10" />
-                  </div>
-                </div>
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <Button>
-                    <Save />
-                    Simpan Produk
-                  </Button>
-                  <Button type="button" variant="outline">
-                    Preview
-                  </Button>
-                </div>
-              </form>
+              <ProductForm />
             </CardContent>
           </Card>
         </section>
@@ -112,24 +75,5 @@ export default function AdminProductsPage() {
         </section>
       </div>
     </AdminShell>
-  );
-}
-
-function Field({
-  label,
-  id,
-  type = "text",
-  placeholder,
-}: {
-  label: string;
-  id: string;
-  type?: string;
-  placeholder?: string;
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      <Input id={id} type={type} placeholder={placeholder} />
-    </div>
   );
 }

@@ -6,13 +6,16 @@ import { AdminShell } from "@/components/admin-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { products } from "@/lib/products";
+import { listProducts } from "@/lib/product-service";
 import { formatRupiah } from "@/lib/utils";
 
-const totalViews = products.reduce((sum, product) => sum + product.views, 0);
-const totalValue = products.reduce((sum, product) => sum + product.harga, 0);
+export const dynamic = "force-dynamic";
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const products = await listProducts();
+  const totalViews = products.reduce((sum, product) => sum + product.views, 0);
+  const totalValue = products.reduce((sum, product) => sum + product.harga, 0);
+
   return (
     <AdminShell title="Dashboard">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">

@@ -7,16 +7,22 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
-import { categories, products } from "@/lib/products";
+import type { Product } from "@/lib/products";
 
-export function CatalogPage() {
+export function CatalogPage({
+  initialProducts,
+  categories,
+}: {
+  initialProducts: Product[];
+  categories: string[];
+}) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Semua");
 
   const filteredProducts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    return products.filter((product) => {
+    return initialProducts.filter((product) => {
       const matchesCategory = category === "Semua" || product.category === category;
       const matchesQuery =
         !normalizedQuery ||
@@ -27,7 +33,7 @@ export function CatalogPage() {
 
       return matchesCategory && matchesQuery;
     });
-  }, [category, query]);
+  }, [category, initialProducts, query]);
 
   return (
     <>
