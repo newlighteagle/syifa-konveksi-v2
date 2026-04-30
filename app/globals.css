@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 203 36% 98%;
+    --foreground: 200 10% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 200 10% 11%;
+    --primary: 198 100% 28%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 196 100% 27%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 27% 96%;
+    --muted-foreground: 205 13% 28%;
+    --accent: 200 92% 95%;
+    --accent-foreground: 198 100% 18%;
+    --destructive: 0 74% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 207 24% 88%;
+    --input: 207 24% 88%;
+    --ring: 199 89% 48%;
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  img {
+    @apply max-w-full;
+  }
+}
+
+@layer utilities {
+  .sky-gradient {
+    @apply bg-gradient-to-r from-skybrand-deep to-skybrand-bright;
+  }
+
+  .airy-panel {
+    @apply border border-slate-200/80 bg-white shadow-soft;
+  }
+}
