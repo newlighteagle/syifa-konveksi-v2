@@ -4,12 +4,15 @@ import { PlusCircle } from "lucide-react";
 import { AdminProductsList } from "@/components/admin-products-list";
 import { AdminShell } from "@/components/admin-shell";
 import { Button } from "@/components/ui/button";
-import { listProducts } from "@/lib/product-service";
+import { listCategoryOptions, listProducts } from "@/lib/product-service";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminProductsPage() {
-  const products = await listProducts();
+  const [products, categories] = await Promise.all([
+    listProducts(),
+    listCategoryOptions(),
+  ]);
 
   return (
     <AdminShell title="Produk">
@@ -30,7 +33,7 @@ export default async function AdminProductsPage() {
           </Button>
         </div>
 
-        <AdminProductsList products={products} />
+        <AdminProductsList products={products} categories={categories} />
       </div>
     </AdminShell>
   );
