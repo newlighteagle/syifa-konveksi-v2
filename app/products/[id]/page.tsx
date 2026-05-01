@@ -30,6 +30,8 @@ export default async function ProductDetailPage({
     notFound();
   }
 
+  const galleryMedia = [product.mediaUrl, ...product.mediaUrls].filter(Boolean);
+
   return (
     <main className="min-h-screen bg-background">
       <SiteHeader />
@@ -51,15 +53,15 @@ export default async function ProductDetailPage({
               />
             </div>
             <div className="grid grid-cols-3 gap-3">
-              {[0, 1, 2].map((item) => (
+              {galleryMedia.slice(0, 6).map((mediaUrl, item) => (
                 <div
-                  key={item}
+                  key={`${mediaUrl}-${item}`}
                   className="relative aspect-[4/3] overflow-hidden rounded-lg border border-slate-200 bg-white"
                 >
                   <ProductCardMedia
                     name={`${product.name} thumbnail ${item + 1}`}
-                    mediaType={product.mediaType}
-                    mediaUrl={product.mediaUrl}
+                    mediaType={item === 0 ? product.mediaType : "image"}
+                    mediaUrl={mediaUrl}
                   />
                 </div>
               ))}

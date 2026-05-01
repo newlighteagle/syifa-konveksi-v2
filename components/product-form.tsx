@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Save, X } from "lucide-react";
+import { Eye, Save, X } from "lucide-react";
 
+import { ProductDetailMedia } from "@/components/product-media";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,8 @@ export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps
   const formRef = useRef<HTMLFormElement>(null);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewMedia, setPreviewMedia] = useState<string[]>([]);
   const isEditing = Boolean(product);
 
   useEffect(() => {
@@ -46,6 +49,7 @@ export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps
         description: formData.get("description"),
         mediaType: formData.get("mediaType"),
         mediaUrl: formData.get("mediaUrl"),
+        mediaUrls: parseList(formData.get("mediaUrls")),
         kodeProduksi: formData.get("kodeProduksi"),
         periodeProduksi: month && year ? `${month}-${year}` : monthValue,
         harga: formData.get("harga"),
@@ -113,14 +117,52 @@ export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps
         <Field label="Warna" id="colors" placeholder="Sky Blue, Navy" defaultValue={product?.colors.join(", ")} />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="mediaUrl">Link Gambar / Video</Label>
+        <Label htmlFor="mediaUrl">Link Media Utama</Label>
         <Input
           id="mediaUrl"
           name="mediaUrl"
           placeholder="https://www.instagram.com/reel/..."
           defaultValue={product?.mediaUrl}
         />
+        <p className="text-xs leading-5 text-slate-500">
+          Untuk video Instagram, pilih Media Type `video` lalu tempel link Reel di sini.
+        </p>
       </div>
+      <div className="space-y-2">
+        <Label htmlFor="mediaUrls">Link Galeri Tambahan</Label>
+        <Textarea
+          id="mediaUrls"
+          name="mediaUrls"
+          placeholder={"Satu link per baris, contoh:\nhttps://www.instagram.com/p/...\nhttps://example.com/foto-1.jpg\nhttps://example.com/foto-2.jpg"}
+          defaultValue={product?.mediaUrls.join("\n")}
+        />
+        <p className="text-xs leading-5 text-slate-500">
+          Bisa campur 1 video dan beberapa foto. Media utama akan tampil pertama.
+        </p>
+      </div>
+      {showPreview ? (
+        <div className="grid gap-3 rounded-lg border border-sky-100 bg-sky-50/50 p-4">
+          <p className="text-sm font-bold text-slate-950">Preview media</p>
+          {previewMedia.length === 0 ? (
+            <p className="text-sm text-slate-500">Belum ada link media untuk dipreview.</p>
+          ) : (
+            <div className="grid gap-3 md:grid-cols-2">
+              {previewMedia.map((url, index) => (
+                <div
+                  key={`${url}-${index}`}
+                  className="relative aspect-[4/5] overflow-hidden rounded-lg border border-slate-200 bg-white"
+                >
+                  <ProductDetailMedia
+                    name={`Preview ${index + 1}`}
+                    mediaType={index === 0 ? getCurrentMediaType(formRef.current) : inferMediaType(url)}
+                    mediaUrl={url}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : null}
       {message ? (
         <p className="rounded-lg bg-sky-50 px-3 py-2 text-sm font-semibold text-sky-800">
           {message}
@@ -131,19 +173,56 @@ export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps
           <Save />
           {isLoading ? "Menyimpan..." : isEditing ? "Update Produk" : "Simpan Produk"}
         </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            if (!formRef.current) {
+              return;
+            }
+
+            const formData = new FormData(formRef.current);
+            setPreviewMedia([
+              String(formData.get("mediaUrl") ?? "").trim(),
+              ...parseList(formData.get("mediaUrls")),
+            ].filter(Boolean));
+            setShowPreview((value) => !value);
+          }}
+        >
+          <Eye />
+          Preview
+        </Button>
         {isEditing ? (
           <Button type="button" variant="outline" onClick={onCancelEdit}>
             <X />
             Batal Edit
           </Button>
-        ) : (
-          <Button type="button" variant="outline">
-            Preview
-          </Button>
-        )}
+        ) : null}
       </div>
     </form>
   );
+}
+
+function parseList(value: FormDataEntryValue | null) {
+  return String(value ?? "")
+    .split(/\r?\n|,/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function inferMediaType(url: string): "image" | "video" {
+  return /instagram\.com\/(reel|tv)\//i.test(url) || /\.(mp4|webm|ogg)(\?.*)?$/i.test(url)
+    ? "video"
+    : "image";
+}
+
+function getCurrentMediaType(form: HTMLFormElement | null): "image" | "video" {
+  if (!form) {
+    return "image";
+  }
+
+  const value = new FormData(form).get("mediaType");
+  return value === "video" ? "video" : "image";
 }
 
 function Field({

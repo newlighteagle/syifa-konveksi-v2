@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Edit3, PlusCircle, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -97,19 +96,11 @@ export function AdminProductsWorkspace({ products }: { products: Product[] }) {
                 href={`/products/${product.id}`}
                 className="relative aspect-square overflow-hidden rounded-lg bg-sky-50"
               >
-                {product.mediaType === "image" ? (
-                  <Image
-                    src={product.mediaUrl}
-                    alt={product.name}
-                    fill
-                    sizes="96px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-sky-50 text-xs font-bold text-sky-700">
-                    Video
-                  </div>
-                )}
+                <ProductCardMedia
+                  name={product.name}
+                  mediaType={product.mediaType}
+                  mediaUrl={product.mediaUrl}
+                />
               </Link>
               <div className="min-w-0">
                 <div className="flex items-start justify-between gap-3">
@@ -149,3 +140,4 @@ export function AdminProductsWorkspace({ products }: { products: Product[] }) {
     </div>
   );
 }
+import { ProductCardMedia } from "@/components/product-media";

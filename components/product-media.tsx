@@ -1,8 +1,7 @@
-import Image from "next/image";
 import { ExternalLink, PlayCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getInstagramEmbedUrl, isDirectVideoUrl } from "@/lib/media";
+import { getInstagramEmbedUrl, isDirectImageUrl, isDirectVideoUrl } from "@/lib/media";
 
 type ProductMediaProps = {
   name: string;
@@ -12,14 +11,12 @@ type ProductMediaProps = {
 };
 
 export function ProductCardMedia({ name, mediaType, mediaUrl }: ProductMediaProps) {
-  if (mediaType === "image") {
+  if (mediaType === "image" && isDirectImageUrl(mediaUrl)) {
     return (
-      <Image
+      <img
         src={mediaUrl}
         alt={name}
-        fill
-        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-        className="object-cover transition duration-500 group-hover:scale-105"
+        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
       />
     );
   }
@@ -29,7 +26,9 @@ export function ProductCardMedia({ name, mediaType, mediaUrl }: ProductMediaProp
       <span className="flex size-16 items-center justify-center rounded-full bg-white text-sky-700 shadow-airy">
         <PlayCircle className="size-8" />
       </span>
-      <p className="mt-4 text-sm font-bold text-slate-950">Video produk</p>
+      <p className="mt-4 text-sm font-bold text-slate-950">
+        {mediaType === "video" ? "Video produk" : "Media produk"}
+      </p>
       <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">{name}</p>
     </div>
   );
@@ -43,11 +42,11 @@ export function ProductDetailMedia({
 }: ProductMediaProps) {
   const instagramEmbedUrl = getInstagramEmbedUrl(mediaUrl);
 
-  if (mediaType === "video" && instagramEmbedUrl) {
+  if (instagramEmbedUrl) {
     return (
       <iframe
         src={instagramEmbedUrl}
-        title={`Video ${name}`}
+        title={`Media ${name}`}
         className="h-full w-full border-0"
         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
         allowFullScreen
@@ -83,14 +82,16 @@ export function ProductDetailMedia({
     );
   }
 
-  return (
-    <Image
-      src={mediaUrl}
-      alt={name}
-      fill
-      priority={priority}
-      sizes="(min-width: 1024px) 60vw, 100vw"
-      className="object-cover"
-    />
-  );
+  if (isDirectImageUrl(mediaUrl) || mediaType === "image") {
+    return (
+      <img
+        src={mediaUrl}
+        alt={name}
+        className="h-full w-full object-cover"
+        loading={priority ? "eager" : "lazy"}
+      />
+    );
+  }
+
+  return null;
 }

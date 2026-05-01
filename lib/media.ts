@@ -24,3 +24,7 @@ export function getInstagramEmbedUrl(url: string) {
 export function isDirectVideoUrl(url: string) {
   return /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
 }
+
+export function isDirectImageUrl(url: string) {
+  return /\.(avif|gif|jpe?g|png|webp)(\?.*)?$/i.test(url);
+}
