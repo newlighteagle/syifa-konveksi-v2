@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
-export function AdminLogoutButton() {
+export function AdminLogoutButton({ collapsed = false }: { collapsed?: boolean }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -18,9 +18,16 @@ export function AdminLogoutButton() {
   }
 
   return (
-    <Button type="button" variant="outline" disabled={isLoading} onClick={handleLogout}>
+    <Button
+      type="button"
+      variant="outline"
+      size={collapsed ? "icon" : "default"}
+      disabled={isLoading}
+      title="Keluar"
+      onClick={handleLogout}
+    >
       <LogOut />
-      {isLoading ? "Keluar..." : "Keluar"}
+      {collapsed ? null : isLoading ? "Keluar..." : "Keluar"}
     </Button>
   );
 }
