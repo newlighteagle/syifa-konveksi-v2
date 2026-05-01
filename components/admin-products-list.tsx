@@ -239,24 +239,26 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
         </Card>
       ) : (
         <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_22rem]">
-          <div className={viewMode === "card" ? "grid gap-2 md:grid-cols-3" : "grid gap-1.5"}>
-            {paginatedProducts.map((product) =>
-              viewMode === "card" ? (
-                <ProductCardItem
-                  key={product.id}
-                  product={product}
-                  selected={selectedProduct?.id === product.id}
-                  onClick={() => setSelectedProductId(product.id)}
-                />
-              ) : (
-                <ProductListItem
-                  key={product.id}
-                  product={product}
-                  selected={selectedProduct?.id === product.id}
-                  onClick={() => setSelectedProductId(product.id)}
-                />
-              ),
-            )}
+          <div className="grid gap-2">
+            <div className={viewMode === "card" ? "grid gap-2 md:grid-cols-3" : "grid gap-1.5"}>
+              {paginatedProducts.map((product) =>
+                viewMode === "card" ? (
+                  <ProductCardItem
+                    key={product.id}
+                    product={product}
+                    selected={selectedProduct?.id === product.id}
+                    onClick={() => setSelectedProductId(product.id)}
+                  />
+                ) : (
+                  <ProductListItem
+                    key={product.id}
+                    product={product}
+                    selected={selectedProduct?.id === product.id}
+                    onClick={() => setSelectedProductId(product.id)}
+                  />
+                ),
+              )}
+            </div>
             <PaginationControls
               currentPage={currentPage}
               pageEnd={pageEnd}
