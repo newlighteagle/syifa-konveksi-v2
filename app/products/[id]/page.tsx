@@ -30,7 +30,7 @@ export default async function ProductDetailPage({
     notFound();
   }
 
-  const galleryMedia = [product.mediaUrl, ...product.mediaUrls].filter(Boolean);
+  const galleryMedia = [product.mediaUrl, ...product.galleryUrls].filter(Boolean);
 
   return (
     <main className="min-h-screen bg-background">

@@ -6,7 +6,7 @@ export const productInputSchema = z.object({
   description: z.string().trim().min(10),
   mediaType: z.enum(["image", "video"]),
   mediaUrl: z.string().trim().url(),
-  mediaUrls: z.array(z.string().trim().url()).default([]),
+  galleryUrls: z.array(z.string().trim().url()).default([]),
   kodeProduksi: z.string().trim().min(3),
   periodeProduksi: z.string().trim().regex(/^\d{2}-\d{4}$/),
   harga: z.coerce.number().int().positive(),

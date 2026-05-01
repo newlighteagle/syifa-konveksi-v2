@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Eye, Save, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { ProductDetailMedia } from "@/components/product-media";
 import { Button } from "@/components/ui/button";
@@ -12,11 +13,18 @@ import type { Product } from "@/lib/products";
 
 type ProductFormProps = {
   product?: Product | null;
-  onSaved?: () => void;
+  submitLabel?: string;
+  successRedirectPath?: string;
   onCancelEdit?: () => void;
 };
 
-export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps) {
+export function ProductForm({
+  product,
+  submitLabel,
+  successRedirectPath = "/admin/products",
+  onCancelEdit,
+}: ProductFormProps) {
+  const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -49,7 +57,7 @@ export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps
         description: formData.get("description"),
         mediaType: formData.get("mediaType"),
         mediaUrl: formData.get("mediaUrl"),
-        mediaUrls: parseList(formData.get("mediaUrls")),
+        galleryUrls: parseList(formData.get("galleryUrls")),
         kodeProduksi: formData.get("kodeProduksi"),
         periodeProduksi: month && year ? `${month}-${year}` : monthValue,
         harga: formData.get("harga"),
@@ -79,7 +87,8 @@ export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps
       event.currentTarget.reset();
     }
     setIsLoading(false);
-    onSaved?.();
+    router.push(successRedirectPath);
+    router.refresh();
   }
 
   return (
@@ -129,12 +138,12 @@ export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps
         </p>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="mediaUrls">Link Galeri Tambahan</Label>
+        <Label htmlFor="galleryUrls">Link Galeri Tambahan</Label>
         <Textarea
-          id="mediaUrls"
-          name="mediaUrls"
+          id="galleryUrls"
+          name="galleryUrls"
           placeholder={"Satu link per baris, contoh:\nhttps://www.instagram.com/p/...\nhttps://example.com/foto-1.jpg\nhttps://example.com/foto-2.jpg"}
-          defaultValue={product?.mediaUrls.join("\n")}
+          defaultValue={product?.galleryUrls.join("\n")}
         />
         <p className="text-xs leading-5 text-slate-500">
           Bisa campur 1 video dan beberapa foto. Media utama akan tampil pertama.
@@ -171,7 +180,7 @@ export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button disabled={isLoading}>
           <Save />
-          {isLoading ? "Menyimpan..." : isEditing ? "Update Produk" : "Simpan Produk"}
+          {isLoading ? "Menyimpan..." : submitLabel ?? (isEditing ? "Update Produk" : "Simpan Produk")}
         </Button>
         <Button
           type="button"
@@ -184,7 +193,7 @@ export function ProductForm({ product, onSaved, onCancelEdit }: ProductFormProps
             const formData = new FormData(formRef.current);
             setPreviewMedia([
               String(formData.get("mediaUrl") ?? "").trim(),
-              ...parseList(formData.get("mediaUrls")),
+              ...parseList(formData.get("galleryUrls")),
             ].filter(Boolean));
             setShowPreview((value) => !value);
           }}

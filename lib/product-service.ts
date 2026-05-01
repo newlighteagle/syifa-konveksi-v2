@@ -16,7 +16,7 @@ function fromPrisma(product: ProductWithEnums): Product {
     description: product.description,
     mediaType: product.mediaType,
     mediaUrl: product.mediaUrl,
-    mediaUrls: product.mediaUrls,
+    galleryUrls: product.galleryUrls,
     kodeProduksi: product.kodeProduksi,
     periodeProduksi: product.periodeProduksi,
     harga: product.harga,

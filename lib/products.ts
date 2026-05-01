@@ -5,7 +5,7 @@ export type Product = {
   description: string;
   mediaType: "image" | "video";
   mediaUrl: string;
-  mediaUrls: string[];
+  galleryUrls: string[];
   kodeProduksi: string;
   periodeProduksi: string;
   harga: number;
@@ -26,7 +26,7 @@ export const products: Product[] = [
     mediaType: "image",
     mediaUrl:
       "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=1200&q=80",
-    mediaUrls: [],
+    galleryUrls: [],
     kodeProduksi: "GMS-0524-01",
     periodeProduksi: "05-2024",
     harga: 150000,
@@ -45,7 +45,7 @@ export const products: Product[] = [
     mediaType: "image",
     mediaUrl:
       "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=1200&q=80",
-    mediaUrls: [],
+    galleryUrls: [],
     kodeProduksi: "PDH-0624-03",
     periodeProduksi: "06-2024",
     harga: 120000,
@@ -64,7 +64,7 @@ export const products: Product[] = [
     mediaType: "image",
     mediaUrl:
       "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80",
-    mediaUrls: [],
+    galleryUrls: [],
     kodeProduksi: "KOS-0424-11",
     periodeProduksi: "04-2024",
     harga: 55000,
@@ -83,7 +83,7 @@ export const products: Product[] = [
     mediaType: "image",
     mediaUrl:
       "https://images.unsplash.com/photo-1622290291468-a28f7a7dc6a8?auto=format&fit=crop&w=1200&q=80",
-    mediaUrls: [],
+    galleryUrls: [],
     kodeProduksi: "SKL-0724-02",
     periodeProduksi: "07-2024",
     harga: 98000,
@@ -102,7 +102,7 @@ export const products: Product[] = [
     mediaType: "video",
     mediaUrl:
       "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=1200&q=80",
-    mediaUrls: [],
+    galleryUrls: [],
     kodeProduksi: "OTR-0824-07",
     periodeProduksi: "08-2024",
     harga: 135000,
@@ -121,7 +121,7 @@ export const products: Product[] = [
     mediaType: "image",
     mediaUrl:
       "https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=1200&q=80",
-    mediaUrls: [],
+    galleryUrls: [],
     kodeProduksi: "RMP-0924-04",
     periodeProduksi: "09-2024",
     harga: 89000,
