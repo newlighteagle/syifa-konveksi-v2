@@ -1,15 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Eye, Save, X } from "lucide-react";
+import { Check, ChevronsUpDown, Eye, Plus, Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { ProductDetailMedia } from "@/components/product-media";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import type { Product } from "@/lib/products";
+import { cn } from "@/lib/utils";
 
 type ProductFormProps = {
   product?: Product | null;
@@ -37,12 +48,14 @@ export function ProductForm({
   const [categoryMode, setCategoryMode] = useState<"select" | "new">("select");
   const [selectedCategory, setSelectedCategory] = useState(product?.category ?? "");
   const [selectedColors, setSelectedColors] = useState<string[]>(product?.colors ?? []);
+  const [colorSearch, setColorSearch] = useState("");
   const isEditing = Boolean(product);
 
   useEffect(() => {
     setMessage("");
     setSelectedCategory(product?.category ?? "");
     setSelectedColors(product?.colors ?? []);
+    setColorSearch("");
     setCategoryMode(product?.category && !categories.some((category) => category.name === product.category) ? "new" : "select");
     if (product) {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -82,7 +95,6 @@ export function ProductForm({
           .filter(Boolean),
         colors: [
           ...selectedColors,
-          ...parseList(formData.get("newColors")),
         ],
       }),
     });
@@ -98,6 +110,8 @@ export function ProductForm({
     setMessage(isEditing ? "Produk berhasil diperbarui." : "Produk berhasil disimpan.");
     if (!isEditing) {
       event.currentTarget.reset();
+      setSelectedColors([]);
+      setColorSearch("");
     }
     setIsLoading(false);
     router.push(successRedirectPath);
@@ -167,35 +181,13 @@ export function ProductForm({
       </div>
       <div className="grid gap-5">
         <Field label="Ukuran" id="sizes" placeholder="S, M, L, XL" defaultValue={product?.sizes.join(", ")} />
-        <div className="space-y-2">
-          <Label>Warna</Label>
-          <div className="grid gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 sm:grid-cols-2">
-            {colors.length === 0 ? (
-              <p className="text-sm text-slate-500">Belum ada warna tersimpan.</p>
-            ) : null}
-            {colors.map((color) => (
-              <label key={color.id} className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                <input
-                  type="checkbox"
-                  className="size-4 rounded border-slate-300 text-sky-600"
-                  checked={selectedColors.includes(color.name)}
-                  onChange={(event) => {
-                    setSelectedColors((current) =>
-                      event.target.checked
-                        ? Array.from(new Set([...current, color.name]))
-                        : current.filter((item) => item !== color.name),
-                    );
-                  }}
-                />
-                {color.name}
-              </label>
-            ))}
-          </div>
-          <Input
-            name="newColors"
-            placeholder="Tambah warna baru, pisahkan koma. Contoh: Navy, Hitam"
-          />
-        </div>
+        <ColorCombobox
+          colors={colors}
+          search={colorSearch}
+          selectedColors={selectedColors}
+          setSearch={setColorSearch}
+          setSelectedColors={setSelectedColors}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="mediaUrl">Link Media Utama</Label>
@@ -289,6 +281,143 @@ function parseList(value: FormDataEntryValue | null) {
     .split(/\r?\n|,/)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function ColorCombobox({
+  colors,
+  search,
+  selectedColors,
+  setSearch,
+  setSelectedColors,
+}: {
+  colors: Array<{ id: string; name: string }>;
+  search: string;
+  selectedColors: string[];
+  setSearch: (value: string) => void;
+  setSelectedColors: React.Dispatch<React.SetStateAction<string[]>>;
+}) {
+  const [open, setOpen] = useState(false);
+  const normalizedSearch = normalizeOptionName(search);
+  const filteredColors = colors.filter((color) =>
+    color.name.toLowerCase().includes(search.trim().toLowerCase()),
+  );
+  const canCreateColor =
+    normalizedSearch.length > 0 &&
+    !colors.some((color) => color.name.toLowerCase() === normalizedSearch.toLowerCase()) &&
+    !selectedColors.some((color) => color.toLowerCase() === normalizedSearch.toLowerCase());
+
+  function toggleColor(colorName: string) {
+    setSelectedColors((current) =>
+      current.includes(colorName)
+        ? current.filter((item) => item !== colorName)
+        : [...current, colorName],
+    );
+  }
+
+  function createColor() {
+    if (!canCreateColor) {
+      return;
+    }
+
+    setSelectedColors((current) => [...current, normalizedSearch]);
+    setSearch("");
+  }
+
+  return (
+    <div className="space-y-2">
+      <Label>Warna</Label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="h-auto min-h-11 w-full justify-between bg-slate-50 px-3 py-2 font-medium text-slate-700 hover:bg-white"
+          >
+            <span className="line-clamp-1 text-left">
+              {selectedColors.length > 0
+                ? `${selectedColors.length} warna dipilih`
+                : "Pilih warna produk"}
+            </span>
+            <ChevronsUpDown className="size-4 shrink-0 text-slate-400" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+          <Command shouldFilter={false}>
+            <CommandInput
+              placeholder="Cari atau buat warna..."
+              value={search}
+              onValueChange={setSearch}
+            />
+            <CommandList>
+              {filteredColors.length === 0 && !canCreateColor ? (
+                <CommandEmpty>Warna tidak ditemukan.</CommandEmpty>
+              ) : null}
+              <CommandGroup>
+                {filteredColors.map((color) => {
+                  const isSelected = selectedColors.includes(color.name);
+
+                  return (
+                    <CommandItem
+                      key={color.id}
+                      value={color.name}
+                      onSelect={() => toggleColor(color.name)}
+                    >
+                      <Check
+                        className={cn(
+                          "size-4 text-sky-700",
+                          isSelected ? "opacity-100" : "opacity-0",
+                        )}
+                      />
+                      <span>{color.name}</span>
+                    </CommandItem>
+                  );
+                })}
+                {canCreateColor ? (
+                  <CommandItem value={normalizedSearch} onSelect={createColor}>
+                    <Plus className="size-4 text-sky-700" />
+                    <span>Buat warna "{normalizedSearch}"</span>
+                  </CommandItem>
+                ) : null}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+      {selectedColors.length > 0 ? (
+        <div className="flex flex-wrap gap-2">
+          {selectedColors.map((color) => (
+            <Badge key={color} variant="secondary" className="gap-2 pr-2">
+              {color}
+              <button
+                type="button"
+                className="rounded-full text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-100"
+                aria-label={`Hapus warna ${color}`}
+                onClick={() => {
+                  setSelectedColors((current) => current.filter((item) => item !== color));
+                }}
+              >
+                <X className="size-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      ) : (
+        <p className="text-xs leading-5 text-slate-500">
+          Pilih beberapa warna dari daftar, atau ketik nama warna baru lalu pilih opsi buat warna.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function normalizeOptionName(value: string) {
+  return value
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 }
 
 function Field({
