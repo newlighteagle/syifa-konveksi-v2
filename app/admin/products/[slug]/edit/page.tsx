@@ -6,7 +6,7 @@ import { AdminShell } from "@/components/admin-shell";
 import { ProductForm } from "@/components/product-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getProductBySlug } from "@/lib/product-service";
+import { getProductBySlug, listCategoryOptions, listColorOptions } from "@/lib/product-service";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,11 @@ export default async function EditProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const [product, categories, colors] = await Promise.all([
+    getProductBySlug(slug),
+    listCategoryOptions(),
+    listColorOptions(),
+  ]);
 
   if (!product) {
     notFound();
@@ -36,7 +40,12 @@ export default async function EditProductPage({
             <CardTitle>Edit Produk</CardTitle>
           </CardHeader>
           <CardContent>
-            <ProductForm product={product} submitLabel="Update Produk" />
+            <ProductForm
+              product={product}
+              categories={categories}
+              colors={colors}
+              submitLabel="Update Produk"
+            />
           </CardContent>
         </Card>
       </div>

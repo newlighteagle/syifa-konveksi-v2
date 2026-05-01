@@ -13,6 +13,8 @@ import type { Product } from "@/lib/products";
 
 type ProductFormProps = {
   product?: Product | null;
+  categories: Array<{ id: string; name: string }>;
+  colors: Array<{ id: string; name: string }>;
   submitLabel?: string;
   successRedirectPath?: string;
   onCancelEdit?: () => void;
@@ -20,6 +22,8 @@ type ProductFormProps = {
 
 export function ProductForm({
   product,
+  categories,
+  colors,
   submitLabel,
   successRedirectPath = "/admin/products",
   onCancelEdit,
@@ -30,10 +34,16 @@ export function ProductForm({
   const [isLoading, setIsLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewMedia, setPreviewMedia] = useState<string[]>([]);
+  const [categoryMode, setCategoryMode] = useState<"select" | "new">("select");
+  const [selectedCategory, setSelectedCategory] = useState(product?.category ?? "");
+  const [selectedColors, setSelectedColors] = useState<string[]>(product?.colors ?? []);
   const isEditing = Boolean(product);
 
   useEffect(() => {
     setMessage("");
+    setSelectedCategory(product?.category ?? "");
+    setSelectedColors(product?.colors ?? []);
+    setCategoryMode(product?.category && !categories.some((category) => category.name === product.category) ? "new" : "select");
     if (product) {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -53,9 +63,12 @@ export function ProductForm({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: formData.get("name"),
-        category: formData.get("category"),
+        category:
+          categoryMode === "new"
+            ? formData.get("newCategory")
+            : formData.get("category"),
         description: formData.get("description"),
-        mediaType: formData.get("mediaType"),
+        mediaType: "video",
         mediaUrl: formData.get("mediaUrl"),
         galleryUrls: parseList(formData.get("galleryUrls")),
         kodeProduksi: formData.get("kodeProduksi"),
@@ -67,10 +80,10 @@ export function ProductForm({
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean),
-        colors: String(formData.get("colors") ?? "")
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean),
+        colors: [
+          ...selectedColors,
+          ...parseList(formData.get("newColors")),
+        ],
       }),
     });
 
@@ -95,7 +108,39 @@ export function ProductForm({
     <form ref={formRef} key={product?.id ?? "new-product"} className="grid gap-5" onSubmit={onSubmit}>
       <div className="grid gap-5 md:grid-cols-2">
         <Field label="Nama Produk" id="name" placeholder="Gamis Seragam Biru" defaultValue={product?.name} />
-        <Field label="Kategori" id="category" placeholder="Gamis" defaultValue={product?.category} />
+        <div className="space-y-2">
+          <Label htmlFor="category">Kategori</Label>
+          <select
+            id="category"
+            name="category"
+            value={categoryMode === "new" ? "__new" : selectedCategory}
+            onChange={(event) => {
+              if (event.target.value === "__new") {
+                setCategoryMode("new");
+                return;
+              }
+
+              setCategoryMode("select");
+              setSelectedCategory(event.target.value);
+            }}
+            className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-100"
+          >
+            <option value="">Pilih kategori</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.name}>
+                {category.name}
+              </option>
+            ))}
+            <option value="__new">+ Buat kategori baru</option>
+          </select>
+          {categoryMode === "new" ? (
+            <Input
+              name="newCategory"
+              placeholder="Nama kategori baru"
+              defaultValue={product?.category}
+            />
+          ) : null}
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="description">Deskripsi</Label>
@@ -116,14 +161,41 @@ export function ProductForm({
         />
         <Field label="Harga" id="harga" type="number" placeholder="150000" defaultValue={product?.harga ? String(product.harga) : undefined} />
       </div>
-      <div className="grid gap-5 md:grid-cols-3">
-        <SelectField label="Media Type" id="mediaType" options={["image", "video"]} defaultValue={product?.mediaType} />
+      <div className="grid gap-5 md:grid-cols-2">
         <SelectField label="Status" id="stockStatus" options={["Ready", "Preorder", "Terbatas"]} defaultValue={product?.stockStatus} />
         <Field label="Material" id="material" placeholder="Toyobo premium" defaultValue={product?.material} />
       </div>
-      <div className="grid gap-5 md:grid-cols-2">
+      <div className="grid gap-5">
         <Field label="Ukuran" id="sizes" placeholder="S, M, L, XL" defaultValue={product?.sizes.join(", ")} />
-        <Field label="Warna" id="colors" placeholder="Sky Blue, Navy" defaultValue={product?.colors.join(", ")} />
+        <div className="space-y-2">
+          <Label>Warna</Label>
+          <div className="grid gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 sm:grid-cols-2">
+            {colors.length === 0 ? (
+              <p className="text-sm text-slate-500">Belum ada warna tersimpan.</p>
+            ) : null}
+            {colors.map((color) => (
+              <label key={color.id} className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <input
+                  type="checkbox"
+                  className="size-4 rounded border-slate-300 text-sky-600"
+                  checked={selectedColors.includes(color.name)}
+                  onChange={(event) => {
+                    setSelectedColors((current) =>
+                      event.target.checked
+                        ? Array.from(new Set([...current, color.name]))
+                        : current.filter((item) => item !== color.name),
+                    );
+                  }}
+                />
+                {color.name}
+              </label>
+            ))}
+          </div>
+          <Input
+            name="newColors"
+            placeholder="Tambah warna baru, pisahkan koma. Contoh: Navy, Hitam"
+          />
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="mediaUrl">Link Media Utama</Label>
@@ -134,7 +206,7 @@ export function ProductForm({
           defaultValue={product?.mediaUrl}
         />
         <p className="text-xs leading-5 text-slate-500">
-          Untuk video Instagram, pilih Media Type `video` lalu tempel link Reel di sini.
+          Media utama selalu video. Tempel link Instagram Reel atau link video langsung.
         </p>
       </div>
       <div className="space-y-2">
@@ -146,7 +218,7 @@ export function ProductForm({
           defaultValue={product?.galleryUrls.join("\n")}
         />
         <p className="text-xs leading-5 text-slate-500">
-          Bisa campur 1 video dan beberapa foto. Media utama akan tampil pertama.
+          Galeri tambahan digunakan untuk foto. Isi satu link foto per baris.
         </p>
       </div>
       {showPreview ? (
@@ -163,7 +235,7 @@ export function ProductForm({
                 >
                   <ProductDetailMedia
                     name={`Preview ${index + 1}`}
-                    mediaType={index === 0 ? getCurrentMediaType(formRef.current) : inferMediaType(url)}
+                    mediaType={index === 0 ? "video" : "image"}
                     mediaUrl={url}
                   />
                 </div>
@@ -217,21 +289,6 @@ function parseList(value: FormDataEntryValue | null) {
     .split(/\r?\n|,/)
     .map((item) => item.trim())
     .filter(Boolean);
-}
-
-function inferMediaType(url: string): "image" | "video" {
-  return /instagram\.com\/(reel|tv)\//i.test(url) || /\.(mp4|webm|ogg)(\?.*)?$/i.test(url)
-    ? "video"
-    : "image";
-}
-
-function getCurrentMediaType(form: HTMLFormElement | null): "image" | "video" {
-  if (!form) {
-    return "image";
-  }
-
-  const value = new FormData(form).get("mediaType");
-  return value === "video" ? "video" : "image";
 }
 
 function Field({

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { readSession } from "@/lib/auth";
 import { hasDatabaseUrl, prisma } from "@/lib/prisma";
-import { listProducts } from "@/lib/product-service";
+import { listProducts, resolveCategory, resolveColors } from "@/lib/product-service";
 import { productInputSchema, slugify } from "@/lib/validation";
 
 export async function GET(request: Request) {
@@ -40,12 +40,21 @@ export async function POST(request: Request) {
 
   const data = parsed.data;
   const slug = slugify(data.name);
+  const category = await resolveCategory(data.category);
+  const colors = await resolveColors(data.colors);
 
   const product = await prisma.product.create({
     data: {
       ...data,
       slug,
+      mediaType: "video",
+      categoryId: category.id,
       createdById: session.id,
+      colorLinks: {
+        create: colors.map((color) => ({
+          colorId: color.id,
+        })),
+      },
     },
   });
 

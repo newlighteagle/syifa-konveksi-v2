@@ -34,6 +34,8 @@ model Product {
   slug              String      @unique
   name              String
   category          String      @default("Katalog")
+  categoryId        String?     @map("category_id")
+  categoryRef       Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   description       String
   mediaType         MediaType   @map("media_type")
   mediaUrl          String      @map("media_url")
@@ -45,6 +47,7 @@ model Product {
   material          String      @default("-")
   sizes             String[]    @default([])
   colors            String[]    @default([])
+  colorLinks        ProductColor[]
   views             Int         @default(0)
   createdById       String?     @map("created_by_id")
   createdBy         User?       @relation(fields: [createdById], references: [id], onDelete: SetNull)
@@ -53,6 +56,35 @@ model Product {
 
   @@index([name])
   @@index([category])
+  @@index([categoryId])
   @@index([kodeProduksi])
   @@map("products")
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Color {
+  id        String         @id @default(cuid())
+  name      String         @unique
+  createdAt DateTime       @default(now()) @map("created_at")
+  products  ProductColor[]
+
+  @@map("colors")
+}
+
+model ProductColor {
+  productId String  @map("product_id")
+  colorId   String  @map("color_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  color     Color   @relation(fields: [colorId], references: [id], onDelete: Cascade)
+
+  @@id([productId, colorId])
+  @@map("product_colors")
 }
