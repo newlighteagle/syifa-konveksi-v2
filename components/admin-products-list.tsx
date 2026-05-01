@@ -134,8 +134,8 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
   return (
     <div className="grid gap-5">
       <Card>
-        <CardContent className="grid gap-3 p-3">
-          <div className="grid gap-3 lg:grid-cols-[1fr_16rem_auto] lg:items-center">
+        <CardContent className="grid gap-2 p-3">
+          <div className="grid gap-2 lg:grid-cols-[1fr_14rem_auto] lg:items-center">
             <label className="relative block">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
               <Input
@@ -205,8 +205,8 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_24rem]">
-          <div className={viewMode === "card" ? "grid gap-3 md:grid-cols-2" : "grid gap-2"}>
+        <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_22rem]">
+          <div className={viewMode === "card" ? "grid gap-2 md:grid-cols-3" : "grid gap-1.5"}>
             {paginatedProducts.map((product) =>
               viewMode === "card" ? (
                 <ProductCardItem
@@ -295,7 +295,7 @@ function PaginationControls({
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-xs text-slate-500">
         Menampilkan {pageStart}-{pageEnd} dari {totalItems} produk
       </p>
@@ -342,11 +342,11 @@ function ProductListItem({
       type="button"
       onClick={onClick}
       className={cn(
-        "grid w-full gap-3 rounded-lg border bg-white p-3 text-left transition hover:border-sky-200 hover:shadow-soft sm:grid-cols-[4.5rem_1fr_auto] sm:items-center",
+        "grid w-full gap-2 rounded-lg border bg-white p-2 text-left transition hover:border-sky-200 hover:shadow-soft sm:grid-cols-[3.5rem_1fr_auto] sm:items-center",
         selected ? "border-sky-300 shadow-soft" : "border-slate-200",
       )}
     >
-      <span className="relative aspect-square overflow-hidden rounded-lg bg-sky-50">
+      <span className="relative aspect-square overflow-hidden rounded-md bg-sky-50">
         <ProductCardMedia
           name={product.name}
           mediaType={product.mediaType}
@@ -354,21 +354,21 @@ function ProductListItem({
         />
       </span>
       <span className="min-w-0">
-        <span className="flex flex-wrap items-center gap-2">
+        <span className="flex flex-wrap items-center gap-1.5">
           <Badge>{product.category}</Badge>
           <Badge variant="secondary">{product.stockStatus}</Badge>
         </span>
-        <span className="mt-2 block truncate text-base font-bold text-slate-950">
+        <span className="mt-1 block truncate text-sm font-bold text-slate-950">
           {product.name}
         </span>
         <span className="mt-0.5 block text-xs font-semibold text-sky-700">
           {product.kodeProduksi}
         </span>
-        <span className="mt-1 line-clamp-1 text-xs leading-5 text-slate-600">
+        <span className="hidden text-xs leading-5 text-slate-600 2xl:mt-0.5 2xl:line-clamp-1 2xl:block">
           {product.description}
         </span>
       </span>
-      <span className="text-sm font-bold text-slate-950">{formatRupiah(product.harga)}</span>
+      <span className="text-xs font-bold text-slate-950">{formatRupiah(product.harga)}</span>
     </button>
   );
 }
@@ -391,25 +391,25 @@ function ProductCardItem({
         selected ? "border-sky-300 shadow-soft" : "border-slate-200",
       )}
     >
-      <span className="relative block aspect-[16/10] overflow-hidden bg-sky-50">
+      <span className="relative block aspect-[16/7] overflow-hidden bg-sky-50">
         <ProductCardMedia
           name={product.name}
           mediaType={product.mediaType}
           mediaUrl={product.mediaUrl}
         />
       </span>
-      <span className="block p-3">
-        <span className="flex flex-wrap items-center gap-2">
+      <span className="block p-2">
+        <span className="flex flex-wrap items-center gap-1.5">
           <Badge>{product.category}</Badge>
           <Badge variant="secondary">{product.stockStatus}</Badge>
         </span>
-        <span className="mt-2 line-clamp-1 block text-base font-bold leading-6 text-slate-950">
+        <span className="mt-1 line-clamp-1 block text-sm font-bold leading-5 text-slate-950">
           {product.name}
         </span>
         <span className="mt-0.5 block text-xs font-semibold text-sky-700">
           {product.kodeProduksi}
         </span>
-        <span className="mt-2 block text-sm font-bold text-slate-950">{formatRupiah(product.harga)}</span>
+        <span className="mt-1 block text-xs font-bold text-slate-950">{formatRupiah(product.harga)}</span>
       </span>
     </button>
   );
@@ -427,8 +427,8 @@ function ProductDetailPanel({
   onClose: () => void;
 }) {
   return (
-    <Card className="h-fit max-h-[calc(100vh-7rem)] overflow-hidden xl:sticky xl:top-4">
-      <div className="relative aspect-[16/9] max-h-48 overflow-hidden bg-sky-50">
+    <Card className="h-fit max-h-[calc(100vh-6rem)] overflow-hidden xl:sticky xl:top-3">
+      <div className="relative aspect-[16/8] max-h-40 overflow-hidden bg-sky-50">
         <ProductDetailMedia
           name={product.name}
           mediaType={product.mediaType}
@@ -436,14 +436,14 @@ function ProductDetailPanel({
           priority
         />
       </div>
-      <CardContent className="grid max-h-[calc(100vh-19rem)] gap-3 overflow-y-auto p-4">
-        <div className="flex items-start justify-between gap-3">
+      <CardContent className="grid max-h-[calc(100vh-16rem)] gap-2.5 overflow-y-auto p-3">
+        <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
               <Badge>{product.category}</Badge>
               <Badge variant="secondary">{product.stockStatus}</Badge>
             </div>
-            <h2 className="mt-2 line-clamp-2 text-lg font-extrabold leading-6 text-slate-950">
+            <h2 className="mt-1.5 line-clamp-2 text-base font-extrabold leading-5 text-slate-950">
               {product.name}
             </h2>
             <p className="mt-1 text-xs font-semibold text-sky-700">{product.kodeProduksi}</p>
@@ -453,9 +453,9 @@ function ProductDetailPanel({
           </Button>
         </div>
 
-        <p className="line-clamp-3 text-xs leading-5 text-slate-600">{product.description}</p>
+        <p className="line-clamp-2 text-xs leading-5 text-slate-600">{product.description}</p>
 
-        <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className="grid grid-cols-2 gap-1.5 text-xs">
           <ProductMeta label="Harga" value={formatRupiah(product.harga)} strong />
           <ProductMeta label="Periode" value={product.periodeProduksi} />
           <ProductMeta label="Material" value={product.material} />
