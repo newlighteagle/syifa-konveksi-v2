@@ -1,15 +1,18 @@
 import { z } from "zod";
 
 export const productInputSchema = z.object({
-  name: z.string().trim().min(3),
-  category: z.string().trim().min(2).default("Katalog"),
-  description: z.string().trim().min(10),
+  name: z.string().trim().min(3, "Nama produk minimal 3 karakter."),
+  category: z.string().trim().min(2, "Kategori wajib dipilih.").default("Katalog"),
+  description: z.string().trim().min(3, "Deskripsi minimal 3 karakter."),
   mediaType: z.enum(["image", "video"]),
-  mediaUrl: z.string().trim().url(),
-  galleryUrls: z.array(z.string().trim().url()).default([]),
-  kodeProduksi: z.string().trim().min(3),
-  periodeProduksi: z.string().trim().regex(/^\d{2}-\d{4}$/),
-  harga: z.coerce.number().int().positive(),
+  mediaUrl: z.string().trim().url("Link media utama harus berupa URL valid."),
+  galleryUrls: z.array(z.string().trim().url("Setiap link galeri harus berupa URL valid.")).default([]),
+  kodeProduksi: z.string().trim().min(3, "Kode produksi minimal 3 karakter."),
+  periodeProduksi: z
+    .string()
+    .trim()
+    .regex(/^\d{2}-\d{4}$/, "Periode produksi wajib dipilih."),
+  harga: z.coerce.number().int().positive("Harga harus lebih dari 0."),
   stockStatus: z.enum(["Ready", "Preorder", "Terbatas"]).default("Ready"),
   material: z.string().trim().min(1).default("-"),
   sizes: z.array(z.string().trim().min(1)).default([]),

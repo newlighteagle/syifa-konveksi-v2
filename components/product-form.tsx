@@ -31,6 +31,8 @@ type ProductFormProps = {
   onCancelEdit?: () => void;
 };
 
+type FieldErrors = Record<string, string[] | undefined>;
+
 export function ProductForm({
   product,
   categories,
@@ -42,6 +44,7 @@ export function ProductForm({
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [message, setMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewMedia, setPreviewMedia] = useState<string[]>([]);
@@ -53,6 +56,7 @@ export function ProductForm({
 
   useEffect(() => {
     setMessage("");
+    setFieldErrors({});
     setSelectedCategory(product?.category ?? "");
     setSelectedColors(product?.colors ?? []);
     setColorSearch("");
@@ -66,6 +70,7 @@ export function ProductForm({
     event.preventDefault();
     setIsLoading(true);
     setMessage("");
+    setFieldErrors({});
 
     const formData = new FormData(event.currentTarget);
     const monthValue = String(formData.get("periodeProduksi") ?? "");
@@ -103,6 +108,7 @@ export function ProductForm({
 
     if (!response.ok) {
       setMessage(body?.message ?? "Produk belum bisa disimpan.");
+      setFieldErrors(body?.errors ?? {});
       setIsLoading(false);
       return;
     }
@@ -121,7 +127,13 @@ export function ProductForm({
   return (
     <form ref={formRef} key={product?.id ?? "new-product"} className="grid gap-5" onSubmit={onSubmit}>
       <div className="grid gap-5 md:grid-cols-2">
-        <Field label="Nama Produk" id="name" placeholder="Gamis Seragam Biru" defaultValue={product?.name} />
+        <Field
+          label="Nama Produk"
+          id="name"
+          placeholder="Gamis Seragam Biru"
+          defaultValue={product?.name}
+          error={fieldErrors.name?.[0]}
+        />
         <div className="space-y-2">
           <Label htmlFor="category">Kategori</Label>
           <select
@@ -154,6 +166,7 @@ export function ProductForm({
               defaultValue={product?.category}
             />
           ) : null}
+          <FieldError message={fieldErrors.category?.[0]} />
         </div>
       </div>
       <div className="space-y-2">
@@ -164,23 +177,50 @@ export function ProductForm({
           placeholder="Detail bahan, ukuran, model, dan catatan produksi..."
           defaultValue={product?.description}
         />
+        <FieldError message={fieldErrors.description?.[0]} />
       </div>
       <div className="grid gap-5 md:grid-cols-3">
-        <Field label="Kode Produksi" id="kodeProduksi" placeholder="GMS-1024-01" defaultValue={product?.kodeProduksi} />
+        <Field
+          label="Kode Produksi"
+          id="kodeProduksi"
+          placeholder="GMS-1024-01"
+          defaultValue={product?.kodeProduksi}
+          error={fieldErrors.kodeProduksi?.[0]}
+        />
         <Field
           label="Periode"
           id="periodeProduksi"
           type="month"
           defaultValue={toMonthInputValue(product?.periodeProduksi)}
+          error={fieldErrors.periodeProduksi?.[0]}
         />
-        <Field label="Harga" id="harga" type="number" placeholder="150000" defaultValue={product?.harga ? String(product.harga) : undefined} />
+        <Field
+          label="Harga"
+          id="harga"
+          type="number"
+          placeholder="150000"
+          defaultValue={product?.harga ? String(product.harga) : undefined}
+          error={fieldErrors.harga?.[0]}
+        />
       </div>
       <div className="grid gap-5 md:grid-cols-2">
         <SelectField label="Status" id="stockStatus" options={["Ready", "Preorder", "Terbatas"]} defaultValue={product?.stockStatus} />
-        <Field label="Material" id="material" placeholder="Toyobo premium" defaultValue={product?.material} />
+        <Field
+          label="Material"
+          id="material"
+          placeholder="Toyobo premium"
+          defaultValue={product?.material}
+          error={fieldErrors.material?.[0]}
+        />
       </div>
       <div className="grid gap-5">
-        <Field label="Ukuran" id="sizes" placeholder="S, M, L, XL" defaultValue={product?.sizes.join(", ")} />
+        <Field
+          label="Ukuran"
+          id="sizes"
+          placeholder="S, M, L, XL"
+          defaultValue={product?.sizes.join(", ")}
+          error={fieldErrors.sizes?.[0]}
+        />
         <ColorCombobox
           colors={colors}
           search={colorSearch}
@@ -200,6 +240,7 @@ export function ProductForm({
         <p className="text-xs leading-5 text-slate-500">
           Media utama selalu video. Tempel link YouTube Shorts, Instagram Reel, atau link video langsung.
         </p>
+        <FieldError message={fieldErrors.mediaUrl?.[0]} />
       </div>
       <div className="space-y-2">
         <Label htmlFor="galleryUrls">Link Galeri Tambahan</Label>
@@ -212,6 +253,7 @@ export function ProductForm({
         <p className="text-xs leading-5 text-slate-500">
           Galeri tambahan digunakan untuk foto. Isi satu link foto per baris.
         </p>
+        <FieldError message={fieldErrors.galleryUrls?.[0]} />
       </div>
       {showPreview ? (
         <div className="grid gap-3 rounded-lg border border-sky-100 bg-sky-50/50 p-4">
@@ -426,19 +468,30 @@ function Field({
   type = "text",
   placeholder,
   defaultValue,
+  error,
 }: {
   label: string;
   id: string;
   type?: string;
   placeholder?: string;
   defaultValue?: string;
+  error?: string;
 }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
       <Input id={id} name={id} type={type} placeholder={placeholder} defaultValue={defaultValue} />
+      <FieldError message={error} />
     </div>
   );
+}
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) {
+    return null;
+  }
+
+  return <p className="text-xs font-semibold text-red-600">{message}</p>;
 }
 
 function SelectField({
