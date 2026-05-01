@@ -10,24 +10,22 @@ import type { Product } from "@/lib/products";
 export function ProductCard({ product }: { product: Product }) {
   return (
     <article className="group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-airy">
-      <Link href={`/products/${product.id}`} className="block">
-        <div className="relative aspect-[4/3] overflow-hidden bg-sky-50">
-          <ProductCardMedia
-            name={product.name}
-            mediaType={product.mediaType}
-            mediaUrl={product.mediaUrl}
-          />
-          <div className="absolute left-4 top-4 flex gap-2">
-            <Badge>{product.category}</Badge>
-            {product.mediaType === "video" ? (
-              <Badge variant="secondary" className="gap-1">
-                <PlayCircle className="size-3" />
-                Video
-              </Badge>
-            ) : null}
-          </div>
+      <div className="relative aspect-[4/3] overflow-hidden bg-sky-50">
+        <ProductCardMedia
+          name={product.name}
+          mediaType={product.mediaType}
+          mediaUrl={product.mediaUrl}
+        />
+        <div className="pointer-events-none absolute left-4 top-4 flex gap-2">
+          <Badge>{product.category}</Badge>
+          {product.mediaType === "video" ? (
+            <Badge variant="secondary" className="gap-1">
+              <PlayCircle className="size-3" />
+              Video
+            </Badge>
+          ) : null}
         </div>
-      </Link>
+      </div>
       <div className="space-y-4 p-5">
         <div>
           <p className="text-xs font-semibold uppercase text-sky-700">{product.kodeProduksi}</p>

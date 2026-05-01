@@ -11,6 +11,29 @@ type ProductMediaProps = {
 };
 
 export function ProductCardMedia({ name, mediaType, mediaUrl }: ProductMediaProps) {
+  const instagramEmbedUrl = getInstagramEmbedUrl(mediaUrl);
+
+  if (instagramEmbedUrl) {
+    return (
+      <iframe
+        src={instagramEmbedUrl}
+        title={`Preview ${name}`}
+        className="h-full w-full border-0"
+        loading="lazy"
+        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+        allowFullScreen
+      />
+    );
+  }
+
+  if (mediaType === "video" && isDirectVideoUrl(mediaUrl)) {
+    return (
+      <video className="h-full w-full object-cover" controls muted playsInline preload="metadata">
+        <source src={mediaUrl} />
+      </video>
+    );
+  }
+
   if (mediaType === "image" && isDirectImageUrl(mediaUrl)) {
     return (
       <img
