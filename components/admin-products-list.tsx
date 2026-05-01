@@ -245,15 +245,19 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
                 viewMode === "card" ? (
                   <ProductCardItem
                     key={product.id}
+                    deleting={deletingProductId === product.id}
                     product={product}
                     selected={selectedProduct?.id === product.id}
+                    onDelete={() => handleDelete(product)}
                     onClick={() => setSelectedProductId(product.id)}
                   />
                 ) : (
                   <ProductListItem
                     key={product.id}
+                    deleting={deletingProductId === product.id}
                     product={product}
                     selected={selectedProduct?.id === product.id}
+                    onDelete={() => handleDelete(product)}
                     onClick={() => setSelectedProductId(product.id)}
                   />
                 ),
@@ -409,31 +413,38 @@ function PaginationControls({
 }
 
 function ProductListItem({
+  deleting,
   product,
   selected,
+  onDelete,
   onClick,
 }: {
+  deleting: boolean;
   product: Product;
   selected: boolean;
+  onDelete: () => void;
   onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <div
       className={cn(
         "grid w-full gap-2 rounded-lg border bg-white p-2 text-left transition hover:border-sky-200 hover:shadow-soft sm:grid-cols-[3.5rem_1fr_auto] sm:items-center",
         selected ? "border-sky-300 shadow-soft" : "border-slate-200",
       )}
     >
-      <span className="relative aspect-square overflow-hidden rounded-md bg-sky-50">
+      <button
+        type="button"
+        onClick={onClick}
+        className="relative aspect-square overflow-hidden rounded-md bg-sky-50 text-left"
+        aria-label={`Lihat detail ${product.name}`}
+      >
         <ProductCardMedia
           name={product.name}
           mediaType={product.mediaType}
           mediaUrl={product.mediaUrl}
         />
-      </span>
-      <span className="min-w-0">
+      </button>
+      <button type="button" onClick={onClick} className="min-w-0 text-left">
         <span className="flex flex-wrap items-center gap-1.5">
           <Badge>{product.category}</Badge>
           <Badge variant="secondary">{product.stockStatus}</Badge>
@@ -447,38 +458,53 @@ function ProductListItem({
         <span className="hidden text-xs leading-5 text-slate-600 2xl:mt-0.5 2xl:line-clamp-1 2xl:block">
           {product.description}
         </span>
-      </span>
-      <span className="text-xs font-bold text-slate-950">{formatRupiah(product.harga)}</span>
-    </button>
+      </button>
+      <div className="flex items-center justify-between gap-2 sm:justify-end">
+        <button type="button" onClick={onClick} className="text-xs font-bold text-slate-950">
+          {formatRupiah(product.harga)}
+        </button>
+        <ProductQuickActions deleting={deleting} product={product} onDelete={onDelete} />
+      </div>
+    </div>
   );
 }
 
 function ProductCardItem({
+  deleting,
   product,
   selected,
+  onDelete,
   onClick,
 }: {
+  deleting: boolean;
   product: Product;
   selected: boolean;
+  onDelete: () => void;
   onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    <div
       className={cn(
-        "overflow-hidden rounded-lg border bg-white text-left transition hover:border-sky-200 hover:shadow-soft",
+        "relative overflow-hidden rounded-lg border bg-white text-left transition hover:border-sky-200 hover:shadow-soft",
         selected ? "border-sky-300 shadow-soft" : "border-slate-200",
       )}
     >
-      <span className="relative block aspect-[16/7] overflow-hidden bg-sky-50">
+      <div className="absolute right-2 top-2 z-10">
+        <ProductQuickActions deleting={deleting} product={product} onDelete={onDelete} />
+      </div>
+      <button
+        type="button"
+        onClick={onClick}
+        className="relative block aspect-[16/7] w-full overflow-hidden bg-sky-50 text-left"
+        aria-label={`Lihat detail ${product.name}`}
+      >
         <ProductCardMedia
           name={product.name}
           mediaType={product.mediaType}
           mediaUrl={product.mediaUrl}
         />
-      </span>
-      <span className="block p-2">
+      </button>
+      <button type="button" onClick={onClick} className="block w-full p-2 text-left">
         <span className="flex flex-wrap items-center gap-1.5">
           <Badge>{product.category}</Badge>
           <Badge variant="secondary">{product.stockStatus}</Badge>
@@ -490,8 +516,47 @@ function ProductCardItem({
           {product.kodeProduksi}
         </span>
         <span className="mt-1 block text-xs font-bold text-slate-950">{formatRupiah(product.harga)}</span>
-      </span>
-    </button>
+      </button>
+    </div>
+  );
+}
+
+function ProductQuickActions({
+  deleting,
+  product,
+  onDelete,
+}: {
+  deleting: boolean;
+  product: Product;
+  onDelete: () => void;
+}) {
+  return (
+    <div className="flex items-center gap-1">
+      <Button
+        asChild
+        type="button"
+        variant="outline"
+        size="icon"
+        className="size-8 bg-white/95"
+        title={`Edit ${product.name}`}
+      >
+        <Link href={`/admin/products/${product.id}/edit`} aria-label={`Edit ${product.name}`}>
+          <Edit3 />
+        </Link>
+      </Button>
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
+        className="size-8 bg-white/95 text-red-600 hover:border-red-200 hover:text-red-700"
+        disabled={deleting}
+        title={`Hapus ${product.name}`}
+        aria-label={`Hapus ${product.name}`}
+        onClick={onDelete}
+      >
+        <Trash2 />
+      </Button>
+    </div>
   );
 }
 
