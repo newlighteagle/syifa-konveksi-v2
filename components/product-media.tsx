@@ -1,7 +1,12 @@
 import { ExternalLink, PlayCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getInstagramEmbedUrl, isDirectImageUrl, isDirectVideoUrl } from "@/lib/media";
+import {
+  getInstagramEmbedUrl,
+  getYoutubeEmbedUrl,
+  isDirectImageUrl,
+  isDirectVideoUrl,
+} from "@/lib/media";
 
 type ProductMediaProps = {
   name: string;
@@ -12,11 +17,12 @@ type ProductMediaProps = {
 
 export function ProductCardMedia({ name, mediaType, mediaUrl }: ProductMediaProps) {
   const instagramEmbedUrl = getInstagramEmbedUrl(mediaUrl);
+  const youtubeEmbedUrl = getYoutubeEmbedUrl(mediaUrl);
 
-  if (instagramEmbedUrl) {
+  if (instagramEmbedUrl || youtubeEmbedUrl) {
     return (
       <iframe
-        src={instagramEmbedUrl}
+        src={instagramEmbedUrl ?? youtubeEmbedUrl ?? ""}
         title={`Preview ${name}`}
         className="h-full w-full border-0"
         loading="lazy"
@@ -64,11 +70,12 @@ export function ProductDetailMedia({
   priority,
 }: ProductMediaProps) {
   const instagramEmbedUrl = getInstagramEmbedUrl(mediaUrl);
+  const youtubeEmbedUrl = getYoutubeEmbedUrl(mediaUrl);
 
-  if (instagramEmbedUrl) {
+  if (instagramEmbedUrl || youtubeEmbedUrl) {
     return (
       <iframe
-        src={instagramEmbedUrl}
+        src={instagramEmbedUrl ?? youtubeEmbedUrl ?? ""}
         title={`Media ${name}`}
         className="h-full w-full border-0"
         allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"

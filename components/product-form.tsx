@@ -202,11 +202,11 @@ export function ProductForm({
         <Input
           id="mediaUrl"
           name="mediaUrl"
-          placeholder="https://www.instagram.com/reel/..."
+          placeholder="https://www.youtube.com/shorts/T9X5KVfryAY"
           defaultValue={product?.mediaUrl}
         />
         <p className="text-xs leading-5 text-slate-500">
-          Media utama selalu video. Tempel link Instagram Reel atau link video langsung.
+          Media utama selalu video. Tempel link YouTube Shorts, Instagram Reel, atau link video langsung.
         </p>
       </div>
       <div className="space-y-2">
