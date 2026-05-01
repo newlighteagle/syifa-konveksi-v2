@@ -38,7 +38,7 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
   const [categoryFilter, setCategoryFilter] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = viewMode === "card" ? 6 : 8;
+  const pageSize = 6;
 
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -134,7 +134,7 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
   return (
     <div className="grid gap-5">
       <Card>
-        <CardContent className="grid gap-4 p-4">
+        <CardContent className="grid gap-3 p-3">
           <div className="grid gap-3 lg:grid-cols-[1fr_16rem_auto] lg:items-center">
             <label className="relative block">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
@@ -142,7 +142,7 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 className="pl-9"
-                placeholder="Cari nama, kode, bahan, ukuran, atau warna"
+                placeholder="Cari produk, kode, bahan, ukuran, warna"
               />
             </label>
             <select
@@ -174,7 +174,7 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
               </ViewButton>
             </div>
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
             <span>
               {filteredProducts.length} dari {products.length} produk
             </span>
@@ -205,8 +205,8 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_26rem]">
-          <div className={viewMode === "card" ? "grid gap-4 md:grid-cols-2" : "grid gap-3"}>
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className={viewMode === "card" ? "grid gap-3 md:grid-cols-2" : "grid gap-2"}>
             {paginatedProducts.map((product) =>
               viewMode === "card" ? (
                 <ProductCardItem
@@ -295,8 +295,8 @@ function PaginationControls({
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-slate-200 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-sm text-slate-500">
+    <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-xs text-slate-500">
         Menampilkan {pageStart}-{pageEnd} dari {totalItems} produk
       </p>
       <div className="flex items-center gap-2">
@@ -310,7 +310,7 @@ function PaginationControls({
           <ChevronLeft />
           Sebelumnya
         </Button>
-        <span className="min-w-16 text-center text-sm font-semibold text-slate-700">
+        <span className="min-w-14 text-center text-xs font-semibold text-slate-700">
           {currentPage}/{totalPages}
         </span>
         <Button
@@ -342,7 +342,7 @@ function ProductListItem({
       type="button"
       onClick={onClick}
       className={cn(
-        "grid w-full gap-4 rounded-lg border bg-white p-4 text-left transition hover:border-sky-200 hover:shadow-soft sm:grid-cols-[6rem_1fr_auto] sm:items-center",
+        "grid w-full gap-3 rounded-lg border bg-white p-3 text-left transition hover:border-sky-200 hover:shadow-soft sm:grid-cols-[4.5rem_1fr_auto] sm:items-center",
         selected ? "border-sky-300 shadow-soft" : "border-slate-200",
       )}
     >
@@ -358,17 +358,17 @@ function ProductListItem({
           <Badge>{product.category}</Badge>
           <Badge variant="secondary">{product.stockStatus}</Badge>
         </span>
-        <span className="mt-3 block truncate text-lg font-bold text-slate-950">
+        <span className="mt-2 block truncate text-base font-bold text-slate-950">
           {product.name}
         </span>
-        <span className="mt-1 block text-sm font-semibold text-sky-700">
+        <span className="mt-0.5 block text-xs font-semibold text-sky-700">
           {product.kodeProduksi}
         </span>
-        <span className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">
+        <span className="mt-1 line-clamp-1 text-xs leading-5 text-slate-600">
           {product.description}
         </span>
       </span>
-      <span className="font-bold text-slate-950">{formatRupiah(product.harga)}</span>
+      <span className="text-sm font-bold text-slate-950">{formatRupiah(product.harga)}</span>
     </button>
   );
 }
@@ -391,25 +391,25 @@ function ProductCardItem({
         selected ? "border-sky-300 shadow-soft" : "border-slate-200",
       )}
     >
-      <span className="relative block aspect-[4/3] overflow-hidden bg-sky-50">
+      <span className="relative block aspect-[16/10] overflow-hidden bg-sky-50">
         <ProductCardMedia
           name={product.name}
           mediaType={product.mediaType}
           mediaUrl={product.mediaUrl}
         />
       </span>
-      <span className="block p-4">
+      <span className="block p-3">
         <span className="flex flex-wrap items-center gap-2">
           <Badge>{product.category}</Badge>
           <Badge variant="secondary">{product.stockStatus}</Badge>
         </span>
-        <span className="mt-3 line-clamp-2 block text-lg font-bold leading-6 text-slate-950">
+        <span className="mt-2 line-clamp-1 block text-base font-bold leading-6 text-slate-950">
           {product.name}
         </span>
-        <span className="mt-1 block text-sm font-semibold text-sky-700">
+        <span className="mt-0.5 block text-xs font-semibold text-sky-700">
           {product.kodeProduksi}
         </span>
-        <span className="mt-3 block font-bold text-slate-950">{formatRupiah(product.harga)}</span>
+        <span className="mt-2 block text-sm font-bold text-slate-950">{formatRupiah(product.harga)}</span>
       </span>
     </button>
   );
@@ -427,8 +427,8 @@ function ProductDetailPanel({
   onClose: () => void;
 }) {
   return (
-    <Card className="h-fit overflow-hidden xl:sticky xl:top-6">
-      <div className="relative aspect-[4/3] overflow-hidden bg-sky-50">
+    <Card className="h-fit max-h-[calc(100vh-7rem)] overflow-hidden xl:sticky xl:top-4">
+      <div className="relative aspect-[16/9] max-h-48 overflow-hidden bg-sky-50">
         <ProductDetailMedia
           name={product.name}
           mediaType={product.mediaType}
@@ -436,33 +436,33 @@ function ProductDetailPanel({
           priority
         />
       </div>
-      <CardContent className="grid gap-4 p-5">
+      <CardContent className="grid max-h-[calc(100vh-19rem)] gap-3 overflow-y-auto p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <Badge>{product.category}</Badge>
               <Badge variant="secondary">{product.stockStatus}</Badge>
             </div>
-            <h2 className="mt-3 text-xl font-extrabold leading-7 text-slate-950">
+            <h2 className="mt-2 line-clamp-2 text-lg font-extrabold leading-6 text-slate-950">
               {product.name}
             </h2>
-            <p className="mt-1 text-sm font-semibold text-sky-700">{product.kodeProduksi}</p>
+            <p className="mt-1 text-xs font-semibold text-sky-700">{product.kodeProduksi}</p>
           </div>
           <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Tutup detail">
             <X />
           </Button>
         </div>
 
-        <p className="text-sm leading-6 text-slate-600">{product.description}</p>
+        <p className="line-clamp-3 text-xs leading-5 text-slate-600">{product.description}</p>
 
-        <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="grid grid-cols-2 gap-2 text-xs">
           <ProductMeta label="Harga" value={formatRupiah(product.harga)} strong />
           <ProductMeta label="Periode" value={product.periodeProduksi} />
           <ProductMeta label="Material" value={product.material} />
           <ProductMeta label="Dilihat" value={`${product.views} kali`} />
         </div>
 
-        <div className="grid gap-3">
+        <div className="grid gap-2">
           <TagGroup label="Ukuran" values={product.sizes} />
           <TagGroup label="Warna" values={product.colors} />
         </div>
@@ -499,9 +499,9 @@ function ProductMeta({
   strong?: boolean;
 }) {
   return (
-    <div className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+    <div className="rounded-lg border border-slate-100 bg-slate-50 p-2">
       <p className="text-xs font-semibold text-slate-500">{label}</p>
-      <p className={cn("mt-1 text-slate-700", strong ? "font-bold text-slate-950" : "font-semibold")}>
+      <p className={cn("mt-0.5 line-clamp-1 text-slate-700", strong ? "font-bold text-slate-950" : "font-semibold")}>
         {value}
       </p>
     </div>
@@ -512,7 +512,7 @@ function TagGroup({ label, values }: { label: string; values: string[] }) {
   return (
     <div>
       <p className="text-xs font-semibold text-slate-500">{label}</p>
-      <div className="mt-2 flex flex-wrap gap-2">
+      <div className="mt-1.5 flex flex-wrap gap-1.5">
         {values.map((value) => (
           <Badge key={value} variant="outline">
             {value}
