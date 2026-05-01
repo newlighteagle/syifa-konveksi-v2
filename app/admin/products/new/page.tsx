@@ -29,6 +29,7 @@ export default async function NewProductPage() {
             <ProductForm
               categories={categories}
               colors={colors}
+              successRedirectPath="/admin/products"
               submitLabel="Simpan Produk"
             />
           </CardContent>

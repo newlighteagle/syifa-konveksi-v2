@@ -27,6 +27,8 @@ function fromPrisma(product: ProductWithEnums): Product {
     sizes: product.sizes,
     colors: product.colorLinks?.map((link) => link.color.name) ?? product.colors,
     views: product.views,
+    createdAt: product.createdAt.toISOString(),
+    updatedAt: product.updatedAt.toISOString(),
   };
 }
 
@@ -75,7 +77,7 @@ export async function listProducts(options?: { query?: string; category?: string
         categoryRef: true,
         colorLinks: { include: { color: true } },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
     });
 
     return rows.map((row) => fromPrisma(row as ProductWithEnums));

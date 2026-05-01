@@ -44,6 +44,7 @@ export default async function EditProductPage({
               product={product}
               categories={categories}
               colors={colors}
+              successRedirectPath="/admin/products"
               submitLabel="Update Produk"
             />
           </CardContent>

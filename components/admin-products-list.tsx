@@ -24,6 +24,18 @@ import type { Product } from "@/lib/products";
 import { cn, formatRupiah } from "@/lib/utils";
 
 type ViewMode = "list" | "card";
+type SortKey =
+  | "updated-desc"
+  | "name-asc"
+  | "name-desc"
+  | "code-asc"
+  | "code-desc"
+  | "period-desc"
+  | "period-asc"
+  | "category-asc"
+  | "color-asc"
+  | "price-desc"
+  | "price-asc";
 
 type AdminProductsListProps = {
   products: Product[];
@@ -37,13 +49,14 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [categoryFilter, setCategoryFilter] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("updated-desc");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 6;
 
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
-    return products.filter((product) => {
+    const filtered = products.filter((product) => {
       const matchesCategory = categoryFilter === "Semua" || product.category === categoryFilter;
       const matchesSearch =
         !query ||
@@ -63,7 +76,9 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
 
       return matchesCategory && matchesSearch;
     });
-  }, [categoryFilter, products, searchQuery]);
+
+    return filtered.sort((left, right) => compareProducts(left, right, sortKey));
+  }, [categoryFilter, products, searchQuery, sortKey]);
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
   const paginatedProducts = filteredProducts.slice(
@@ -79,7 +94,7 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [categoryFilter, searchQuery, viewMode]);
+  }, [categoryFilter, searchQuery, sortKey, viewMode]);
 
   useEffect(() => {
     setCurrentPage((page) => Math.min(page, totalPages));
@@ -135,7 +150,7 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
     <div className="grid gap-5">
       <Card>
         <CardContent className="grid gap-2 p-3">
-          <div className="grid gap-2 lg:grid-cols-[1fr_14rem_auto] lg:items-center">
+          <div className="grid gap-2 lg:grid-cols-[1fr_13rem_14rem_auto] lg:items-center">
             <label className="relative block">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
               <Input
@@ -156,6 +171,23 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
                   {category.name}
                 </option>
               ))}
+            </select>
+            <select
+              value={sortKey}
+              onChange={(event) => setSortKey(event.target.value as SortKey)}
+              className="h-11 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-medium text-slate-700 focus:border-sky-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-100"
+            >
+              <option value="updated-desc">Terbaru diupdate</option>
+              <option value="name-asc">Nama A-Z</option>
+              <option value="name-desc">Nama Z-A</option>
+              <option value="code-asc">Kode A-Z</option>
+              <option value="code-desc">Kode Z-A</option>
+              <option value="period-desc">Periode terbaru</option>
+              <option value="period-asc">Periode terlama</option>
+              <option value="category-asc">Kategori A-Z</option>
+              <option value="color-asc">Warna A-Z</option>
+              <option value="price-desc">Harga tertinggi</option>
+              <option value="price-asc">Harga terendah</option>
             </select>
             <div className="grid grid-cols-2 rounded-lg border border-slate-200 bg-slate-50 p-1">
               <ViewButton
@@ -178,13 +210,14 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
             <span>
               {filteredProducts.length} dari {products.length} produk
             </span>
-            {searchQuery || categoryFilter !== "Semua" ? (
+            {searchQuery || categoryFilter !== "Semua" || sortKey !== "updated-desc" ? (
               <button
                 type="button"
                 className="inline-flex items-center gap-1 font-semibold text-sky-700 hover:text-sky-900"
                 onClick={() => {
                   setSearchQuery("");
                   setCategoryFilter("Semua");
+                  setSortKey("updated-desc");
                 }}
               >
                 <X className="size-4" />
@@ -273,6 +306,51 @@ function ViewButton({
       {label}
     </button>
   );
+}
+
+function compareProducts(left: Product, right: Product, sortKey: SortKey) {
+  switch (sortKey) {
+    case "name-asc":
+      return compareText(left.name, right.name);
+    case "name-desc":
+      return compareText(right.name, left.name);
+    case "code-asc":
+      return compareText(left.kodeProduksi, right.kodeProduksi);
+    case "code-desc":
+      return compareText(right.kodeProduksi, left.kodeProduksi);
+    case "period-desc":
+      return comparePeriod(right.periodeProduksi, left.periodeProduksi);
+    case "period-asc":
+      return comparePeriod(left.periodeProduksi, right.periodeProduksi);
+    case "category-asc":
+      return compareText(left.category, right.category) || compareText(left.name, right.name);
+    case "color-asc":
+      return compareText(left.colors[0] ?? "", right.colors[0] ?? "") || compareText(left.name, right.name);
+    case "price-desc":
+      return right.harga - left.harga;
+    case "price-asc":
+      return left.harga - right.harga;
+    case "updated-desc":
+    default:
+      return compareDate(right.updatedAt, left.updatedAt) || compareText(left.name, right.name);
+  }
+}
+
+function compareText(left: string, right: string) {
+  return left.localeCompare(right, "id", { sensitivity: "base", numeric: true });
+}
+
+function compareDate(left?: string, right?: string) {
+  return new Date(left ?? 0).getTime() - new Date(right ?? 0).getTime();
+}
+
+function comparePeriod(left: string, right: string) {
+  return periodToSortableNumber(left) - periodToSortableNumber(right);
+}
+
+function periodToSortableNumber(value: string) {
+  const [month, year] = value.split("-").map(Number);
+  return (year || 0) * 100 + (month || 0);
 }
 
 function PaginationControls({

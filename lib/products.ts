@@ -14,6 +14,8 @@ export type Product = {
   sizes: string[];
   colors: string[];
   views: number;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export const products: Product[] = [
