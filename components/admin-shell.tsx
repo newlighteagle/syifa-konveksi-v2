@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { BarChart3, Boxes, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { BarChart3, Boxes, Palette, PanelLeftClose, PanelLeftOpen, Tags } from "lucide-react";
 
 import { AdminLogoutButton } from "@/components/admin-logout-button";
 import { BrandLogo } from "@/components/brand-logo";
@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { label: "Dashboard", href: "/admin/dashboard", icon: BarChart3 },
   { label: "Produk", href: "/admin/products", icon: Boxes },
+  { label: "Kategori", href: "/admin/categories", icon: Tags },
+  { label: "Warna", href: "/admin/colors", icon: Palette },
 ];
 
 export function AdminShell({ children, title }: { children: React.ReactNode; title: string }) {

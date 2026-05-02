@@ -24,6 +24,10 @@ export const loginSchema = z.object({
   password: z.string().min(8),
 });
 
+export const optionNameSchema = z.object({
+  name: z.string().trim().min(1, "Nama opsi wajib diisi.").max(60, "Nama opsi maksimal 60 karakter."),
+});
+
 export function slugify(value: string) {
   return value
     .toLowerCase()

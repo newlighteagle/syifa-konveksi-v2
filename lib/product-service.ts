@@ -10,6 +10,19 @@ type ProductWithEnums = PrismaProduct & {
   colorLinks?: Array<ProductColor & { color: Color }>;
 };
 
+export type ManagedOption = {
+  id: string;
+  name: string;
+  productCount: number;
+};
+
+export class OptionInUseError extends Error {
+  constructor(optionType: "kategori" | "warna") {
+    super(`${capitalize(optionType)} masih dipakai produk. Pindahkan produk terkait dulu sebelum menghapus.`);
+    this.name = "OptionInUseError";
+  }
+}
+
 function fromPrisma(product: ProductWithEnums): Product {
   return {
     id: product.slug,
@@ -154,6 +167,27 @@ export async function listCategoryOptions() {
   return categories.map((category) => ({ id: category.id, name: category.name }));
 }
 
+export async function listManagedCategories(): Promise<ManagedOption[]> {
+  if (!hasDatabaseUrl()) {
+    return Array.from(new Set(products.map((product) => product.category)))
+      .sort((a, b) => a.localeCompare(b))
+      .map((name) => ({
+        id: name,
+        name,
+        productCount: products.filter((product) => product.category === name).length,
+      }));
+  }
+
+  const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+  return Promise.all(
+    categories.map(async (category) => ({
+      id: category.id,
+      name: category.name,
+      productCount: await countCategoryProducts(category),
+    })),
+  );
+}
+
 export async function listColorOptions() {
   if (!hasDatabaseUrl()) {
     return Array.from(new Set(products.flatMap((product) => product.colors))).map((name) => ({
@@ -164,6 +198,27 @@ export async function listColorOptions() {
 
   const colors = await prisma.color.findMany({ orderBy: { name: "asc" } });
   return colors.map((color) => ({ id: color.id, name: color.name }));
+}
+
+export async function listManagedColors(): Promise<ManagedOption[]> {
+  if (!hasDatabaseUrl()) {
+    return Array.from(new Set(products.flatMap((product) => product.colors)))
+      .sort((a, b) => a.localeCompare(b))
+      .map((name) => ({
+        id: name,
+        name,
+        productCount: products.filter((product) => product.colors.includes(name)).length,
+      }));
+  }
+
+  const colors = await prisma.color.findMany({ orderBy: { name: "asc" } });
+  return Promise.all(
+    colors.map(async (color) => ({
+      id: color.id,
+      name: color.name,
+      productCount: await countColorProducts(color),
+    })),
+  );
 }
 
 export async function resolveCategory(name: string) {
@@ -186,4 +241,70 @@ export async function resolveColors(names: string[]) {
       }),
     ),
   );
+}
+
+export async function createCategoryOption(name: string) {
+  return prisma.category.create({
+    data: { name: normalizeOptionName(name) },
+  });
+}
+
+export async function createColorOption(name: string) {
+  return prisma.color.create({
+    data: { name: normalizeOptionName(name) },
+  });
+}
+
+export async function deleteCategoryOption(id: string) {
+  const category = await prisma.category.findUnique({ where: { id } });
+
+  if (!category) {
+    return null;
+  }
+
+  if ((await countCategoryProducts(category)) > 0) {
+    throw new OptionInUseError("kategori");
+  }
+
+  await prisma.category.delete({ where: { id } });
+  return category;
+}
+
+export async function deleteColorOption(id: string) {
+  const color = await prisma.color.findUnique({ where: { id } });
+
+  if (!color) {
+    return null;
+  }
+
+  if ((await countColorProducts(color)) > 0) {
+    throw new OptionInUseError("warna");
+  }
+
+  await prisma.color.delete({ where: { id } });
+  return color;
+}
+
+function normalizeOptionName(name: string) {
+  return name.trim().replace(/\s+/g, " ");
+}
+
+function countCategoryProducts(category: Category) {
+  return prisma.product.count({
+    where: {
+      OR: [{ categoryId: category.id }, { category: category.name }],
+    },
+  });
+}
+
+function countColorProducts(color: Color) {
+  return prisma.product.count({
+    where: {
+      OR: [{ colorLinks: { some: { colorId: color.id } } }, { colors: { has: color.name } }],
+    },
+  });
+}
+
+function capitalize(value: string) {
+  return `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
 }
