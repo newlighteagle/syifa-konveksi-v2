@@ -23,10 +23,16 @@ export function CatalogPage({
     const normalizedQuery = query.trim().toLowerCase();
 
     return initialProducts.filter((product) => {
-      const matchesCategory = category === "Semua" || product.category === category;
+      const matchesCategory =
+        category === "Semua" || product.category === category;
       const matchesQuery =
         !normalizedQuery ||
-        [product.name, product.category, product.description, product.kodeProduksi]
+        [
+          product.name,
+          product.category,
+          product.description,
+          product.kodeProduksi,
+        ]
           .join(" ")
           .toLowerCase()
           .includes(normalizedQuery);
@@ -46,8 +52,8 @@ export function CatalogPage({
           Temukan model baju produksi terbaru dengan cepat.
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-          Cari gamis, seragam, kemeja, dan produk konveksi lain dengan tampilan bersih
-          bertema biru langit.
+          Cari baju tani, baju kaos, seragam, kemeja, dan produk konveksi lain
+          dengan tampilan cantik, kualitas terbaik, dan harga menarik.
         </p>
         <div className="mx-auto mt-10 flex max-w-2xl items-center gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-airy">
           <Search className="ml-3 size-5 shrink-0 text-slate-400" />
