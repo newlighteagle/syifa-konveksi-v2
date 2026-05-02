@@ -15,7 +15,11 @@ import { getProductBySlug, incrementProductViews } from "@/lib/product-service";
 import { products } from "@/lib/products";
 import { buildProductShareData } from "@/lib/share";
 import { formatRupiah } from "@/lib/utils";
-import { buildProductInquiryMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import {
+  buildProductInquiryMessage,
+  buildWhatsAppUrl,
+  getBusinessWhatsAppNumber,
+} from "@/lib/whatsapp";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +48,7 @@ export default async function ProductDetailPage({
     url: productUrl,
   });
   const whatsappUrl = buildWhatsAppUrl({
-    phoneNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER,
+    phoneNumber: getBusinessWhatsAppNumber(),
     message: buildProductInquiryMessage({
       name: product.name,
       kodeProduksi: product.kodeProduksi,

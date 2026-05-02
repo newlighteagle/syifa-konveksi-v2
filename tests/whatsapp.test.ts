@@ -2,14 +2,31 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  DEFAULT_WHATSAPP_NUMBER,
   buildGeneralContactMessage,
   buildProductInquiryMessage,
   buildWhatsAppUrl,
+  getBusinessWhatsAppNumber,
   normalizeWhatsAppNumber,
 } from "@/lib/whatsapp";
 
 test("normalizeWhatsAppNumber strips formatting and keeps country code", () => {
   assert.equal(normalizeWhatsAppNumber("+62 852-4176-7460"), "6285241767460");
+});
+
+test("getBusinessWhatsAppNumber falls back to the configured Syifa number", () => {
+  const originalNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+
+  try {
+    assert.equal(getBusinessWhatsAppNumber(), DEFAULT_WHATSAPP_NUMBER);
+  } finally {
+    if (originalNumber === undefined) {
+      delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+    } else {
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = originalNumber;
+    }
+  }
 });
 
 test("normalizeWhatsAppNumber converts local zero prefix to Indonesia country code", () => {

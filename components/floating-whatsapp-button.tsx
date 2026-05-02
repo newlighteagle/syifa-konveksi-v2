@@ -1,10 +1,14 @@
 import { MessageCircle } from "lucide-react";
 
-import { buildGeneralContactMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import {
+  buildGeneralContactMessage,
+  buildWhatsAppUrl,
+  getBusinessWhatsAppNumber,
+} from "@/lib/whatsapp";
 
 export function FloatingWhatsAppButton() {
   const whatsappUrl = buildWhatsAppUrl({
-    phoneNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER,
+    phoneNumber: getBusinessWhatsAppNumber(),
     message: buildGeneralContactMessage(),
   });
 

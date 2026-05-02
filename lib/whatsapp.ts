@@ -5,6 +5,12 @@ export type ProductInquiryMessageInput = {
   url: string;
 };
 
+export const DEFAULT_WHATSAPP_NUMBER = "+62 852-4176-7460";
+
+export function getBusinessWhatsAppNumber() {
+  return process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim() || DEFAULT_WHATSAPP_NUMBER;
+}
+
 export function normalizeWhatsAppNumber(phoneNumber?: string | null) {
   const digits = phoneNumber?.replace(/\D/g, "") ?? "";
 
