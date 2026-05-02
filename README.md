@@ -112,6 +112,8 @@ Database and domain:
 
 ## Issue-Based Workflow
 
+Selama MVP ini sampai milestone 3 selesai, development hanya menggunakan branch `main`. Jangan membuat branch fitur, branch eksperimen, atau branch PR terpisah kecuali project owner mengubah aturan ini secara eksplisit.
+
 1. Pick one approved GitHub issue.
 2. Implement only the scope described in that issue.
 3. Run at minimum `npm run build`.
