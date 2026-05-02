@@ -6,12 +6,14 @@ import { notFound } from "next/navigation";
 
 import { FloatingWhatsAppButton } from "@/components/floating-whatsapp-button";
 import { ProductDetailMedia, ProductCardMedia } from "@/components/product-media";
+import { ProductShareButton } from "@/components/product-share-button";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getProductBySlug, incrementProductViews } from "@/lib/product-service";
 import { products } from "@/lib/products";
+import { buildProductShareData } from "@/lib/share";
 import { formatRupiah } from "@/lib/utils";
 import { buildProductInquiryMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -36,6 +38,11 @@ export default async function ProductDetailPage({
 
   const galleryMedia = product.galleryUrls.filter(Boolean);
   const productUrl = getProductUrl(requestHeaders, product.id);
+  const shareData = buildProductShareData({
+    name: product.name,
+    kodeProduksi: product.kodeProduksi,
+    url: productUrl,
+  });
   const whatsappUrl = buildWhatsAppUrl({
     phoneNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER,
     message: buildProductInquiryMessage({
@@ -152,9 +159,7 @@ export default async function ProductDetailPage({
                   WhatsApp belum diset
                 </Button>
               )}
-              <Button variant="outline" className="flex-1">
-                Simpan Referensi
-              </Button>
+              <ProductShareButton shareData={shareData} />
             </div>
           </section>
         </div>
