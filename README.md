@@ -181,7 +181,7 @@ Priority order:
 
 ## Milestone and Issue Status
 
-Last synced from GitHub Issues: after completing issue #13.
+Last synced from GitHub Issues: after completing issue #14.
 
 ### MVP Stabilization
 
@@ -211,14 +211,14 @@ Status: 5 closed / 0 open
 
 ### MVP Admin Operations
 
-Status: 3 closed / 2 open
+Status: 4 closed / 1 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
 | [#11](https://github.com/newlighteagle/syifa-konveksi-v2/issues/11) | P1 | Closed | Allow choosing image or video as main media |
 | [#12](https://github.com/newlighteagle/syifa-konveksi-v2/issues/12) | P2 | Closed | Document external media workflow |
 | [#13](https://github.com/newlighteagle/syifa-konveksi-v2/issues/13) | P2 | Closed | Add category and color management screens |
-| [#14](https://github.com/newlighteagle/syifa-konveksi-v2/issues/14) | P2 | Open | Improve delete confirmation with safer modal |
+| [#14](https://github.com/newlighteagle/syifa-konveksi-v2/issues/14) | P2 | Closed | Improve delete confirmation with safer modal |
 | [#15](https://github.com/newlighteagle/syifa-konveksi-v2/issues/15) | P2 | Open | Add draft published product status |
 
 ## Manual QA Checklist

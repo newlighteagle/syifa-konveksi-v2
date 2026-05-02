@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {
+  AlertTriangle,
   ChevronLeft,
   ChevronRight,
   Edit3,
@@ -12,7 +13,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ProductCardMedia, ProductDetailMedia } from "@/components/product-media";
@@ -45,6 +46,8 @@ type AdminProductsListProps = {
 export function AdminProductsList({ products, categories }: AdminProductsListProps) {
   const router = useRouter();
   const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
+  const [pendingDeleteProduct, setPendingDeleteProduct] = useState<Product | null>(null);
+  const [deleteError, setDeleteError] = useState("");
   const [selectedProductId, setSelectedProductId] = useState(products[0]?.id ?? "");
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [categoryFilter, setCategoryFilter] = useState("Semua");
@@ -100,13 +103,17 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
     setCurrentPage((page) => Math.min(page, totalPages));
   }, [totalPages]);
 
-  async function handleDelete(product: Product) {
-    const confirmed = window.confirm(`Hapus produk "${product.name}"?`);
+  function requestDelete(product: Product) {
+    setDeleteError("");
+    setPendingDeleteProduct(product);
+  }
 
-    if (!confirmed) {
+  async function confirmDelete() {
+    if (!pendingDeleteProduct || deletingProductId) {
       return;
     }
 
+    const product = pendingDeleteProduct;
     setDeletingProductId(product.id);
     const response = await fetch(`/api/products/${product.id}`, {
       method: "DELETE",
@@ -115,13 +122,15 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
 
     if (!response.ok) {
       const body = await response.json().catch(() => null);
-      window.alert(body?.message ?? "Produk belum bisa dihapus.");
+      setDeleteError(body?.message ?? "Produk belum bisa dihapus.");
       return;
     }
 
     if (selectedProductId === product.id) {
       setSelectedProductId("");
     }
+    setPendingDeleteProduct(null);
+    setDeleteError("");
     router.refresh();
   }
 
@@ -147,7 +156,8 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
   }
 
   return (
-    <div className="grid gap-5">
+    <>
+      <div className="grid gap-5">
       <Card>
         <CardContent className="grid gap-2 p-3">
           <div className="grid gap-2 lg:grid-cols-[1fr_13rem_14rem_auto] lg:items-center">
@@ -248,7 +258,7 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
                     deleting={deletingProductId === product.id}
                     product={product}
                     selected={selectedProduct?.id === product.id}
-                    onDelete={() => handleDelete(product)}
+                    onDelete={() => requestDelete(product)}
                     onClick={() => setSelectedProductId(product.id)}
                   />
                 ) : (
@@ -257,7 +267,7 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
                     deleting={deletingProductId === product.id}
                     product={product}
                     selected={selectedProduct?.id === product.id}
-                    onDelete={() => handleDelete(product)}
+                    onDelete={() => requestDelete(product)}
                     onClick={() => setSelectedProductId(product.id)}
                   />
                 ),
@@ -277,13 +287,28 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
             <ProductDetailPanel
               product={selectedProduct}
               deleting={deletingProductId === selectedProduct.id}
-              onDelete={() => handleDelete(selectedProduct)}
+              onDelete={() => requestDelete(selectedProduct)}
               onClose={() => setSelectedProductId("")}
             />
           ) : null}
         </div>
       )}
-    </div>
+      </div>
+      <DeleteProductModal
+        error={deleteError}
+        loading={Boolean(pendingDeleteProduct && deletingProductId === pendingDeleteProduct.id)}
+        product={pendingDeleteProduct}
+        onCancel={() => {
+          if (deletingProductId) {
+            return;
+          }
+
+          setPendingDeleteProduct(null);
+          setDeleteError("");
+        }}
+        onConfirm={() => void confirmDelete()}
+      />
+    </>
   );
 }
 
@@ -311,6 +336,109 @@ function ViewButton({
       {children}
       {label}
     </button>
+  );
+}
+
+function DeleteProductModal({
+  error,
+  loading,
+  product,
+  onCancel,
+  onConfirm,
+}: {
+  error: string;
+  loading: boolean;
+  product: Product | null;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!product) {
+      return;
+    }
+
+    cancelButtonRef.current?.focus();
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && !loading) {
+        onCancel();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [loading, onCancel, product]);
+
+  if (!product) {
+    return null;
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-end bg-slate-950/45 p-0 backdrop-blur-sm sm:place-items-center sm:p-4"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget && !loading) {
+          onCancel();
+        }
+      }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-product-title"
+        aria-describedby="delete-product-description"
+        className="w-full rounded-t-lg border border-slate-200 bg-white p-5 shadow-2xl sm:max-w-md sm:rounded-lg"
+      >
+        <div className="flex items-start gap-3">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-700">
+            <AlertTriangle className="size-5" />
+          </span>
+          <div className="min-w-0">
+            <h2 id="delete-product-title" className="text-lg font-extrabold text-slate-950">
+              Hapus produk?
+            </h2>
+            <p id="delete-product-description" className="mt-2 text-sm leading-6 text-slate-600">
+              Produk ini akan dihapus dari admin dan katalog publik setelah konfirmasi.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-lg border border-red-100 bg-red-50 p-4">
+          <p className="text-sm font-bold text-red-950">{product.name}</p>
+          <p className="mt-1 text-sm font-semibold text-red-700">{product.kodeProduksi}</p>
+        </div>
+
+        {error ? (
+          <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm font-semibold text-red-800">
+            {error}
+          </p>
+        ) : null}
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <Button
+            ref={cancelButtonRef}
+            type="button"
+            variant="outline"
+            disabled={loading}
+            onClick={onCancel}
+          >
+            Batal
+          </Button>
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={loading}
+            onClick={onConfirm}
+          >
+            <Trash2 />
+            {loading ? "Menghapus..." : "Hapus Produk"}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
 
