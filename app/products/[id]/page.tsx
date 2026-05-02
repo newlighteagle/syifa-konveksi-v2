@@ -8,7 +8,7 @@ import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getProductBySlug } from "@/lib/product-service";
+import { getProductBySlug, incrementProductViews } from "@/lib/product-service";
 import { products } from "@/lib/products";
 import { formatRupiah } from "@/lib/utils";
 
@@ -24,6 +24,7 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  await incrementProductViews(id);
   const product = await getProductBySlug(id);
 
   if (!product) {

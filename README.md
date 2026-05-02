@@ -129,16 +129,16 @@ Priority order:
 
 ## Milestone and Issue Status
 
-Last synced from GitHub Issues: current workspace session.
+Last synced from GitHub Issues: after completing issue #2.
 
 ### MVP Stabilization
 
-Status: 0 closed / 5 open
+Status: 2 closed / 3 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
-| [#1](https://github.com/newlighteagle/syifa-konveksi-v2/issues/1) | P0 | Open | Fix product media type persistence |
-| [#2](https://github.com/newlighteagle/syifa-konveksi-v2/issues/2) | P1 | Open | Add product detail view counter |
+| [#1](https://github.com/newlighteagle/syifa-konveksi-v2/issues/1) | P0 | Closed | Fix product media type persistence |
+| [#2](https://github.com/newlighteagle/syifa-konveksi-v2/issues/2) | P1 | Closed | Add product detail view counter |
 | [#3](https://github.com/newlighteagle/syifa-konveksi-v2/issues/3) | P1 | Open | Require production AUTH_SECRET |
 | [#4](https://github.com/newlighteagle/syifa-konveksi-v2/issues/4) | P2 | Open | Add empty states for missing product attributes |
 | [#5](https://github.com/newlighteagle/syifa-konveksi-v2/issues/5) | P2 | Open | Add basic regression checklist for product CRUD |

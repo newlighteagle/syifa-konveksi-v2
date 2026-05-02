@@ -107,6 +107,21 @@ export async function getProductBySlug(slug: string) {
   }
 }
 
+export async function incrementProductViews(slug: string) {
+  if (!hasDatabaseUrl()) {
+    return;
+  }
+
+  try {
+    await prisma.product.update({
+      where: { slug },
+      data: { views: { increment: 1 } },
+    });
+  } catch (error) {
+    console.error("Unable to increment product views:", error);
+  }
+}
+
 export async function listCategories() {
   return ["Semua", ...(await listCategoryOptions()).map((category) => category.name)];
 }
