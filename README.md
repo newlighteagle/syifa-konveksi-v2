@@ -140,19 +140,21 @@ Priority order:
 
 ## Milestone and Issue Status
 
-Last synced from GitHub Issues: after completing issue #3.
+Last synced from GitHub Issues: after completing issue #5.
 
 ### MVP Stabilization
 
-Status: 3 closed / 2 open
+Status: 5 closed / 0 open
+
+Milestone result: complete and closed.
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
 | [#1](https://github.com/newlighteagle/syifa-konveksi-v2/issues/1) | P0 | Closed | Fix product media type persistence |
 | [#2](https://github.com/newlighteagle/syifa-konveksi-v2/issues/2) | P1 | Closed | Add product detail view counter |
 | [#3](https://github.com/newlighteagle/syifa-konveksi-v2/issues/3) | P1 | Closed | Require production AUTH_SECRET |
-| [#4](https://github.com/newlighteagle/syifa-konveksi-v2/issues/4) | P2 | Open | Add empty states for missing product attributes |
-| [#5](https://github.com/newlighteagle/syifa-konveksi-v2/issues/5) | P2 | Open | Add basic regression checklist for product CRUD |
+| [#4](https://github.com/newlighteagle/syifa-konveksi-v2/issues/4) | P2 | Closed | Add empty states for missing product attributes |
+| [#5](https://github.com/newlighteagle/syifa-konveksi-v2/issues/5) | P2 | Closed | Add basic regression checklist for product CRUD |
 
 ### MVP Conversion
 
@@ -180,13 +182,29 @@ Status: 0 closed / 5 open
 
 ## Manual QA Checklist
 
-Use this checklist after issue implementation:
+Use this checklist after issue implementation or before deployment. Run it against a local database that can be safely changed, not against production data.
 
-- Admin login succeeds with seeded credentials.
-- Public catalog loads products.
-- Product detail page opens from a catalog card.
-- Admin product list search and category filter work.
-- Product create flow saves valid data.
-- Product edit flow updates valid data.
-- Product delete flow removes only the intended product.
-- Production build succeeds with `npm run build`.
+Required local env:
+
+- `DATABASE_URL`: points to a local/staging PostgreSQL database with Prisma schema applied via `npm run db:push`.
+- `AUTH_SECRET`: set to any long random value for local QA; production requires this value.
+- `SEED_ADMIN_EMAIL`: admin email used by `npm run db:seed`.
+- `SEED_ADMIN_PASSWORD`: admin password used by `npm run db:seed`.
+
+Setup:
+
+- Run `npm install` if dependencies are missing.
+- Run `npm run db:push` after schema changes.
+- Run `npm run db:seed` so admin login and starter catalog data exist.
+- Start the app with `npm run dev` and open `http://localhost:3000`.
+
+Regression steps:
+
+- Admin login: open `/admin`, sign in with `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`, and confirm the admin dashboard loads.
+- Public catalog: open `/`, confirm products load, category filters work, and keyword search narrows the product list.
+- Public detail: open a product from the catalog, confirm media renders, product information is visible, view count appears, and missing size/color/gallery data has a clean empty state.
+- Admin search/filter: open `/admin/products`, search by product name or production code, filter by category, and confirm the list updates without leaving the page.
+- Create product: click add product, fill required fields with a unique product name and production code, save it, and confirm it appears in the admin product list and public catalog.
+- Edit product: open the created product in edit mode, change price, status, sizes, colors, and media type, save it, then confirm the updated values appear in admin and public detail views.
+- Delete product: delete only the QA product created during this checklist and confirm it no longer appears in admin or public catalog.
+- Build check: run `npm test` and `npm run build`; both should finish successfully.
