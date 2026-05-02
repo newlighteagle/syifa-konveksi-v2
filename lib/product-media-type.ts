@@ -1,5 +1,7 @@
 export type ProductMediaType = "image" | "video";
 
+export const DEFAULT_PRODUCT_MEDIA_TYPE: ProductMediaType = "image";
+
 export function getMediaUrlPlaceholder(mediaType: ProductMediaType) {
   return mediaType === "image"
     ? "https://example.com/foto-produk.jpg"

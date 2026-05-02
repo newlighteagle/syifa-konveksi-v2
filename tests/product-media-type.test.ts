@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  DEFAULT_PRODUCT_MEDIA_TYPE,
   getMediaUrlHelpText,
   getMediaUrlPlaceholder,
   getPreviewMediaType,
@@ -22,6 +23,10 @@ const baseProductInput = {
   sizes: ["M", "L"],
   colors: ["Biru"],
 };
+
+test("new products default to image media type", () => {
+  assert.equal(DEFAULT_PRODUCT_MEDIA_TYPE, "image");
+});
 
 test("productInputSchema accepts image media type", () => {
   const parsed = productInputSchema.parse({

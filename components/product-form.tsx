@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronsUpDown, Eye, Plus, Save, X } from "lucide-react";
+import { Check, ChevronsUpDown, Eye, ImageIcon, Plus, Save, Video, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { ProductDetailMedia } from "@/components/product-media";
@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  DEFAULT_PRODUCT_MEDIA_TYPE,
   getMediaUrlHelpText,
   getMediaUrlPlaceholder,
   getPreviewMediaType,
@@ -54,7 +55,9 @@ export function ProductForm({
   const [isLoading, setIsLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewMedia, setPreviewMedia] = useState<string[]>([]);
-  const [mediaType, setMediaType] = useState<ProductMediaType>(product?.mediaType ?? "video");
+  const [mediaType, setMediaType] = useState<ProductMediaType>(
+    product?.mediaType ?? DEFAULT_PRODUCT_MEDIA_TYPE,
+  );
   const [categoryMode, setCategoryMode] = useState<"select" | "new">("select");
   const [selectedCategory, setSelectedCategory] = useState(product?.category ?? "");
   const [selectedColors, setSelectedColors] = useState<string[]>(product?.colors ?? []);
@@ -66,7 +69,7 @@ export function ProductForm({
     setFieldErrors({});
     setSelectedCategory(product?.category ?? "");
     setSelectedColors(product?.colors ?? []);
-    setMediaType(product?.mediaType ?? "video");
+    setMediaType(product?.mediaType ?? DEFAULT_PRODUCT_MEDIA_TYPE);
     setColorSearch("");
     setCategoryMode(product?.category && !categories.some((category) => category.name === product.category) ? "new" : "select");
     if (product) {
@@ -239,14 +242,20 @@ export function ProductForm({
       </div>
       <div className="space-y-2">
         <Label>Tipe Media Utama</Label>
-        <div className="grid grid-cols-2 rounded-lg border border-slate-200 bg-slate-50 p-1">
+        <div
+          className="grid grid-cols-2 rounded-lg border border-slate-200 bg-slate-50 p-1"
+          role="radiogroup"
+          aria-label="Tipe media utama"
+        >
           <MediaTypeButton
             active={mediaType === "image"}
+            icon={<ImageIcon />}
             label="Foto"
             onClick={() => setMediaType("image")}
           />
           <MediaTypeButton
             active={mediaType === "video"}
+            icon={<Video />}
             label="Video"
             onClick={() => setMediaType("video")}
           />
@@ -348,10 +357,12 @@ export function ProductForm({
 
 function MediaTypeButton({
   active,
+  icon,
   label,
   onClick,
 }: {
   active: boolean;
+  icon: React.ReactNode;
   label: string;
   onClick: () => void;
 }) {
@@ -359,12 +370,14 @@ function MediaTypeButton({
     <button
       type="button"
       className={cn(
-        "h-9 rounded-md text-sm font-semibold transition",
+        "flex h-9 items-center justify-center gap-2 rounded-md text-sm font-semibold transition [&_svg]:size-4",
         active ? "bg-white text-sky-700 shadow-sm" : "text-slate-500 hover:text-slate-800",
       )}
-      aria-pressed={active}
+      role="radio"
+      aria-checked={active}
       onClick={onClick}
     >
+      {icon}
       {label}
     </button>
   );
