@@ -19,6 +19,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  getMediaUrlHelpText,
+  getMediaUrlPlaceholder,
+  getPreviewMediaType,
+  type ProductMediaType,
+} from "@/lib/product-media-type";
 import type { Product } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
@@ -48,6 +54,7 @@ export function ProductForm({
   const [isLoading, setIsLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [previewMedia, setPreviewMedia] = useState<string[]>([]);
+  const [mediaType, setMediaType] = useState<ProductMediaType>(product?.mediaType ?? "video");
   const [categoryMode, setCategoryMode] = useState<"select" | "new">("select");
   const [selectedCategory, setSelectedCategory] = useState(product?.category ?? "");
   const [selectedColors, setSelectedColors] = useState<string[]>(product?.colors ?? []);
@@ -59,6 +66,7 @@ export function ProductForm({
     setFieldErrors({});
     setSelectedCategory(product?.category ?? "");
     setSelectedColors(product?.colors ?? []);
+    setMediaType(product?.mediaType ?? "video");
     setColorSearch("");
     setCategoryMode(product?.category && !categories.some((category) => category.name === product.category) ? "new" : "select");
     if (product) {
@@ -86,7 +94,7 @@ export function ProductForm({
             ? formData.get("newCategory")
             : formData.get("category"),
         description: formData.get("description"),
-        mediaType: "video",
+        mediaType,
         mediaUrl: formData.get("mediaUrl"),
         galleryUrls: parseList(formData.get("galleryUrls")),
         kodeProduksi: formData.get("kodeProduksi"),
@@ -230,15 +238,35 @@ export function ProductForm({
         />
       </div>
       <div className="space-y-2">
+        <Label>Tipe Media Utama</Label>
+        <div className="grid grid-cols-2 rounded-lg border border-slate-200 bg-slate-50 p-1">
+          <MediaTypeButton
+            active={mediaType === "image"}
+            label="Foto"
+            onClick={() => setMediaType("image")}
+          />
+          <MediaTypeButton
+            active={mediaType === "video"}
+            label="Video"
+            onClick={() => setMediaType("video")}
+          />
+        </div>
+        <p className="text-xs leading-5 text-slate-500">
+          Pilih foto untuk URL gambar langsung, atau video untuk YouTube Shorts, Instagram Reel,
+          dan link video langsung.
+        </p>
+        <FieldError message={fieldErrors.mediaType?.[0]} />
+      </div>
+      <div className="space-y-2">
         <Label htmlFor="mediaUrl">Link Media Utama</Label>
         <Input
           id="mediaUrl"
           name="mediaUrl"
-          placeholder="https://www.youtube.com/shorts/T9X5KVfryAY"
+          placeholder={getMediaUrlPlaceholder(mediaType)}
           defaultValue={product?.mediaUrl}
         />
         <p className="text-xs leading-5 text-slate-500">
-          Media utama selalu video. Tempel link YouTube Shorts, Instagram Reel, atau link video langsung.
+          {getMediaUrlHelpText(mediaType)}
         </p>
         <FieldError message={fieldErrors.mediaUrl?.[0]} />
       </div>
@@ -269,7 +297,7 @@ export function ProductForm({
                 >
                   <ProductDetailMedia
                     name={`Preview ${index + 1}`}
-                    mediaType={index === 0 ? "video" : "image"}
+                    mediaType={getPreviewMediaType(index, mediaType)}
                     mediaUrl={url}
                   />
                 </div>
@@ -315,6 +343,30 @@ export function ProductForm({
         ) : null}
       </div>
     </form>
+  );
+}
+
+function MediaTypeButton({
+  active,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        "h-9 rounded-md text-sm font-semibold transition",
+        active ? "bg-white text-sky-700 shadow-sm" : "text-slate-500 hover:text-slate-800",
+      )}
+      aria-pressed={active}
+      onClick={onClick}
+    >
+      {label}
+    </button>
   );
 }
 

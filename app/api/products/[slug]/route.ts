@@ -54,7 +54,7 @@ export async function PUT(
     data: {
       ...data,
       slug: slugify(data.name),
-      mediaType: "video",
+      mediaType: data.mediaType,
       categoryId: category.id,
       colorLinks: {
         deleteMany: {},

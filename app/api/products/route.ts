@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     data: {
       ...data,
       slug,
-      mediaType: "video",
+      mediaType: data.mediaType,
       categoryId: category.id,
       createdById: session.id,
       colorLinks: {

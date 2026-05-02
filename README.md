@@ -109,6 +109,18 @@ Database and domain:
 4. Report changed files, verification result, and any follow-up risk.
 5. Wait for approval before starting the next issue.
 
+### Solved Issue Workflow
+
+Use this workflow for every issue implementation:
+
+1. Develop the solution locally from the approved issue scope.
+2. Run QA/QC and unit tests locally. At minimum run `npm test` when tests exist and `npm run build`.
+3. Send a report to the project owner with changed files, test results, QA notes, and any known risk.
+4. If the project owner requests revisions, apply the revisions locally and repeat QA/QC.
+5. If there are no revision requests and the project owner approves, push the finished change to GitHub.
+
+Do not push or deploy before project owner approval.
+
 Priority order:
 
 - `priority:P0`: critical MVP behavior.
