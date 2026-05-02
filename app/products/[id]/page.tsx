@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type React from "react";
-import { ArrowLeft, Calendar, CheckCircle2, MessageCircle, PlayCircle, Shirt, Tag } from "lucide-react";
+import { ArrowLeft, Calendar, CheckCircle2, MessageCircle, Shirt, Tag } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { ProductDetailMedia, ProductCardMedia } from "@/components/product-media";
@@ -31,7 +31,7 @@ export default async function ProductDetailPage({
     notFound();
   }
 
-  const galleryMedia = [product.mediaUrl, ...product.galleryUrls].filter(Boolean);
+  const galleryMedia = product.galleryUrls.filter(Boolean);
 
   return (
     <main className="min-h-screen bg-background">
@@ -53,20 +53,22 @@ export default async function ProductDetailPage({
                 priority
               />
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              {galleryMedia.slice(0, 6).map((mediaUrl, item) => (
-                <div
-                  key={`${mediaUrl}-${item}`}
-                  className="relative aspect-[4/3] overflow-hidden rounded-lg border border-slate-200 bg-white"
-                >
-                  <ProductCardMedia
-                    name={`${product.name} thumbnail ${item + 1}`}
-                    mediaType={item === 0 ? product.mediaType : "image"}
-                    mediaUrl={mediaUrl}
-                  />
-                </div>
-              ))}
-            </div>
+            {galleryMedia.length > 0 ? (
+              <div className="grid grid-cols-3 gap-3">
+                {galleryMedia.slice(0, 6).map((mediaUrl, item) => (
+                  <div
+                    key={`${mediaUrl}-${item}`}
+                    className="relative aspect-[4/3] overflow-hidden rounded-lg border border-slate-200 bg-white"
+                  >
+                    <ProductCardMedia
+                      name={`${product.name} thumbnail ${item + 1}`}
+                      mediaType="image"
+                      mediaUrl={mediaUrl}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : null}
           </section>
 
           <section className="space-y-6">
@@ -95,24 +97,32 @@ export default async function ProductDetailPage({
 
             <div className="space-y-3">
               <p className="text-sm font-semibold text-slate-700">Ukuran tersedia</p>
-              <div className="flex flex-wrap gap-2">
-                {product.sizes.map((size) => (
-                  <Badge key={size} variant="secondary">
-                    {size}
-                  </Badge>
-                ))}
-              </div>
+              {product.sizes.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map((size) => (
+                    <Badge key={size} variant="secondary">
+                      {size}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <EmptyAttribute message="Ukuran belum tersedia. Hubungi admin untuk pilihan ukuran." />
+              )}
             </div>
 
             <div className="space-y-3">
               <p className="text-sm font-semibold text-slate-700">Warna populer</p>
-              <div className="flex flex-wrap gap-2">
-                {product.colors.map((color) => (
-                  <Badge key={color} variant="outline">
-                    {color}
-                  </Badge>
-                ))}
-              </div>
+              {product.colors.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map((color) => (
+                    <Badge key={color} variant="outline">
+                      {color}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <EmptyAttribute message="Warna belum tersedia. Tim kami bisa bantu cek opsi warna." />
+              )}
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -148,5 +158,13 @@ function InfoItem({
         <p className="mt-1 font-semibold text-slate-950">{value}</p>
       </div>
     </div>
+  );
+}
+
+function EmptyAttribute({ message }: { message: string }) {
+  return (
+    <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-500">
+      {message}
+    </p>
   );
 }
