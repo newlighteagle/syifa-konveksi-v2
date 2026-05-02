@@ -9,7 +9,7 @@ export default function AdminLoginPage() {
         <div className="absolute inset-x-0 top-0 h-1 sky-gradient" />
         <CardContent className="p-8 sm:p-10">
           <div className="text-center">
-            <BrandLogo className="mx-auto size-20 rounded-2xl" />
+            <BrandLogo className="mx-auto size-20" />
             <h1 className="mt-6 text-2xl font-extrabold text-slate-950">Masuk Admin</h1>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               Akses aman untuk mengelola katalog Syifa Konveksi.

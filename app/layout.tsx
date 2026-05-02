@@ -6,9 +6,9 @@ export const metadata: Metadata = {
   title: "Syifa Konveksi",
   description: "Katalog digital interaktif untuk Syifa Konveksi.",
   icons: {
-    icon: "/logo-center.png",
-    shortcut: "/logo-center.png",
-    apple: "/logo-center.png",
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
   },
 };
 
