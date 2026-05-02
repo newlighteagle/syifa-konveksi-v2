@@ -27,6 +27,7 @@ function fromPrisma(product: ProductWithEnums): Product {
     sizes: product.sizes,
     colors: product.colorLinks?.map((link) => link.color.name) ?? product.colors,
     views: product.views,
+    inquiries: product.inquiries,
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString(),
   };
@@ -119,6 +120,21 @@ export async function incrementProductViews(slug: string) {
     });
   } catch (error) {
     console.error("Unable to increment product views:", error);
+  }
+}
+
+export async function incrementProductInquiries(slug: string) {
+  if (!hasDatabaseUrl()) {
+    return;
+  }
+
+  try {
+    await prisma.product.update({
+      where: { slug },
+      data: { inquiries: { increment: 1 } },
+    });
+  } catch (error) {
+    console.error("Unable to increment product inquiries:", error);
   }
 }
 

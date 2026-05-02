@@ -37,6 +37,7 @@ async function main() {
         sizes: product.sizes,
         colors: product.colors,
         views: product.views,
+        inquiries: product.inquiries,
         createdById: admin.id,
       },
       create: {
@@ -55,6 +56,7 @@ async function main() {
         sizes: product.sizes,
         colors: product.colors,
         views: product.views,
+        inquiries: product.inquiries,
         createdById: admin.id,
       },
     });

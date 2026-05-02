@@ -3,6 +3,7 @@ import type React from "react";
 import {
   Boxes,
   Eye,
+  MessageCircle,
   PackageCheck,
   PlusCircle,
   TrendingUp,
@@ -23,6 +24,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminDashboardPage() {
   const [products, visitorStats] = await Promise.all([listProducts(), getSiteVisitorStats()]);
   const totalViews = products.reduce((sum, product) => sum + product.views, 0);
+  const totalInquiries = products.reduce((sum, product) => sum + product.inquiries, 0);
   const totalValue = products.reduce((sum, product) => sum + product.harga, 0);
   const readyStock = products.filter((product) => product.stockStatus === "Ready").length;
 
@@ -57,11 +59,12 @@ export default async function AdminDashboardPage() {
         />
         <Metric icon={<Boxes />} label="Total produk" value={`${products.length}`} />
         <Metric icon={<Eye />} label="Total dilihat" value={totalViews.toLocaleString("id-ID")} />
+        <Metric icon={<MessageCircle />} label="Total inquiry" value={totalInquiries.toLocaleString("id-ID")} />
         <Metric icon={<PackageCheck />} label="Ready stock" value={`${readyStock} produk`} />
         <Metric icon={<TrendingUp />} label="Nilai katalog" value={formatRupiah(totalValue)} />
       </div>
 
-      <div className="mt-8 grid gap-6 xl:grid-cols-[1fr_0.8fr]">
+      <div className="mt-8 grid gap-6 xl:grid-cols-3">
         <Card>
           <CardHeader>
             <CardTitle>Produk paling sering dilihat</CardTitle>
@@ -78,6 +81,26 @@ export default async function AdminDashboardPage() {
                     <p className="text-sm text-slate-500">{product.kodeProduksi}</p>
                   </div>
                   <Badge variant="secondary">{product.views.toLocaleString("id-ID")} views</Badge>
+                </div>
+              ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Produk paling sering ditanyakan</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {products
+              .slice()
+              .sort((a, b) => b.inquiries - a.inquiries)
+              .slice(0, 5)
+              .map((product) => (
+                <div key={product.id} className="flex items-center justify-between gap-4 rounded-lg bg-slate-50 p-4">
+                  <div>
+                    <p className="font-semibold text-slate-950">{product.name}</p>
+                    <p className="text-sm text-slate-500">{product.kodeProduksi}</p>
+                  </div>
+                  <Badge variant="secondary">{product.inquiries.toLocaleString("id-ID")} inquiry</Badge>
                 </div>
               ))}
           </CardContent>

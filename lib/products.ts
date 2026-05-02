@@ -14,6 +14,7 @@ export type Product = {
   sizes: string[];
   colors: string[];
   views: number;
+  inquiries: number;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -37,6 +38,7 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["Sky Blue", "Navy", "Mauve"],
     views: 1240,
+    inquiries: 0,
   },
   {
     id: "kemeja-pdh-eksekutif",
@@ -56,6 +58,7 @@ export const products: Product[] = [
     sizes: ["M", "L", "XL", "XXL"],
     colors: ["Putih", "Abu Slate", "Biru"],
     views: 985,
+    inquiries: 0,
   },
   {
     id: "kaos-komunitas-combed",
@@ -75,6 +78,7 @@ export const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     colors: ["Putih", "Hitam", "Sage"],
     views: 1720,
+    inquiries: 0,
   },
   {
     id: "seragam-sekolah-ceria",
@@ -94,6 +98,7 @@ export const products: Product[] = [
     sizes: ["XS", "S", "M", "L"],
     colors: ["Biru Muda", "Merah", "Hijau"],
     views: 760,
+    inquiries: 0,
   },
   {
     id: "outer-linen-nadira",
@@ -113,6 +118,7 @@ export const products: Product[] = [
     sizes: ["All Size", "XL"],
     colors: ["Cream", "Denim", "Terracotta"],
     views: 642,
+    inquiries: 0,
   },
   {
     id: "rompi-event-utility",
@@ -132,6 +138,7 @@ export const products: Product[] = [
     sizes: ["M", "L", "XL", "XXL"],
     colors: ["Navy", "Khaki", "Hitam"],
     views: 531,
+    inquiries: 0,
   },
 ];
 

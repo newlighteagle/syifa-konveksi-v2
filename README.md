@@ -48,7 +48,7 @@ Create `.env` from `.env.example`, then set the required values.
 - `SEED_ADMIN_EMAIL`: seeded admin email.
 - `SEED_ADMIN_PASSWORD`: seeded admin password.
 
-After schema changes, run `npm run db:push` against the target database before deploying. The visitor dashboard metrics require the `site_visitors` table.
+After schema changes, run `npm run db:push` against the target database before deploying. The visitor dashboard metrics require the `site_visitors` table, and inquiry tracking requires the `products.inquiries` column.
 
 ## Project Structure
 
@@ -141,7 +141,7 @@ Priority order:
 
 ## Milestone and Issue Status
 
-Last synced from GitHub Issues: after completing issue #9.
+Last synced from GitHub Issues: after completing issue #10.
 
 ### MVP Stabilization
 
@@ -159,7 +159,7 @@ Milestone result: complete and closed.
 
 ### MVP Conversion
 
-Status: 4 closed / 1 open
+Status: 5 closed / 0 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
@@ -167,7 +167,7 @@ Status: 4 closed / 1 open
 | [#7](https://github.com/newlighteagle/syifa-konveksi-v2/issues/7) | P1 | Closed | Add floating WhatsApp contact CTA |
 | [#8](https://github.com/newlighteagle/syifa-konveksi-v2/issues/8) | P2 | Closed | Add share product button |
 | [#9](https://github.com/newlighteagle/syifa-konveksi-v2/issues/9) | P1 | Closed | Add business contact section footer |
-| [#10](https://github.com/newlighteagle/syifa-konveksi-v2/issues/10) | P2 | Open | Add simple product inquiry tracking |
+| [#10](https://github.com/newlighteagle/syifa-konveksi-v2/issues/10) | P2 | Closed | Add simple product inquiry tracking |
 
 ### MVP Admin Operations
 

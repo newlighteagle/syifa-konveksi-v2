@@ -152,7 +152,11 @@ export default async function ProductDetailPage({
             <div className="flex flex-col gap-3 sm:flex-row">
               {whatsappUrl ? (
                 <Button asChild className="flex-1">
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={getInquiryTrackingUrl(product.id, whatsappUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <MessageCircle />
                     Tanya Produk
                   </a>
@@ -211,4 +215,8 @@ function getProductUrl(requestHeaders: Headers, productId: string) {
   const protocol =
     requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   return `${protocol}://${host}/products/${productId}`;
+}
+
+function getInquiryTrackingUrl(productId: string, whatsappUrl: string) {
+  return `/api/products/${productId}/inquiries?redirect=${encodeURIComponent(whatsappUrl)}`;
 }

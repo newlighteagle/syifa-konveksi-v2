@@ -49,6 +49,7 @@ model Product {
   colors            String[]    @default([])
   colorLinks        ProductColor[]
   views             Int         @default(0)
+  inquiries         Int         @default(0)
   createdById       String?     @map("created_by_id")
   createdBy         User?       @relation(fields: [createdById], references: [id], onDelete: SetNull)
   createdAt         DateTime    @default(now()) @map("created_at")
