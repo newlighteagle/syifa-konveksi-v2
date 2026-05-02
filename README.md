@@ -4,6 +4,13 @@ Syifa Konveksi v2 adalah aplikasi katalog digital untuk menampilkan produk konve
 
 Production: https://www.syifakonveksi.my.id
 
+## Features
+
+- Public product catalog with category/search filtering.
+- Product detail view counter.
+- Site visitor counter for total visits and unique public IP visitors, shown in the admin dashboard.
+- Admin product management with category, color, stock status, and media controls.
+
 ## Tech Stack
 
 - Framework: Next.js 15 App Router
@@ -39,6 +46,8 @@ Create `.env` from `.env.example`, then set the required values.
 - `AUTH_SECRET`: required for production session signing.
 - `SEED_ADMIN_EMAIL`: seeded admin email.
 - `SEED_ADMIN_PASSWORD`: seeded admin password.
+
+After schema changes, run `npm run db:push` against the target database before deploying. The visitor dashboard metrics require the `site_visitors` table.
 
 ## Project Structure
 

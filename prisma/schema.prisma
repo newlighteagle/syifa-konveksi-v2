@@ -88,3 +88,14 @@ model ProductColor {
   @@id([productId, colorId])
   @@map("product_colors")
 }
+
+model SiteVisitor {
+  id             String   @id @default(cuid())
+  ipAddress      String   @unique @map("ip_address")
+  visits         Int      @default(1)
+  firstVisitedAt DateTime @default(now()) @map("first_visited_at")
+  lastVisitedAt  DateTime @updatedAt @map("last_visited_at")
+
+  @@index([lastVisitedAt])
+  @@map("site_visitors")
+}

@@ -1,10 +1,16 @@
+import { headers } from "next/headers";
+
 import { CatalogPage } from "@/components/catalog-page";
 import { SiteHeader } from "@/components/site-header";
 import { listCategories, listProducts } from "@/lib/product-service";
+import { getPublicIpFromHeaders, recordSiteVisit } from "@/lib/visitor-service";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  const requestHeaders = await headers();
+  await recordSiteVisit(getPublicIpFromHeaders(requestHeaders));
+
   const [products, categories] = await Promise.all([listProducts(), listCategories()]);
 
   return (
