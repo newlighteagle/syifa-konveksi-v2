@@ -50,6 +50,42 @@ Create `.env` from `.env.example`, then set the required values.
 
 After schema changes, run `npm run db:push` against the target database before deploying. The visitor dashboard metrics require the `site_visitors` table, and inquiry tracking requires the `products.inquiries` column.
 
+## Product Media Workflow
+
+MVP ini belum menyediakan upload file lokal dari admin portal. Admin perlu menaruh foto atau video produk di layanan eksternal terlebih dahulu, lalu menempel URL media ke form tambah/edit produk.
+
+Cara mengisi media produk:
+
+- Pilih `Foto` untuk media utama berupa URL gambar langsung.
+- Pilih `Video` untuk media utama berupa YouTube Shorts, Instagram Reel/post, atau URL video langsung.
+- Isi `Link Media Utama` dengan satu URL utama yang akan tampil sebagai media pertama di katalog dan halaman detail.
+- Isi `Link Galeri Tambahan` hanya dengan foto tambahan, satu URL per baris.
+
+Format URL yang didukung:
+
+- Image direct URL: link yang langsung mengarah ke file gambar seperti `.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`, atau `.gif`.
+- YouTube URL: link `youtube.com`, `youtu.be`, atau `youtube.com/shorts/...`.
+- Instagram URL: link post, reel, atau video dari `instagram.com`.
+- Direct video URL: link yang langsung mengarah ke file video seperti `.mp4`, `.webm`, atau `.ogg`.
+
+Contoh URL valid:
+
+- `https://example.com/foto-produk.jpg`
+- `https://cdn.example.com/katalog/seragam.webp`
+- `https://www.youtube.com/shorts/T9X5KVfryAY`
+- `https://youtu.be/T9X5KVfryAY`
+- `https://www.instagram.com/reel/ABC123/`
+- `https://cdn.example.com/video-produk.mp4`
+
+Contoh URL tidak valid:
+
+- `foto-produk.jpg` karena bukan URL lengkap.
+- `www.example.com/foto-produk.jpg` karena tidak memakai `https://` atau `http://`.
+- `https://drive.google.com/file/d/.../view` karena bukan direct image/video URL dan belum ada integrasi preview khusus Google Drive.
+- `https://example.com/katalog` karena tidak jelas mengarah ke gambar atau video langsung.
+
+Jika preview media tidak tampil, buka URL di tab browser baru. URL yang benar untuk foto direct biasanya langsung menampilkan gambar saja, bukan halaman web berisi gambar.
+
 ## Project Structure
 
 - `app/`: App Router pages, layouts, and API route handlers.
@@ -141,7 +177,7 @@ Priority order:
 
 ## Milestone and Issue Status
 
-Last synced from GitHub Issues: after completing issue #11.
+Last synced from GitHub Issues: after completing issue #12.
 
 ### MVP Stabilization
 
@@ -171,12 +207,12 @@ Status: 5 closed / 0 open
 
 ### MVP Admin Operations
 
-Status: 1 closed / 4 open
+Status: 2 closed / 3 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
 | [#11](https://github.com/newlighteagle/syifa-konveksi-v2/issues/11) | P1 | Closed | Allow choosing image or video as main media |
-| [#12](https://github.com/newlighteagle/syifa-konveksi-v2/issues/12) | P2 | Open | Document external media workflow |
+| [#12](https://github.com/newlighteagle/syifa-konveksi-v2/issues/12) | P2 | Closed | Document external media workflow |
 | [#13](https://github.com/newlighteagle/syifa-konveksi-v2/issues/13) | P2 | Open | Add category and color management screens |
 | [#14](https://github.com/newlighteagle/syifa-konveksi-v2/issues/14) | P2 | Open | Improve delete confirmation with safer modal |
 | [#15](https://github.com/newlighteagle/syifa-konveksi-v2/issues/15) | P2 | Open | Add draft published product status |
