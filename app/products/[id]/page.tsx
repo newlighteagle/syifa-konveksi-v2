@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type React from "react";
 import { ArrowLeft, Calendar, CheckCircle2, MessageCircle, Shirt, Tag } from "lucide-react";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { ProductDetailMedia, ProductCardMedia } from "@/components/product-media";
@@ -11,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getProductBySlug, incrementProductViews } from "@/lib/product-service";
 import { products } from "@/lib/products";
 import { formatRupiah } from "@/lib/utils";
+import { buildProductInquiryMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const dynamic = "force-dynamic";
 
@@ -25,13 +27,23 @@ export default async function ProductDetailPage({
 }) {
   const { id } = await params;
   await incrementProductViews(id);
-  const product = await getProductBySlug(id);
+  const [product, requestHeaders] = await Promise.all([getProductBySlug(id), headers()]);
 
   if (!product) {
     notFound();
   }
 
   const galleryMedia = product.galleryUrls.filter(Boolean);
+  const productUrl = getProductUrl(requestHeaders, product.id);
+  const whatsappUrl = buildWhatsAppUrl({
+    phoneNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER,
+    message: buildProductInquiryMessage({
+      name: product.name,
+      kodeProduksi: product.kodeProduksi,
+      harga: formatRupiah(product.harga),
+      url: productUrl,
+    }),
+  });
 
   return (
     <main className="min-h-screen bg-background">
@@ -126,10 +138,19 @@ export default async function ProductDetailPage({
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button className="flex-1">
-                <MessageCircle />
-                Tanya Produk
-              </Button>
+              {whatsappUrl ? (
+                <Button asChild className="flex-1">
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle />
+                    Tanya Produk
+                  </a>
+                </Button>
+              ) : (
+                <Button className="flex-1" disabled title="Nomor WhatsApp belum diset">
+                  <MessageCircle />
+                  WhatsApp belum diset
+                </Button>
+              )}
               <Button variant="outline" className="flex-1">
                 Simpan Referensi
               </Button>
@@ -167,4 +188,16 @@ function EmptyAttribute({ message }: { message: string }) {
       {message}
     </p>
   );
+}
+
+function getProductUrl(requestHeaders: Headers, productId: string) {
+  const host = requestHeaders.get("host");
+
+  if (!host) {
+    return `https://www.syifakonveksi.my.id/products/${productId}`;
+  }
+
+  const protocol =
+    requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+  return `${protocol}://${host}/products/${productId}`;
 }

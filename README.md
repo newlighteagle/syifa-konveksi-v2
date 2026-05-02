@@ -44,6 +44,7 @@ Create `.env` from `.env.example`, then set the required values.
 
 - `DATABASE_URL`: PostgreSQL connection string. Without this, public catalog uses mock read-only products.
 - `AUTH_SECRET`: required for production session signing. Production will fail with an explicit error when this value is empty; development can use the built-in fallback.
+- `NEXT_PUBLIC_WHATSAPP_NUMBER`: business WhatsApp number for product inquiries, for example `+62 852-4176-7460`.
 - `SEED_ADMIN_EMAIL`: seeded admin email.
 - `SEED_ADMIN_PASSWORD`: seeded admin password.
 
@@ -140,7 +141,7 @@ Priority order:
 
 ## Milestone and Issue Status
 
-Last synced from GitHub Issues: after completing issue #5.
+Last synced from GitHub Issues: after completing issue #6.
 
 ### MVP Stabilization
 
@@ -158,11 +159,11 @@ Milestone result: complete and closed.
 
 ### MVP Conversion
 
-Status: 0 closed / 5 open
+Status: 1 closed / 4 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
-| [#6](https://github.com/newlighteagle/syifa-konveksi-v2/issues/6) | P0 | Open | Connect Tanya Produk button to WhatsApp |
+| [#6](https://github.com/newlighteagle/syifa-konveksi-v2/issues/6) | P0 | Closed | Connect Tanya Produk button to WhatsApp |
 | [#7](https://github.com/newlighteagle/syifa-konveksi-v2/issues/7) | P1 | Open | Add floating WhatsApp contact CTA |
 | [#8](https://github.com/newlighteagle/syifa-konveksi-v2/issues/8) | P2 | Open | Add share product button |
 | [#9](https://github.com/newlighteagle/syifa-konveksi-v2/issues/9) | P1 | Open | Add business contact section footer |
@@ -188,6 +189,7 @@ Required local env:
 
 - `DATABASE_URL`: points to a local/staging PostgreSQL database with Prisma schema applied via `npm run db:push`.
 - `AUTH_SECRET`: set to any long random value for local QA; production requires this value.
+- `NEXT_PUBLIC_WHATSAPP_NUMBER`: set to the business WhatsApp number so product inquiry links can be tested.
 - `SEED_ADMIN_EMAIL`: admin email used by `npm run db:seed`.
 - `SEED_ADMIN_PASSWORD`: admin password used by `npm run db:seed`.
 
