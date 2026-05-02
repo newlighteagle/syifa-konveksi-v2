@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 
 export const SESSION_COOKIE = "syifa_admin_session";
+const DEVELOPMENT_AUTH_SECRET = "syifa-konveksi-dev-secret-change-me";
 
 type SessionPayload = {
   sub: string;
@@ -9,9 +10,22 @@ type SessionPayload = {
   name: string;
 };
 
+export function getAuthSecret() {
+  const secret = process.env.AUTH_SECRET?.trim();
+
+  if (secret) {
+    return secret;
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("AUTH_SECRET is required in production for secure admin sessions.");
+  }
+
+  return DEVELOPMENT_AUTH_SECRET;
+}
+
 function getSecret() {
-  const secret = process.env.AUTH_SECRET ?? "syifa-konveksi-dev-secret-change-me";
-  return new TextEncoder().encode(secret);
+  return new TextEncoder().encode(getAuthSecret());
 }
 
 export async function createSessionToken(payload: SessionPayload) {

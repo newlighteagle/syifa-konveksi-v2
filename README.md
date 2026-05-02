@@ -43,7 +43,7 @@ npm run db:seed
 Create `.env` from `.env.example`, then set the required values.
 
 - `DATABASE_URL`: PostgreSQL connection string. Without this, public catalog uses mock read-only products.
-- `AUTH_SECRET`: required for production session signing.
+- `AUTH_SECRET`: required for production session signing. Production will fail with an explicit error when this value is empty; development can use the built-in fallback.
 - `SEED_ADMIN_EMAIL`: seeded admin email.
 - `SEED_ADMIN_PASSWORD`: seeded admin password.
 
