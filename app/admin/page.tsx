@@ -1,6 +1,5 @@
-import { ShieldCheck } from "lucide-react";
-
 import { AdminLoginForm } from "@/components/admin-login-form";
+import { BrandLogo } from "@/components/brand-logo";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function AdminLoginPage() {
@@ -10,9 +9,7 @@ export default function AdminLoginPage() {
         <div className="absolute inset-x-0 top-0 h-1 sky-gradient" />
         <CardContent className="p-8 sm:p-10">
           <div className="text-center">
-            <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-sky-50 text-sky-700">
-              <ShieldCheck className="size-8" />
-            </span>
+            <BrandLogo className="mx-auto size-20 rounded-2xl" />
             <h1 className="mt-6 text-2xl font-extrabold text-slate-950">Masuk Admin</h1>
             <p className="mt-2 text-sm leading-6 text-slate-600">
               Akses aman untuk mengelola katalog Syifa Konveksi.

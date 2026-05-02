@@ -5,6 +5,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Syifa Konveksi",
   description: "Katalog digital interaktif untuk Syifa Konveksi.",
+  icons: {
+    icon: "/logo-syifa-konveksi.svg",
+    shortcut: "/logo-syifa-konveksi.svg",
+    apple: "/logo-syifa-konveksi.svg",
+  },
 };
 
 export default function RootLayout({

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { BarChart3, Boxes, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 import { AdminLogoutButton } from "@/components/admin-logout-button";
+import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -47,9 +48,7 @@ export function AdminShell({ children, title }: { children: React.ReactNode; tit
               )}
               title="Syifa Admin"
             >
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg sky-gradient text-sm font-black text-white">
-                SK
-              </span>
+              <BrandLogo className="size-10" />
               <div className={cn("min-w-0", isCollapsed && "hidden")}>
                 <p className="truncate font-extrabold text-slate-950">Syifa Admin</p>
                 <p className="truncate text-xs font-medium text-slate-500">Production Portal</p>

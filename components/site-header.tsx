@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { LayoutDashboard, Search, ShieldCheck } from "lucide-react";
 
+import { BrandLogo } from "@/components/brand-logo";
 import { Button } from "@/components/ui/button";
 
 export function SiteHeader() {
@@ -8,9 +9,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/90 backdrop-blur-xl">
       <div className="container flex h-16 items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-3">
-          <span className="flex size-10 items-center justify-center rounded-lg sky-gradient text-sm font-black text-white shadow-soft">
-            SK
-          </span>
+          <BrandLogo className="size-10" />
           <span className="text-lg font-extrabold text-sky-700">Syifa Konveksi</span>
         </Link>
         <nav className="hidden items-center gap-7 text-sm font-semibold text-slate-600 md:flex">
