@@ -15,7 +15,7 @@ export function BrandLogo({
       )}
     >
       <img
-        src="/logo.png"
+        src="/logo-center.png"
         alt="Logo Syifa Konveksi"
         className={cn("h-full w-full object-cover", imgClassName)}
       />
