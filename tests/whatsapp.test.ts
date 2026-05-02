@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  buildGeneralContactMessage,
   buildProductInquiryMessage,
   buildWhatsAppUrl,
   normalizeWhatsAppNumber,
@@ -27,6 +28,10 @@ test("buildProductInquiryMessage includes product details", () => {
   assert.match(message, /Kode produksi: SKU-001/);
   assert.match(message, /Harga: Rp 80\.000/);
   assert.match(message, /Link produk: https:\/\/www\.syifakonveksi\.my\.id\/products\/baju-tani/);
+});
+
+test("buildGeneralContactMessage asks for a general consultation", () => {
+  assert.match(buildGeneralContactMessage(), /konsultasi produk konveksi/);
 });
 
 test("buildWhatsAppUrl returns encoded wa.me URL", () => {

@@ -34,6 +34,10 @@ export function buildProductInquiryMessage({
   ].join("\n");
 }
 
+export function buildGeneralContactMessage() {
+  return "Halo Syifa Konveksi, saya mau konsultasi produk konveksi.";
+}
+
 export function buildWhatsAppUrl({
   phoneNumber,
   message,

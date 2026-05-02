@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, CheckCircle2, MessageCircle, Shirt, Tag } from "lu
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
+import { FloatingWhatsAppButton } from "@/components/floating-whatsapp-button";
 import { ProductDetailMedia, ProductCardMedia } from "@/components/product-media";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
@@ -158,6 +159,7 @@ export default async function ProductDetailPage({
           </section>
         </div>
       </div>
+      <FloatingWhatsAppButton />
     </main>
   );
 }

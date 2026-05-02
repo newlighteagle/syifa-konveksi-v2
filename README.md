@@ -141,7 +141,7 @@ Priority order:
 
 ## Milestone and Issue Status
 
-Last synced from GitHub Issues: after completing issue #6.
+Last synced from GitHub Issues: after completing issue #7.
 
 ### MVP Stabilization
 
@@ -159,12 +159,12 @@ Milestone result: complete and closed.
 
 ### MVP Conversion
 
-Status: 1 closed / 4 open
+Status: 2 closed / 3 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
 | [#6](https://github.com/newlighteagle/syifa-konveksi-v2/issues/6) | P0 | Closed | Connect Tanya Produk button to WhatsApp |
-| [#7](https://github.com/newlighteagle/syifa-konveksi-v2/issues/7) | P1 | Open | Add floating WhatsApp contact CTA |
+| [#7](https://github.com/newlighteagle/syifa-konveksi-v2/issues/7) | P1 | Closed | Add floating WhatsApp contact CTA |
 | [#8](https://github.com/newlighteagle/syifa-konveksi-v2/issues/8) | P2 | Open | Add share product button |
 | [#9](https://github.com/newlighteagle/syifa-konveksi-v2/issues/9) | P1 | Open | Add business contact section footer |
 | [#10](https://github.com/newlighteagle/syifa-konveksi-v2/issues/10) | P2 | Open | Add simple product inquiry tracking |
