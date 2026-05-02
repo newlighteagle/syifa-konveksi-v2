@@ -9,7 +9,7 @@ Production: https://www.syifakonveksi.my.id
 - Public product catalog with category/search filtering.
 - Product detail view counter.
 - Site visitor counter for total visits and unique public IP visitors, shown in the admin dashboard.
-- Admin product management with category, color, stock status, and media controls.
+- Admin product management with publication status, category, color, stock status, and media controls.
 
 ## Tech Stack
 
@@ -48,7 +48,7 @@ Create `.env` from `.env.example`, then set the required values.
 - `SEED_ADMIN_EMAIL`: seeded admin email.
 - `SEED_ADMIN_PASSWORD`: seeded admin password.
 
-After schema changes, run `npm run db:push` against the target database before deploying. The visitor dashboard metrics require the `site_visitors` table, and inquiry tracking requires the `products.inquiries` column.
+After schema changes, run `npm run db:push` against the target database before deploying. The visitor dashboard metrics require the `site_visitors` table, inquiry tracking requires the `products.inquiries` column, and product publication status requires the `products.publication_status` column.
 
 ## Product Media Workflow
 
@@ -181,7 +181,7 @@ Priority order:
 
 ## Milestone and Issue Status
 
-Last synced from GitHub Issues: after completing issue #14.
+Last synced from GitHub Issues: after completing issue #17.
 
 ### MVP Stabilization
 
@@ -211,7 +211,7 @@ Status: 5 closed / 0 open
 
 ### MVP Admin Operations
 
-Status: 4 closed / 1 open
+Status: 6 closed / 0 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
@@ -219,7 +219,8 @@ Status: 4 closed / 1 open
 | [#12](https://github.com/newlighteagle/syifa-konveksi-v2/issues/12) | P2 | Closed | Document external media workflow |
 | [#13](https://github.com/newlighteagle/syifa-konveksi-v2/issues/13) | P2 | Closed | Add category and color management screens |
 | [#14](https://github.com/newlighteagle/syifa-konveksi-v2/issues/14) | P2 | Closed | Improve delete confirmation with safer modal |
-| [#15](https://github.com/newlighteagle/syifa-konveksi-v2/issues/15) | P2 | Open | Add draft published product status |
+| [#15](https://github.com/newlighteagle/syifa-konveksi-v2/issues/15) | P2 | Closed | Add draft published product status |
+| [#17](https://github.com/newlighteagle/syifa-konveksi-v2/issues/17) | P2 | Closed | Make admin dashboard more compact and clean |
 
 ## Manual QA Checklist
 
@@ -247,6 +248,6 @@ Regression steps:
 - Public detail: open a product from the catalog, confirm media renders, product information is visible, view count appears, and missing size/color/gallery data has a clean empty state.
 - Admin search/filter: open `/admin/products`, search by product name or production code, filter by category, and confirm the list updates without leaving the page.
 - Create product: click add product, fill required fields with a unique product name and production code, save it, and confirm it appears in the admin product list and public catalog.
-- Edit product: open the created product in edit mode, change price, status, sizes, colors, and media type, save it, then confirm the updated values appear in admin and public detail views.
+- Edit product: open the created product in edit mode, change price, stock status, publication status, sizes, colors, and media type, save it, then confirm published products appear publicly while draft products stay hidden from the public catalog.
 - Delete product: delete only the QA product created during this checklist and confirm it no longer appears in admin or public catalog.
 - Build check: run `npm test` and `npm run build`; both should finish successfully.

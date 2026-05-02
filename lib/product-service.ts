@@ -6,8 +6,15 @@ import { products, type Product } from "@/lib/products";
 type ProductWithEnums = PrismaProduct & {
   mediaType: "image" | "video";
   stockStatus: "Ready" | "Preorder" | "Terbatas";
+  publicationStatus: "draft" | "published";
   categoryRef?: Category | null;
   colorLinks?: Array<ProductColor & { color: Color }>;
+};
+
+type ProductQueryOptions = {
+  query?: string;
+  category?: string;
+  includeDrafts?: boolean;
 };
 
 export type ManagedOption = {
@@ -36,6 +43,7 @@ function fromPrisma(product: ProductWithEnums): Product {
     periodeProduksi: product.periodeProduksi,
     harga: product.harga,
     stockStatus: product.stockStatus,
+    publicationStatus: product.publicationStatus,
     material: product.material,
     sizes: product.sizes,
     colors: product.colorLinks?.map((link) => link.color.name) ?? product.colors,
@@ -46,12 +54,13 @@ function fromPrisma(product: ProductWithEnums): Product {
   };
 }
 
-export async function listProducts(options?: { query?: string; category?: string }) {
+export async function listProducts(options?: ProductQueryOptions) {
   if (!hasDatabaseUrl()) {
     const query = options?.query?.trim().toLowerCase();
     return products.filter((product) => {
       const matchesCategory =
         !options?.category || options.category === "Semua" || product.category === options.category;
+      const matchesPublication = options?.includeDrafts || product.publicationStatus === "published";
       const matchesQuery =
         !query ||
         [product.name, product.category, product.description, product.kodeProduksi]
@@ -59,7 +68,7 @@ export async function listProducts(options?: { query?: string; category?: string
           .toLowerCase()
           .includes(query);
 
-      return matchesCategory && matchesQuery;
+      return matchesCategory && matchesPublication && matchesQuery;
     });
   }
 
@@ -67,6 +76,7 @@ export async function listProducts(options?: { query?: string; category?: string
   try {
     const rows = await prisma.product.findMany({
       where: {
+        ...(options?.includeDrafts ? {} : { publicationStatus: "published" }),
         ...(options?.category && options.category !== "Semua"
           ? {
               OR: [
@@ -101,9 +111,15 @@ export async function listProducts(options?: { query?: string; category?: string
   }
 }
 
-export async function getProductBySlug(slug: string) {
+export async function getProductBySlug(slug: string, options?: { includeDrafts?: boolean }) {
   if (!hasDatabaseUrl()) {
-    return products.find((product) => product.id === slug) ?? null;
+    return (
+      products.find(
+        (product) =>
+          product.id === slug &&
+          (options?.includeDrafts || product.publicationStatus === "published"),
+      ) ?? null
+    );
   }
 
   try {
@@ -114,7 +130,11 @@ export async function getProductBySlug(slug: string) {
         colorLinks: { include: { color: true } },
       },
     });
-    return product ? fromPrisma(product as ProductWithEnums) : null;
+    if (!product || (!options?.includeDrafts && product.publicationStatus !== "published")) {
+      return null;
+    }
+
+    return fromPrisma(product as ProductWithEnums);
   } catch (error) {
     console.error("Falling back to mock product:", error);
     return products.find((product) => product.id === slug) ?? null;
@@ -127,8 +147,8 @@ export async function incrementProductViews(slug: string) {
   }
 
   try {
-    await prisma.product.update({
-      where: { slug },
+    await prisma.product.updateMany({
+      where: { slug, publicationStatus: "published" },
       data: { views: { increment: 1 } },
     });
   } catch (error) {

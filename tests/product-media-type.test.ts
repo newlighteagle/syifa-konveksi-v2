@@ -47,6 +47,25 @@ test("productInputSchema accepts video media type", () => {
   assert.equal(parsed.mediaType, "video");
 });
 
+test("productInputSchema defaults products to published", () => {
+  const parsed = productInputSchema.parse({
+    ...baseProductInput,
+    mediaType: "image",
+  });
+
+  assert.equal(parsed.publicationStatus, "published");
+});
+
+test("productInputSchema accepts draft publication status", () => {
+  const parsed = productInputSchema.parse({
+    ...baseProductInput,
+    mediaType: "image",
+    publicationStatus: "draft",
+  });
+
+  assert.equal(parsed.publicationStatus, "draft");
+});
+
 test("productInputSchema rejects unsupported media type", () => {
   const result = productInputSchema.safeParse({
     ...baseProductInput,

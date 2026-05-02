@@ -18,6 +18,11 @@ enum StockStatus {
   Terbatas
 }
 
+enum PublicationStatus {
+  draft
+  published
+}
+
 model User {
   id           String    @id @default(cuid())
   name         String
@@ -44,6 +49,7 @@ model Product {
   periodeProduksi   String      @map("periode_produksi")
   harga             Int
   stockStatus       StockStatus @default(Ready) @map("stock_status")
+  publicationStatus PublicationStatus @default(published) @map("publication_status")
   material          String      @default("-")
   sizes             String[]    @default([])
   colors            String[]    @default([])
@@ -59,6 +65,7 @@ model Product {
   @@index([category])
   @@index([categoryId])
   @@index([kodeProduksi])
+  @@index([publicationStatus])
   @@map("products")
 }
 

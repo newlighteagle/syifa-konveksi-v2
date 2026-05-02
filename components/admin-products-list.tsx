@@ -69,6 +69,7 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
           product.description,
           product.kodeProduksi,
           product.stockStatus,
+          product.publicationStatus,
           product.material,
           product.sizes.join(" "),
           product.colors.join(" "),
@@ -576,6 +577,7 @@ function ProductListItem({
         <span className="flex flex-wrap items-center gap-1.5">
           <Badge>{product.category}</Badge>
           <Badge variant="secondary">{product.stockStatus}</Badge>
+          <PublicationBadge status={product.publicationStatus} />
         </span>
         <span className="mt-1 block truncate text-sm font-bold text-slate-950">
           {product.name}
@@ -636,6 +638,7 @@ function ProductCardItem({
         <span className="flex flex-wrap items-center gap-1.5">
           <Badge>{product.category}</Badge>
           <Badge variant="secondary">{product.stockStatus}</Badge>
+          <PublicationBadge status={product.publicationStatus} />
         </span>
         <span className="mt-1 line-clamp-1 block text-sm font-bold leading-5 text-slate-950">
           {product.name}
@@ -688,6 +691,14 @@ function ProductQuickActions({
   );
 }
 
+function PublicationBadge({ status }: { status: Product["publicationStatus"] }) {
+  return (
+    <Badge variant={status === "published" ? "success" : "outline"}>
+      {status === "published" ? "Published" : "Draft"}
+    </Badge>
+  );
+}
+
 function ProductDetailPanel({
   product,
   deleting,
@@ -715,6 +726,7 @@ function ProductDetailPanel({
             <div className="flex flex-wrap items-center gap-1.5">
               <Badge>{product.category}</Badge>
               <Badge variant="secondary">{product.stockStatus}</Badge>
+              <PublicationBadge status={product.publicationStatus} />
             </div>
             <h2 className="mt-1.5 line-clamp-2 text-base font-extrabold leading-5 text-slate-950">
               {product.name}

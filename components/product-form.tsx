@@ -104,6 +104,7 @@ export function ProductForm({
         periodeProduksi: month && year ? `${month}-${year}` : monthValue,
         harga: formData.get("harga"),
         stockStatus: formData.get("stockStatus"),
+        publicationStatus: formData.get("publicationStatus"),
         material: formData.get("material"),
         sizes: String(formData.get("sizes") ?? "")
           .split(",")
@@ -214,8 +215,14 @@ export function ProductForm({
           error={fieldErrors.harga?.[0]}
         />
       </div>
-      <div className="grid gap-5 md:grid-cols-2">
-        <SelectField label="Status" id="stockStatus" options={["Ready", "Preorder", "Terbatas"]} defaultValue={product?.stockStatus} />
+      <div className="grid gap-5 md:grid-cols-3">
+        <SelectField label="Stok" id="stockStatus" options={["Ready", "Preorder", "Terbatas"]} defaultValue={product?.stockStatus} />
+        <SelectField
+          label="Publikasi"
+          id="publicationStatus"
+          options={["published", "draft"]}
+          defaultValue={product?.publicationStatus ?? "published"}
+        />
         <Field
           label="Material"
           id="material"

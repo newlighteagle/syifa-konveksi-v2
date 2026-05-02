@@ -10,6 +10,7 @@ export type Product = {
   periodeProduksi: string;
   harga: number;
   stockStatus: "Ready" | "Preorder" | "Terbatas";
+  publicationStatus: "draft" | "published";
   material: string;
   sizes: string[];
   colors: string[];
@@ -34,6 +35,7 @@ export const products: Product[] = [
     periodeProduksi: "05-2024",
     harga: 150000,
     stockStatus: "Ready",
+    publicationStatus: "published",
     material: "Toyobo premium",
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: ["Sky Blue", "Navy", "Mauve"],
@@ -54,6 +56,7 @@ export const products: Product[] = [
     periodeProduksi: "06-2024",
     harga: 120000,
     stockStatus: "Preorder",
+    publicationStatus: "published",
     material: "Oxford cotton blend",
     sizes: ["M", "L", "XL", "XXL"],
     colors: ["Putih", "Abu Slate", "Biru"],
@@ -74,6 +77,7 @@ export const products: Product[] = [
     periodeProduksi: "04-2024",
     harga: 55000,
     stockStatus: "Ready",
+    publicationStatus: "published",
     material: "Cotton combed 30s",
     sizes: ["S", "M", "L", "XL"],
     colors: ["Putih", "Hitam", "Sage"],
@@ -94,6 +98,7 @@ export const products: Product[] = [
     periodeProduksi: "07-2024",
     harga: 98000,
     stockStatus: "Terbatas",
+    publicationStatus: "published",
     material: "Tropical drill",
     sizes: ["XS", "S", "M", "L"],
     colors: ["Biru Muda", "Merah", "Hijau"],
@@ -114,6 +119,7 @@ export const products: Product[] = [
     periodeProduksi: "08-2024",
     harga: 135000,
     stockStatus: "Ready",
+    publicationStatus: "published",
     material: "Linen rayon",
     sizes: ["All Size", "XL"],
     colors: ["Cream", "Denim", "Terracotta"],
@@ -134,6 +140,7 @@ export const products: Product[] = [
     periodeProduksi: "09-2024",
     harga: 89000,
     stockStatus: "Preorder",
+    publicationStatus: "published",
     material: "Canvas drill",
     sizes: ["M", "L", "XL", "XXL"],
     colors: ["Navy", "Khaki", "Hitam"],

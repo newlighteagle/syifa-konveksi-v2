@@ -17,7 +17,7 @@ export default async function EditProductPage({
 }) {
   const { slug } = await params;
   const [product, categories, colors] = await Promise.all([
-    getProductBySlug(slug),
+    getProductBySlug(slug, { includeDrafts: true }),
     listCategoryOptions(),
     listColorOptions(),
   ]);

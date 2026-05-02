@@ -14,6 +14,7 @@ export const productInputSchema = z.object({
     .regex(/^\d{2}-\d{4}$/, "Periode produksi wajib dipilih."),
   harga: z.coerce.number().int().positive("Harga harus lebih dari 0."),
   stockStatus: z.enum(["Ready", "Preorder", "Terbatas"]).default("Ready"),
+  publicationStatus: z.enum(["draft", "published"]).default("published"),
   material: z.string().trim().min(1).default("-"),
   sizes: z.array(z.string().trim().min(1)).default([]),
   colors: z.array(z.string().trim().min(1)).default([]),
