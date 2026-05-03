@@ -1,13 +1,29 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Search, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { RotateCcw, Search, Send, Sparkles } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/product-card";
+import {
+  CATALOG_SORT_OPTIONS,
+  DEFAULT_CATALOG_CATEGORY,
+  DEFAULT_CATALOG_SORT,
+  type CatalogFilterState,
+  type CatalogSortValue,
+  buildCatalogSearchParams,
+  filterAndSortProducts,
+  parseCatalogSearchParams,
+} from "@/lib/catalog-filters";
 import type { Product } from "@/lib/products";
+import {
+  buildGeneralContactMessage,
+  buildWhatsAppUrl,
+  getBusinessWhatsAppNumber,
+} from "@/lib/whatsapp";
 
 export function CatalogPage({
   initialProducts,
@@ -16,30 +32,63 @@ export function CatalogPage({
   initialProducts: Product[];
   categories: string[];
 }) {
-  const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("Semua");
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const searchParamsSnapshot = searchParams.toString();
+  const filters = useMemo(
+    () => parseCatalogSearchParams(new URLSearchParams(searchParamsSnapshot)),
+    [searchParamsSnapshot],
+  );
+  const [draftQuery, setDraftQuery] = useState(filters.query);
+  const whatsappUrl = buildWhatsAppUrl({
+    phoneNumber: getBusinessWhatsAppNumber(),
+    message: buildGeneralContactMessage(),
+  });
 
   const filteredProducts = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+    return filterAndSortProducts(initialProducts, filters);
+  }, [filters, initialProducts]);
 
-    return initialProducts.filter((product) => {
-      const matchesCategory =
-        category === "Semua" || product.category === category;
-      const matchesQuery =
-        !normalizedQuery ||
-        [
-          product.name,
-          product.category,
-          product.description,
-          product.kodeProduksi,
-        ]
-          .join(" ")
-          .toLowerCase()
-          .includes(normalizedQuery);
+  useEffect(() => {
+    setDraftQuery(filters.query);
+  }, [filters.query]);
 
-      return matchesCategory && matchesQuery;
+  const hasActiveFilters =
+    filters.query !== "" ||
+    filters.category !== DEFAULT_CATALOG_CATEGORY ||
+    filters.sort !== DEFAULT_CATALOG_SORT;
+
+  function updateFilters(nextFilters: CatalogFilterState) {
+    const nextSearchParams = buildCatalogSearchParams(nextFilters);
+    const nextUrl = nextSearchParams.toString()
+      ? `${pathname}?${nextSearchParams.toString()}`
+      : pathname;
+
+    router.replace(nextUrl, { scroll: false });
+  }
+
+  function updateQuery(nextQuery: string) {
+    setDraftQuery(nextQuery);
+    updateFilters({ ...filters, query: nextQuery });
+  }
+
+  function updateCategory(nextCategory: string) {
+    updateFilters({ ...filters, category: nextCategory });
+  }
+
+  function updateSort(nextSort: CatalogSortValue) {
+    updateFilters({ ...filters, sort: nextSort });
+  }
+
+  function resetFilters() {
+    setDraftQuery("");
+    updateFilters({
+      query: "",
+      category: DEFAULT_CATALOG_CATEGORY,
+      sort: DEFAULT_CATALOG_SORT,
     });
-  }, [category, initialProducts, query]);
+  }
 
   return (
     <>
@@ -58,44 +107,95 @@ export function CatalogPage({
         <div className="mx-auto mt-10 flex max-w-2xl items-center gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-airy">
           <Search className="ml-3 size-5 shrink-0 text-slate-400" />
           <Input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            value={draftQuery}
+            onChange={(event) => updateQuery(event.target.value)}
             className="border-0 bg-transparent text-base focus-visible:ring-0"
             placeholder="Cari nama produk, kategori, atau kode produksi..."
           />
-          <Button className="hidden sm:inline-flex">Cari</Button>
+          <Button className="hidden sm:inline-flex" aria-label="Cari produk">
+            Cari
+          </Button>
         </div>
       </section>
 
       <section id="koleksi" className="container pb-16">
-        <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-sky-700">Koleksi Produk</p>
             <h2 className="mt-2 text-2xl font-bold text-slate-950 sm:text-3xl">
               {filteredProducts.length} produk ditemukan
             </h2>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((item) => (
-              <button
-                key={item}
-                onClick={() => setCategory(item)}
-                className={
-                  item === category
-                    ? "rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-soft"
-                    : "rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-700"
-                }
+          <div className="flex flex-col gap-3 lg:items-end">
+            <label className="flex items-center gap-3 text-sm font-semibold text-slate-600">
+              Urutkan
+              <select
+                value={filters.sort}
+                onChange={(event) => updateSort(event.target.value as CatalogSortValue)}
+                className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition hover:border-sky-300 focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
               >
-                {item}
-              </button>
-            ))}
+                {CATALOG_SORT_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((item) => (
+                <button
+                  key={item}
+                  onClick={() => updateCategory(item)}
+                  className={
+                    item === filters.category
+                      ? "rounded-full bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-soft"
+                      : "rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-sky-200 hover:text-sky-700"
+                  }
+                >
+                  {item}
+                </button>
+              ))}
+              {hasActiveFilters ? (
+                <Button variant="ghost" size="sm" onClick={resetFilters}>
+                  <RotateCcw />
+                  Reset
+                </Button>
+              ) : null}
+            </div>
           </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {filteredProducts.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-dashed border-slate-200 bg-white p-8 text-center shadow-soft">
+            <p className="text-sm font-semibold text-sky-700">Produk belum ditemukan</p>
+            <h3 className="mt-2 text-2xl font-bold text-slate-950">
+              Coba kata kunci atau kategori lain.
+            </h3>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
+              Tidak ada produk yang cocok dengan filter saat ini. Tim Syifa Konveksi tetap bisa
+              bantu cek model, bahan, ukuran, dan kebutuhan custom.
+            </p>
+            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+              <Button variant="secondary" onClick={resetFilters}>
+                <RotateCcw />
+                Reset filter
+              </Button>
+              {whatsappUrl ? (
+                <Button asChild>
+                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                    <Send />
+                    Konsultasi WhatsApp
+                  </a>
+                </Button>
+              ) : null}
+            </div>
+          </div>
+        )}
       </section>
     </>
   );

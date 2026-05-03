@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { BusinessContactSection } from "@/components/business-contact-section";
 import { CatalogPage } from "@/components/catalog-page";
 import { FloatingWhatsAppButton } from "@/components/floating-whatsapp-button";
@@ -19,7 +21,9 @@ export default async function Home() {
       />
       <SiteHeader />
       <SiteVisitTracker />
-      <CatalogPage initialProducts={products} categories={categories} />
+      <Suspense>
+        <CatalogPage initialProducts={products} categories={categories} />
+      </Suspense>
       <BusinessContactSection />
       <FloatingWhatsAppButton />
     </main>
