@@ -1,15 +1,18 @@
 # Syifa Konveksi v2
 
-Syifa Konveksi v2 adalah aplikasi katalog digital untuk menampilkan produk konveksi secara publik dan mengelola produk melalui admin portal. Development project ini sekarang berbasis GitHub Issues: setiap perubahan fitur/bugfix harus dimulai dari issue, dikerjakan satu per satu, lalu menunggu approval sebelum lanjut ke issue berikutnya.
+Syifa Konveksi v2 adalah aplikasi katalog digital untuk menampilkan produk konveksi secara publik dan mengelola produk melalui admin portal. Project ini dikerjakan berbasis GitHub Issues: setiap perubahan fitur, bugfix, dan dokumentasi harus dimulai dari issue yang jelas, dikerjakan satu per satu, lalu diverifikasi sebelum push.
 
 Production: https://www.syifakonveksi.my.id
 
 ## Features
 
-- Public product catalog with category/search filtering.
-- Product detail view counter.
-- Site visitor counter for total visits and unique public IP visitors, shown in the admin dashboard.
+- Public product catalog with category and search filtering.
+- Product detail page with view counter, share button, and WhatsApp inquiry flow.
+- Site visitor counter for total visits and unique public IP visitors.
+- Inquiry tracking for product WhatsApp CTA clicks.
+- Admin dashboard for catalog, visitor, view, inquiry, publication, and stock metrics.
 - Admin product management with publication status, category, color, stock status, and media controls.
+- Admin category and color management screens.
 
 ## Tech Stack
 
@@ -17,12 +20,14 @@ Production: https://www.syifakonveksi.my.id
 - UI: React 19, Tailwind CSS, lucide-react
 - Backend: Next.js Route Handlers
 - Database: PostgreSQL via Prisma ORM
-- Auth: JWT session cookie dengan `jose` dan password hashing `bcryptjs`
+- Auth: JWT session cookie with `jose` and password hashing with `bcryptjs`
 - Validation: Zod
 - Deployment: Vercel
 - Package manager: npm
 
-## Development
+## Quick Start
+
+Install dependencies and run the local dev server:
 
 ```bash
 npm install
@@ -34,21 +39,34 @@ Open `http://localhost:3000`.
 Useful commands:
 
 ```bash
+npm test
 npm run build
 npm run db:generate
 npm run db:push
 npm run db:seed
 ```
 
+## Environment Variables
+
 Create `.env` from `.env.example`, then set the required values.
 
 - `DATABASE_URL`: PostgreSQL connection string. Without this, public catalog uses mock read-only products.
-- `AUTH_SECRET`: required for production session signing. Production will fail with an explicit error when this value is empty; development can use the built-in fallback.
+- `AUTH_SECRET`: required for production session signing. Production fails with an explicit error when this value is empty; development can use the built-in fallback.
 - `NEXT_PUBLIC_WHATSAPP_NUMBER`: business WhatsApp number for product inquiries, for example `+62 852-4176-7460`.
 - `SEED_ADMIN_EMAIL`: seeded admin email.
 - `SEED_ADMIN_PASSWORD`: seeded admin password.
 
-After schema changes, run `npm run db:push` against the target database before deploying. The visitor dashboard metrics require the `site_visitors` table, inquiry tracking requires the `products.inquiries` column, and product publication status requires the `products.publication_status` column.
+## Database Notes
+
+After schema changes, run `npm run db:push` against the target database before deploying.
+
+Schema-backed MVP features:
+
+- Visitor dashboard metrics require the `site_visitors` table.
+- Product inquiry tracking requires the `products.inquiries` column.
+- Product publication status requires the `products.publication_status` column.
+
+Production data changes must preserve existing seeded products unless an issue explicitly says otherwise.
 
 ## Product Media Workflow
 
@@ -91,16 +109,44 @@ Jika preview media tidak tampil, buka URL di tab browser baru. URL yang benar un
 - `app/`: App Router pages, layouts, and API route handlers.
 - `components/`: reusable UI and feature components.
 - `components/ui/`: small primitive UI components.
-- `lib/`: shared business logic, validation, auth, Prisma, helpers.
+- `lib/`: shared business logic, validation, auth, Prisma, media, share, visitor, and WhatsApp helpers.
 - `prisma/`: Prisma schema and seed script.
 - `public/`: static assets such as logo files.
+- `tests/`: Node test runner test files.
 
 Removed legacy prototype artifacts:
 
 - `prd.md`
 - `sample_frontend/`
 
-## Naming Standards
+## Current API Routes
+
+Public and product routes:
+
+- `GET /api/products`
+- `POST /api/products`
+- `GET /api/products/:slug`
+- `PUT /api/products/:slug`
+- `DELETE /api/products/:slug`
+- `GET /api/products/:slug/inquiries`
+- `POST /api/products/:slug/inquiries`
+
+Admin option routes:
+
+- `GET /api/categories`
+- `POST /api/categories`
+- `DELETE /api/categories/:id`
+- `GET /api/colors`
+- `POST /api/colors`
+- `DELETE /api/colors/:id`
+
+Auth routes:
+
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+
+## Coding Standards
 
 Folders and files:
 
@@ -132,44 +178,19 @@ Database and domain:
 - Prisma model fields use camelCase in code and `@map` for snake_case database column names when needed.
 - Product public identifiers use `slug`; display code uses `kodeProduksi`.
 - Product prices are stored as integer Rupiah.
-- Production data changes must preserve existing seeded products unless an issue explicitly says otherwise.
+- Public catalog and detail pages should only expose products with `publicationStatus: "published"`.
+- Admin product pages can show both `draft` and `published` products.
 
-## Current API Routes
-
-- `GET /api/products`
-- `POST /api/products`
-- `GET /api/products/:slug`
-- `PUT /api/products/:slug`
-- `DELETE /api/products/:slug`
-- `GET /api/categories`
-- `POST /api/categories`
-- `DELETE /api/categories/:id`
-- `GET /api/colors`
-- `POST /api/colors`
-- `DELETE /api/colors/:id`
-- `POST /api/auth/login`
-- `POST /api/auth/logout`
-- `GET /api/auth/me`
-
-## Issue-Based Workflow
+## GitHub Issue Workflow
 
 Selama MVP ini sampai milestone 3 selesai, development hanya menggunakan branch `main`. Jangan membuat branch fitur, branch eksperimen, atau branch PR terpisah kecuali project owner mengubah aturan ini secara eksplisit.
 
 1. Pick one approved GitHub issue.
 2. Implement only the scope described in that issue.
-3. Run at minimum `npm run build`.
-4. Report changed files, verification result, and any follow-up risk.
-5. Wait for approval before starting the next issue.
-
-### Solved Issue Workflow
-
-Use this workflow for every issue implementation:
-
-1. Develop the solution locally from the approved issue scope.
-2. Run QA/QC and unit tests locally. At minimum run `npm test` when tests exist and `npm run build`.
-3. Send a report to the project owner with changed files, test results, QA notes, and any known risk.
-4. If the project owner requests revisions, apply the revisions locally and repeat QA/QC.
-5. If there are no revision requests and the project owner approves, push the finished change to GitHub.
+3. Run QA/QC and unit tests locally. At minimum run `npm test` when tests exist and `npm run build`.
+4. Report changed files, verification result, QA notes, and any follow-up risk.
+5. Wait for project owner approval before pushing to GitHub.
+6. If approved, push the finished change to `main`.
 
 Do not push or deploy before project owner approval.
 
@@ -179,9 +200,9 @@ Priority order:
 - `priority:P1`: high-value MVP readiness.
 - `priority:P2`: polish, docs, admin operations, or next-layer capabilities.
 
-## Milestone and Issue Status
+## Milestones and Issue Status
 
-Last synced from GitHub Issues: after completing issue #17.
+Last synced from GitHub Issues: after creating issues #18-#23.
 
 ### MVP Stabilization
 
@@ -201,6 +222,8 @@ Milestone result: complete and closed.
 
 Status: 5 closed / 0 open
 
+Milestone result: complete and closed.
+
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
 | [#6](https://github.com/newlighteagle/syifa-konveksi-v2/issues/6) | P0 | Closed | Connect Tanya Produk button to WhatsApp |
@@ -213,6 +236,8 @@ Status: 5 closed / 0 open
 
 Status: 6 closed / 0 open
 
+Milestone result: complete. GitHub milestone is still open unless project owner closes it.
+
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
 | [#11](https://github.com/newlighteagle/syifa-konveksi-v2/issues/11) | P1 | Closed | Allow choosing image or video as main media |
@@ -221,6 +246,19 @@ Status: 6 closed / 0 open
 | [#14](https://github.com/newlighteagle/syifa-konveksi-v2/issues/14) | P2 | Closed | Improve delete confirmation with safer modal |
 | [#15](https://github.com/newlighteagle/syifa-konveksi-v2/issues/15) | P2 | Closed | Add draft published product status |
 | [#17](https://github.com/newlighteagle/syifa-konveksi-v2/issues/17) | P2 | Closed | Make admin dashboard more compact and clean |
+
+### MVP Growth & Performance
+
+Status: 0 closed / 6 open
+
+| Issue | Priority | Status | Title |
+| --- | --- | --- | --- |
+| [#18](https://github.com/newlighteagle/syifa-konveksi-v2/issues/18) | P1 | Open | Improve SEO metadata, structured data, sitemap, and robots |
+| [#19](https://github.com/newlighteagle/syifa-konveksi-v2/issues/19) | P1 | Open | Improve product detail conversion and WhatsApp CTA |
+| [#20](https://github.com/newlighteagle/syifa-konveksi-v2/issues/20) | P1 | Open | Improve homepage performance and media loading |
+| [#21](https://github.com/newlighteagle/syifa-konveksi-v2/issues/21) | P2 | Open | Make public catalog filters shareable and add sorting |
+| [#22](https://github.com/newlighteagle/syifa-konveksi-v2/issues/22) | P2 | Open | Add actionable admin dashboard insights |
+| [#23](https://github.com/newlighteagle/syifa-konveksi-v2/issues/23) | P2 | Open | Add bulk publish actions and CSV export for products |
 
 ## Manual QA Checklist
 
@@ -244,10 +282,13 @@ Setup:
 Regression steps:
 
 - Admin login: open `/admin`, sign in with `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`, and confirm the admin dashboard loads.
-- Public catalog: open `/`, confirm products load, category filters work, and keyword search narrows the product list.
-- Public detail: open a product from the catalog, confirm media renders, product information is visible, view count appears, and missing size/color/gallery data has a clean empty state.
+- Public catalog: open `/`, confirm published products load, category filters work, and keyword search narrows the product list.
+- Public detail: open a published product from the catalog, confirm media renders, product information is visible, view count appears, and missing size/color/gallery data has a clean empty state.
+- Product inquiry: click `Tanya Produk`, confirm WhatsApp opens and inquiry tracking does not block redirect.
 - Admin search/filter: open `/admin/products`, search by product name or production code, filter by category, and confirm the list updates without leaving the page.
-- Create product: click add product, fill required fields with a unique product name and production code, save it, and confirm it appears in the admin product list and public catalog.
-- Edit product: open the created product in edit mode, change price, stock status, publication status, sizes, colors, and media type, save it, then confirm published products appear publicly while draft products stay hidden from the public catalog.
+- Create product: click add product, fill required fields with a unique product name and production code, save it, and confirm it appears in the admin product list.
+- Publication status: set a product to `draft`, confirm it stays visible in admin and is hidden from the public catalog/detail route; set it back to `published` and confirm it appears publicly.
+- Edit product: open the created product in edit mode, change price, stock status, publication status, sizes, colors, and media type, save it, then confirm the updated values appear in admin and public detail views when published.
+- Category/color management: open `/admin/categories` and `/admin/colors`, create a temporary option, confirm it appears in product form options, then delete it if unused.
 - Delete product: delete only the QA product created during this checklist and confirm it no longer appears in admin or public catalog.
 - Build check: run `npm test` and `npm run build`; both should finish successfully.
