@@ -1,19 +1,31 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import type React from "react";
-import { ArrowLeft, Calendar, CheckCircle2, MessageCircle, Shirt, Tag } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  CheckCircle2,
+  Clock3,
+  MessageCircle,
+  PackageCheck,
+  Palette,
+  Shirt,
+  Tag,
+  Truck,
+} from "lucide-react";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
-import { FloatingWhatsAppButton } from "@/components/floating-whatsapp-button";
+import { ProductCard } from "@/components/product-card";
 import { ProductDetailMedia, ProductCardMedia } from "@/components/product-media";
 import { ProductShareButton } from "@/components/product-share-button";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getProductBySlug, incrementProductViews } from "@/lib/product-service";
+import { getProductBySlug, incrementProductViews, listProducts } from "@/lib/product-service";
 import { products } from "@/lib/products";
+import { getRelatedProducts } from "@/lib/related-products";
 import {
   buildProductBreadcrumbJsonLd,
   buildProductJsonLd,
@@ -104,6 +116,10 @@ export default async function ProductDetailPage({
   const galleryMedia = product.galleryUrls.filter(Boolean);
   const productUrl = getProductUrl(requestHeaders, product.id);
   const canonicalProductUrl = getCanonicalUrl(`/products/${product.id}`);
+  const relatedProducts = getRelatedProducts({
+    currentProduct: product,
+    products: await listProducts({ category: product.category }),
+  });
   const shareData = buildProductShareData({
     name: product.name,
     kodeProduksi: product.kodeProduksi,
@@ -118,9 +134,10 @@ export default async function ProductDetailPage({
       url: productUrl,
     }),
   });
+  const inquiryTrackingUrl = whatsappUrl ? getInquiryTrackingUrl(product.id, whatsappUrl) : null;
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background pb-28 sm:pb-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -223,11 +240,34 @@ export default async function ProductDetailPage({
               )}
             </div>
 
+            <div className="grid gap-3 sm:grid-cols-2">
+              <ConversionInfoItem
+                icon={<PackageCheck />}
+                label="Minimal order"
+                value="Bisa konsultasi jumlah kebutuhan"
+              />
+              <ConversionInfoItem
+                icon={<Clock3 />}
+                label="Estimasi produksi"
+                value="Estimasi menyesuaikan model dan jumlah"
+              />
+              <ConversionInfoItem
+                icon={<Palette />}
+                label="Custom produk"
+                value="Bisa custom bahan, warna, ukuran, bordir/sablon logo"
+              />
+              <ConversionInfoItem
+                icon={<Truck />}
+                label="Pengiriman"
+                value="Pengiriman menyesuaikan alamat pemesan"
+              />
+            </div>
+
             <div className="flex flex-col gap-3 sm:flex-row">
-              {whatsappUrl ? (
+              {inquiryTrackingUrl ? (
                 <Button asChild className="flex-1">
                   <a
-                    href={getInquiryTrackingUrl(product.id, whatsappUrl)}
+                    href={inquiryTrackingUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -245,8 +285,38 @@ export default async function ProductDetailPage({
             </div>
           </section>
         </div>
+
+        {relatedProducts.length > 0 ? (
+          <section className="mt-14 border-t border-slate-200 pt-10">
+            <div className="mb-6">
+              <p className="text-sm font-semibold text-sky-700">Produk terkait</p>
+              <h2 className="mt-2 text-2xl font-bold text-slate-950">
+                Pilihan lain di kategori {product.category}
+              </h2>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {relatedProducts.map((relatedProduct) => (
+                <ProductCard key={relatedProduct.id} product={relatedProduct} />
+              ))}
+            </div>
+          </section>
+        ) : null}
       </div>
-      <FloatingWhatsAppButton />
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 p-4 shadow-[0_-12px_30px_rgba(15,23,42,0.12)] backdrop-blur sm:hidden">
+        {inquiryTrackingUrl ? (
+          <Button asChild size="lg" className="w-full">
+            <a href={inquiryTrackingUrl} target="_blank" rel="noopener noreferrer">
+              <MessageCircle />
+              Tanya Produk
+            </a>
+          </Button>
+        ) : (
+          <Button size="lg" className="w-full" disabled title="Nomor WhatsApp belum diset">
+            <MessageCircle />
+            WhatsApp belum diset
+          </Button>
+        )}
+      </div>
     </main>
   );
 }
@@ -276,6 +346,26 @@ function EmptyAttribute({ message }: { message: string }) {
     <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-500">
       {message}
     </p>
+  );
+}
+
+function ConversionInfoItem({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+      <span className="mt-0.5 text-sky-700 [&_svg]:size-5">{icon}</span>
+      <div>
+        <p className="text-xs font-semibold text-slate-500">{label}</p>
+        <p className="mt-1 text-sm font-semibold leading-6 text-slate-950">{value}</p>
+      </div>
+    </div>
   );
 }
 

@@ -45,6 +45,8 @@ test("buildProductInquiryMessage includes product details", () => {
   assert.match(message, /Kode produksi: SKU-001/);
   assert.match(message, /Harga: Rp 80\.000/);
   assert.match(message, /Link produk: https:\/\/www\.syifakonveksi\.my\.id\/products\/baju-tani/);
+  assert.match(message, /konsultasi produk/);
+  assert.match(message, /jumlah, ukuran, dan custom/);
 });
 
 test("buildGeneralContactMessage asks for a general consultation", () => {

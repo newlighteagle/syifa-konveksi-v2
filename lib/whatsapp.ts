@@ -32,7 +32,7 @@ export function buildProductInquiryMessage({
   url,
 }: ProductInquiryMessageInput) {
   return [
-    "Halo Syifa Konveksi, saya mau tanya produk:",
+    "Halo Syifa Konveksi, saya mau konsultasi produk untuk kebutuhan jumlah, ukuran, dan custom.",
     `Nama: ${name}`,
     `Kode produksi: ${kodeProduksi}`,
     `Harga: ${harga}`,
