@@ -11,7 +11,7 @@ Production: https://www.syifakonveksi.my.id
 - Site visitor counter for total visits and unique public IP visitors, tracked after page load.
 - Inquiry tracking for product WhatsApp CTA clicks.
 - SEO metadata, structured data, sitemap, and robots rules for public pages.
-- Admin dashboard for catalog, visitor, view, inquiry, publication, and stock metrics.
+- Admin dashboard for catalog, visitor, view, inquiry, publication, stock metrics, and actionable insights.
 - Admin product management with publication status, category, color, stock status, and media controls.
 - Admin category and color management screens.
 
@@ -204,7 +204,7 @@ Priority order:
 
 ## Milestones and Issue Status
 
-Last synced from GitHub Issues: after solving issue #21.
+Last synced from GitHub Issues: after solving issue #22.
 
 ### MVP Stabilization
 
@@ -251,7 +251,7 @@ Milestone result: complete. GitHub milestone is still open unless project owner 
 
 ### MVP Growth & Performance
 
-Status: 4 closed / 2 open
+Status: 5 closed / 1 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
@@ -259,7 +259,7 @@ Status: 4 closed / 2 open
 | [#19](https://github.com/newlighteagle/syifa-konveksi-v2/issues/19) | P1 | Closed | Improve product detail conversion and WhatsApp CTA |
 | [#20](https://github.com/newlighteagle/syifa-konveksi-v2/issues/20) | P1 | Closed | Improve homepage performance and media loading |
 | [#21](https://github.com/newlighteagle/syifa-konveksi-v2/issues/21) | P2 | Closed | Make public catalog filters shareable and add sorting |
-| [#22](https://github.com/newlighteagle/syifa-konveksi-v2/issues/22) | P2 | Open | Add actionable admin dashboard insights |
+| [#22](https://github.com/newlighteagle/syifa-konveksi-v2/issues/22) | P2 | Closed | Add actionable admin dashboard insights |
 | [#23](https://github.com/newlighteagle/syifa-konveksi-v2/issues/23) | P2 | Open | Add bulk publish actions and CSV export for products |
 
 ## Manual QA Checklist
