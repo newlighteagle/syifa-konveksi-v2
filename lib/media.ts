@@ -53,6 +53,18 @@ export function getYoutubeEmbedUrl(url: string) {
   }
 }
 
+export function getEmbeddedMediaProvider(url: string) {
+  if (getInstagramEmbedUrl(url)) {
+    return "Instagram";
+  }
+
+  if (getYoutubeEmbedUrl(url)) {
+    return "YouTube";
+  }
+
+  return null;
+}
+
 export function isDirectVideoUrl(url: string) {
   return /\.(mp4|webm|ogg)(\?.*)?$/i.test(url);
 }

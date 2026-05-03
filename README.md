@@ -6,9 +6,9 @@ Production: https://www.syifakonveksi.my.id
 
 ## Features
 
-- Public product catalog with category and search filtering.
+- Public product catalog with category, search filtering, and lighter media previews.
 - Product detail page with view counter, share button, related products, and stronger WhatsApp inquiry flow.
-- Site visitor counter for total visits and unique public IP visitors.
+- Site visitor counter for total visits and unique public IP visitors, tracked after page load.
 - Inquiry tracking for product WhatsApp CTA clicks.
 - SEO metadata, structured data, sitemap, and robots rules for public pages.
 - Admin dashboard for catalog, visitor, view, inquiry, publication, and stock metrics.
@@ -124,6 +124,7 @@ Removed legacy prototype artifacts:
 
 Public and product routes:
 
+- `POST /api/visits`
 - `GET /api/products`
 - `POST /api/products`
 - `GET /api/products/:slug`
@@ -203,7 +204,7 @@ Priority order:
 
 ## Milestones and Issue Status
 
-Last synced from GitHub Issues: after solving issue #19.
+Last synced from GitHub Issues: after solving issue #20.
 
 ### MVP Stabilization
 
@@ -250,13 +251,13 @@ Milestone result: complete. GitHub milestone is still open unless project owner 
 
 ### MVP Growth & Performance
 
-Status: 2 closed / 4 open
+Status: 3 closed / 3 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
 | [#18](https://github.com/newlighteagle/syifa-konveksi-v2/issues/18) | P1 | Closed | Improve SEO metadata, structured data, sitemap, and robots |
 | [#19](https://github.com/newlighteagle/syifa-konveksi-v2/issues/19) | P1 | Closed | Improve product detail conversion and WhatsApp CTA |
-| [#20](https://github.com/newlighteagle/syifa-konveksi-v2/issues/20) | P1 | Open | Improve homepage performance and media loading |
+| [#20](https://github.com/newlighteagle/syifa-konveksi-v2/issues/20) | P1 | Closed | Improve homepage performance and media loading |
 | [#21](https://github.com/newlighteagle/syifa-konveksi-v2/issues/21) | P2 | Open | Make public catalog filters shareable and add sorting |
 | [#22](https://github.com/newlighteagle/syifa-konveksi-v2/issues/22) | P2 | Open | Add actionable admin dashboard insights |
 | [#23](https://github.com/newlighteagle/syifa-konveksi-v2/issues/23) | P2 | Open | Add bulk publish actions and CSV export for products |

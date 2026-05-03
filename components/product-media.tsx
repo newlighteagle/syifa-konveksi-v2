@@ -2,6 +2,7 @@ import { ExternalLink, PlayCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
+  getEmbeddedMediaProvider,
   getInstagramEmbedUrl,
   getYoutubeEmbedUrl,
   isDirectImageUrl,
@@ -16,25 +17,23 @@ type ProductMediaProps = {
 };
 
 export function ProductCardMedia({ name, mediaType, mediaUrl }: ProductMediaProps) {
-  const instagramEmbedUrl = getInstagramEmbedUrl(mediaUrl);
-  const youtubeEmbedUrl = getYoutubeEmbedUrl(mediaUrl);
+  const embeddedMediaProvider = getEmbeddedMediaProvider(mediaUrl);
 
-  if (instagramEmbedUrl || youtubeEmbedUrl) {
+  if (embeddedMediaProvider) {
     return (
-      <iframe
-        src={instagramEmbedUrl ?? youtubeEmbedUrl ?? ""}
-        title={`Preview ${name}`}
-        className="h-full w-full border-0"
-        loading="lazy"
-        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-        allowFullScreen
-      />
+      <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-sky-50 via-white to-cyan-50 p-6 text-center">
+        <span className="flex size-16 items-center justify-center rounded-full bg-white text-sky-700 shadow-airy">
+          <PlayCircle className="size-8" />
+        </span>
+        <p className="mt-4 text-sm font-bold text-slate-950">{embeddedMediaProvider} produk</p>
+        <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">{name}</p>
+      </div>
     );
   }
 
   if (mediaType === "video" && isDirectVideoUrl(mediaUrl)) {
     return (
-      <video className="h-full w-full object-cover" controls muted playsInline preload="metadata">
+      <video className="h-full w-full object-cover" muted playsInline preload="none">
         <source src={mediaUrl} />
       </video>
     );
@@ -46,6 +45,7 @@ export function ProductCardMedia({ name, mediaType, mediaUrl }: ProductMediaProp
         src={mediaUrl}
         alt={name}
         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        loading="lazy"
       />
     );
   }

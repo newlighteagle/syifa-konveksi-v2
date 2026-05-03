@@ -1,19 +1,14 @@
-import { headers } from "next/headers";
-
 import { BusinessContactSection } from "@/components/business-contact-section";
 import { CatalogPage } from "@/components/catalog-page";
 import { FloatingWhatsAppButton } from "@/components/floating-whatsapp-button";
+import { SiteVisitTracker } from "@/components/site-visit-tracker";
 import { SiteHeader } from "@/components/site-header";
 import { listCategories, listProducts } from "@/lib/product-service";
 import { buildOrganizationJsonLd } from "@/lib/seo";
-import { getPublicIpFromHeaders, recordSiteVisit } from "@/lib/visitor-service";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function Home() {
-  const requestHeaders = await headers();
-  await recordSiteVisit(getPublicIpFromHeaders(requestHeaders));
-
   const [products, categories] = await Promise.all([listProducts(), listCategories()]);
 
   return (
@@ -23,6 +18,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildOrganizationJsonLd()) }}
       />
       <SiteHeader />
+      <SiteVisitTracker />
       <CatalogPage initialProducts={products} categories={categories} />
       <BusinessContactSection />
       <FloatingWhatsAppButton />
