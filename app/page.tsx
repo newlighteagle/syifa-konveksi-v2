@@ -5,6 +5,7 @@ import { CatalogPage } from "@/components/catalog-page";
 import { FloatingWhatsAppButton } from "@/components/floating-whatsapp-button";
 import { SiteHeader } from "@/components/site-header";
 import { listCategories, listProducts } from "@/lib/product-service";
+import { buildOrganizationJsonLd } from "@/lib/seo";
 import { getPublicIpFromHeaders, recordSiteVisit } from "@/lib/visitor-service";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +18,10 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f7fbff_0%,#ffffff_42%,#f7f9fb_100%)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildOrganizationJsonLd()) }}
+      />
       <SiteHeader />
       <CatalogPage initialProducts={products} categories={categories} />
       <BusinessContactSection />

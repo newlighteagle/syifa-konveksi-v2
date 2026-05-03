@@ -107,7 +107,9 @@ export async function listProducts(options?: ProductQueryOptions) {
     return rows.map((row) => fromPrisma(row as ProductWithEnums));
   } catch (error) {
     console.error("Falling back to mock products:", error);
-    return products;
+    return products.filter(
+      (product) => options?.includeDrafts || product.publicationStatus === "published",
+    );
   }
 }
 
@@ -137,7 +139,13 @@ export async function getProductBySlug(slug: string, options?: { includeDrafts?:
     return fromPrisma(product as ProductWithEnums);
   } catch (error) {
     console.error("Falling back to mock product:", error);
-    return products.find((product) => product.id === slug) ?? null;
+    return (
+      products.find(
+        (product) =>
+          product.id === slug &&
+          (options?.includeDrafts || product.publicationStatus === "published"),
+      ) ?? null
+    );
   }
 }
 

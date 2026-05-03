@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import type React from "react";
 import { ArrowLeft, Calendar, CheckCircle2, MessageCircle, Shirt, Tag } from "lucide-react";
 import { headers } from "next/headers";
@@ -13,6 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getProductBySlug, incrementProductViews } from "@/lib/product-service";
 import { products } from "@/lib/products";
+import {
+  buildProductBreadcrumbJsonLd,
+  buildProductJsonLd,
+  getCanonicalUrl,
+  getProductOgImage,
+  getProductSeoDescription,
+  getProductSeoTitle,
+} from "@/lib/seo";
 import { buildProductShareData } from "@/lib/share";
 import { formatRupiah } from "@/lib/utils";
 import {
@@ -25,6 +34,58 @@ export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return products.map((product) => ({ id: product.id }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const product = await getProductBySlug(id);
+
+  if (!product) {
+    return {
+      title: "Produk tidak ditemukan",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const productUrl = getCanonicalUrl(`/products/${product.id}`);
+  const title = getProductSeoTitle(product);
+  const description = getProductSeoDescription(product);
+  const imageUrl = getProductOgImage(product);
+
+  return {
+    title: {
+      absolute: title,
+    },
+    description,
+    alternates: {
+      canonical: productUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: productUrl,
+      type: "website",
+      images: [
+        {
+          url: imageUrl,
+          alt: product.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [imageUrl],
+    },
+  };
 }
 
 export default async function ProductDetailPage({
@@ -42,6 +103,7 @@ export default async function ProductDetailPage({
 
   const galleryMedia = product.galleryUrls.filter(Boolean);
   const productUrl = getProductUrl(requestHeaders, product.id);
+  const canonicalProductUrl = getCanonicalUrl(`/products/${product.id}`);
   const shareData = buildProductShareData({
     name: product.name,
     kodeProduksi: product.kodeProduksi,
@@ -59,6 +121,18 @@ export default async function ProductDetailPage({
 
   return (
     <main className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildProductJsonLd(product, canonicalProductUrl)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildProductBreadcrumbJsonLd(product, canonicalProductUrl)),
+        }}
+      />
       <SiteHeader />
       <div className="container py-8">
         <Button asChild variant="ghost" className="mb-6 px-0">

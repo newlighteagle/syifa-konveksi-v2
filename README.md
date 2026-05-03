@@ -10,6 +10,7 @@ Production: https://www.syifakonveksi.my.id
 - Product detail page with view counter, share button, and WhatsApp inquiry flow.
 - Site visitor counter for total visits and unique public IP visitors.
 - Inquiry tracking for product WhatsApp CTA clicks.
+- SEO metadata, structured data, sitemap, and robots rules for public pages.
 - Admin dashboard for catalog, visitor, view, inquiry, publication, and stock metrics.
 - Admin product management with publication status, category, color, stock status, and media controls.
 - Admin category and color management screens.
@@ -202,7 +203,7 @@ Priority order:
 
 ## Milestones and Issue Status
 
-Last synced from GitHub Issues: after creating issues #18-#23.
+Last synced from GitHub Issues: after solving issue #18.
 
 ### MVP Stabilization
 
@@ -249,11 +250,11 @@ Milestone result: complete. GitHub milestone is still open unless project owner 
 
 ### MVP Growth & Performance
 
-Status: 0 closed / 6 open
+Status: 1 closed / 5 open
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
-| [#18](https://github.com/newlighteagle/syifa-konveksi-v2/issues/18) | P1 | Open | Improve SEO metadata, structured data, sitemap, and robots |
+| [#18](https://github.com/newlighteagle/syifa-konveksi-v2/issues/18) | P1 | Closed | Improve SEO metadata, structured data, sitemap, and robots |
 | [#19](https://github.com/newlighteagle/syifa-konveksi-v2/issues/19) | P1 | Open | Improve product detail conversion and WhatsApp CTA |
 | [#20](https://github.com/newlighteagle/syifa-konveksi-v2/issues/20) | P1 | Open | Improve homepage performance and media loading |
 | [#21](https://github.com/newlighteagle/syifa-konveksi-v2/issues/21) | P2 | Open | Make public catalog filters shareable and add sorting |
