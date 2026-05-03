@@ -7,7 +7,7 @@ Production: https://www.syifakonveksi.my.id
 ## Features
 
 - Public product catalog with shareable search/category filters, sorting, and lighter media previews.
-- Product detail page with view counter, share button, related products, and stronger WhatsApp inquiry flow.
+- Product detail page with cached detail rendering, async view counter, share button, related products, and stronger WhatsApp inquiry flow.
 - Site visitor counter for total visits and unique public IP visitors, tracked after page load.
 - Inquiry tracking for product WhatsApp CTA clicks.
 - SEO metadata, structured data, sitemap, and robots rules for public pages.
@@ -130,6 +130,7 @@ Public and product routes:
 - `GET /api/products/:slug`
 - `PUT /api/products/:slug`
 - `DELETE /api/products/:slug`
+- `POST /api/products/:slug/views`
 - `GET /api/products/:slug/inquiries`
 - `POST /api/products/:slug/inquiries`
 - `PATCH /api/products/bulk-publication`

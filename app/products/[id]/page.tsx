@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import type React from "react";
+import { Suspense } from "react";
 import {
   ArrowLeft,
   Calendar,
@@ -13,18 +14,18 @@ import {
   Tag,
   Truck,
 } from "lucide-react";
-import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { ProductCard } from "@/components/product-card";
 import { ProductDetailMedia, ProductCardMedia } from "@/components/product-media";
 import { ProductShareButton } from "@/components/product-share-button";
+import { ProductViewTracker } from "@/components/product-view-tracker";
 import { SiteHeader } from "@/components/site-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { getProductBySlug, incrementProductViews, listProducts } from "@/lib/product-service";
-import { products } from "@/lib/products";
+import { getProductBySlug, listProducts } from "@/lib/product-service";
+import type { Product } from "@/lib/products";
 import { getRelatedProducts } from "@/lib/related-products";
 import {
   buildProductBreadcrumbJsonLd,
@@ -42,10 +43,11 @@ import {
   getBusinessWhatsAppNumber,
 } from "@/lib/whatsapp";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
-export function generateStaticParams() {
-  return products.map((product) => ({ id: product.id }));
+export async function generateStaticParams() {
+  const publicProducts = await listProducts();
+  return publicProducts.map((product) => ({ id: product.id }));
 }
 
 export async function generateMetadata({
@@ -106,24 +108,18 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  await incrementProductViews(id);
-  const [product, requestHeaders] = await Promise.all([getProductBySlug(id), headers()]);
+  const product = await getProductBySlug(id);
 
   if (!product) {
     notFound();
   }
 
   const galleryMedia = product.galleryUrls.filter(Boolean);
-  const productUrl = getProductUrl(requestHeaders, product.id);
   const canonicalProductUrl = getCanonicalUrl(`/products/${product.id}`);
-  const relatedProducts = getRelatedProducts({
-    currentProduct: product,
-    products: await listProducts({ category: product.category }),
-  });
   const shareData = buildProductShareData({
     name: product.name,
     kodeProduksi: product.kodeProduksi,
-    url: productUrl,
+    url: canonicalProductUrl,
   });
   const whatsappUrl = buildWhatsAppUrl({
     phoneNumber: getBusinessWhatsAppNumber(),
@@ -131,7 +127,7 @@ export default async function ProductDetailPage({
       name: product.name,
       kodeProduksi: product.kodeProduksi,
       harga: formatRupiah(product.harga),
-      url: productUrl,
+      url: canonicalProductUrl,
     }),
   });
   const inquiryTrackingUrl = whatsappUrl ? getInquiryTrackingUrl(product.id, whatsappUrl) : null;
@@ -151,6 +147,7 @@ export default async function ProductDetailPage({
         }}
       />
       <SiteHeader />
+      <ProductViewTracker productId={product.id} />
       <div className="container py-8">
         <Button asChild variant="ghost" className="mb-6 px-0">
           <Link href="/">
@@ -286,21 +283,9 @@ export default async function ProductDetailPage({
           </section>
         </div>
 
-        {relatedProducts.length > 0 ? (
-          <section className="mt-14 border-t border-slate-200 pt-10">
-            <div className="mb-6">
-              <p className="text-sm font-semibold text-sky-700">Produk terkait</p>
-              <h2 className="mt-2 text-2xl font-bold text-slate-950">
-                Pilihan lain di kategori {product.category}
-              </h2>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {relatedProducts.map((relatedProduct) => (
-                <ProductCard key={relatedProduct.id} product={relatedProduct} />
-              ))}
-            </div>
-          </section>
-        ) : null}
+        <Suspense fallback={null}>
+          <RelatedProductsSection product={product} />
+        </Suspense>
       </div>
       <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 p-4 shadow-[0_-12px_30px_rgba(15,23,42,0.12)] backdrop-blur sm:hidden">
         {inquiryTrackingUrl ? (
@@ -318,6 +303,33 @@ export default async function ProductDetailPage({
         )}
       </div>
     </main>
+  );
+}
+
+async function RelatedProductsSection({ product }: { product: Product }) {
+  const relatedProducts = getRelatedProducts({
+    currentProduct: product,
+    products: await listProducts({ category: product.category }),
+  });
+
+  if (relatedProducts.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="mt-14 border-t border-slate-200 pt-10">
+      <div className="mb-6">
+        <p className="text-sm font-semibold text-sky-700">Produk terkait</p>
+        <h2 className="mt-2 text-2xl font-bold text-slate-950">
+          Pilihan lain di kategori {product.category}
+        </h2>
+      </div>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {relatedProducts.map((relatedProduct) => (
+          <ProductCard key={relatedProduct.id} product={relatedProduct} />
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -367,18 +379,6 @@ function ConversionInfoItem({
       </div>
     </div>
   );
-}
-
-function getProductUrl(requestHeaders: Headers, productId: string) {
-  const host = requestHeaders.get("host");
-
-  if (!host) {
-    return `https://www.syifakonveksi.my.id/products/${productId}`;
-  }
-
-  const protocol =
-    requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  return `${protocol}://${host}/products/${productId}`;
 }
 
 function getInquiryTrackingUrl(productId: string, whatsappUrl: string) {

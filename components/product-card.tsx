@@ -3,13 +3,15 @@ import { ArrowUpRight, PlayCircle } from "lucide-react";
 
 import { ProductCardMedia } from "@/components/product-media";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { formatRupiah } from "@/lib/utils";
 import type { Product } from "@/lib/products";
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <article className="group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-airy">
+    <Link
+      href={`/products/${product.id}`}
+      className="group block overflow-hidden rounded-lg border border-slate-200 bg-white shadow-soft transition duration-300 hover:-translate-y-1 hover:shadow-airy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300 focus-visible:ring-offset-2"
+    >
       <div className="relative aspect-[4/3] overflow-hidden bg-sky-50">
         <ProductCardMedia
           name={product.name}
@@ -39,14 +41,12 @@ export function ProductCard({ product }: { product: Product }) {
             <p className="text-xs font-medium text-slate-500">Mulai dari</p>
             <p className="font-bold text-slate-950">{formatRupiah(product.harga)}</p>
           </div>
-          <Button asChild variant="secondary" size="sm">
-            <Link href={`/products/${product.id}`}>
-              Detail
-              <ArrowUpRight />
-            </Link>
-          </Button>
+          <span className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-sky-200 bg-sky-50 px-3 text-sm font-semibold text-sky-800 transition group-hover:bg-sky-100">
+            Detail
+            <ArrowUpRight className="size-4" />
+          </span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }
