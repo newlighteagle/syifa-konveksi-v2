@@ -179,6 +179,25 @@ export async function incrementProductInquiries(slug: string) {
   }
 }
 
+export async function bulkUpdateProductPublicationStatus({
+  slugs,
+  publicationStatus,
+}: {
+  slugs: string[];
+  publicationStatus: Product["publicationStatus"];
+}) {
+  if (!hasDatabaseUrl()) {
+    return 0;
+  }
+
+  const result = await prisma.product.updateMany({
+    where: { slug: { in: slugs } },
+    data: { publicationStatus },
+  });
+
+  return result.count;
+}
+
 export async function listCategories() {
   return ["Semua", ...(await listCategoryOptions()).map((category) => category.name)];
 }

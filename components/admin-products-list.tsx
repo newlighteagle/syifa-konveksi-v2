@@ -5,11 +5,14 @@ import {
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
+  Download,
   Edit3,
+  FilePenLine,
   LayoutGrid,
   List,
   PlusCircle,
   Search,
+  Send,
   Trash2,
   X,
 } from "lucide-react";
@@ -21,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { buildProductsCsv } from "@/lib/product-export";
 import type { Product } from "@/lib/products";
 import { cn, formatRupiah } from "@/lib/utils";
 
@@ -54,6 +58,9 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
   const [searchQuery, setSearchQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("updated-desc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProductIds, setSelectedProductIds] = useState<Set<string>>(new Set());
+  const [bulkActionStatus, setBulkActionStatus] = useState<"draft" | "published" | null>(null);
+  const [bulkActionError, setBulkActionError] = useState("");
   const pageSize = 6;
 
   const filteredProducts = useMemo(() => {
@@ -95,6 +102,12 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
     null;
   const pageStart = filteredProducts.length === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const pageEnd = Math.min(currentPage * pageSize, filteredProducts.length);
+  const visibleProductIds = paginatedProducts.map((product) => product.id);
+  const filteredProductIds = filteredProducts.map((product) => product.id);
+  const selectedCount = selectedProductIds.size;
+  const hasVisibleProducts = visibleProductIds.length > 0;
+  const isVisiblePageSelected =
+    hasVisibleProducts && visibleProductIds.every((id) => selectedProductIds.has(id));
 
   useEffect(() => {
     setCurrentPage(1);
@@ -103,6 +116,103 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
   useEffect(() => {
     setCurrentPage((page) => Math.min(page, totalPages));
   }, [totalPages]);
+
+  useEffect(() => {
+    const productIds = new Set(products.map((product) => product.id));
+    setSelectedProductIds((currentSelection) => {
+      const nextSelection = new Set(
+        Array.from(currentSelection).filter((productId) => productIds.has(productId)),
+      );
+
+      return nextSelection.size === currentSelection.size ? currentSelection : nextSelection;
+    });
+  }, [products]);
+
+  function toggleProductSelection(productId: string) {
+    setSelectedProductIds((currentSelection) => {
+      const nextSelection = new Set(currentSelection);
+
+      if (nextSelection.has(productId)) {
+        nextSelection.delete(productId);
+      } else {
+        nextSelection.add(productId);
+      }
+
+      return nextSelection;
+    });
+  }
+
+  function toggleVisiblePageSelection() {
+    setSelectedProductIds((currentSelection) => {
+      const nextSelection = new Set(currentSelection);
+
+      if (isVisiblePageSelected) {
+        visibleProductIds.forEach((productId) => nextSelection.delete(productId));
+      } else {
+        visibleProductIds.forEach((productId) => nextSelection.add(productId));
+      }
+
+      return nextSelection;
+    });
+  }
+
+  function selectAllFilteredProducts() {
+    setSelectedProductIds((currentSelection) => {
+      const nextSelection = new Set(currentSelection);
+      filteredProductIds.forEach((productId) => nextSelection.add(productId));
+
+      return nextSelection;
+    });
+  }
+
+  function clearSelection() {
+    setSelectedProductIds(new Set());
+    setBulkActionError("");
+  }
+
+  async function updateSelectedPublicationStatus(publicationStatus: Product["publicationStatus"]) {
+    if (selectedProductIds.size === 0 || bulkActionStatus) {
+      return;
+    }
+
+    setBulkActionStatus(publicationStatus);
+    setBulkActionError("");
+
+    const response = await fetch("/api/products/bulk-publication", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        slugs: Array.from(selectedProductIds),
+        publicationStatus,
+      }),
+    });
+
+    setBulkActionStatus(null);
+
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      setBulkActionError(body?.message ?? "Bulk update belum berhasil.");
+      return;
+    }
+
+    clearSelection();
+    router.refresh();
+  }
+
+  function exportFilteredProductsCsv() {
+    const csv = buildProductsCsv(filteredProducts);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const date = new Date().toISOString().slice(0, 10);
+
+    link.href = url;
+    link.download = `syifa-products-${date}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
 
   function requestDelete(product: Product) {
     setDeleteError("");
@@ -239,6 +349,75 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
         </CardContent>
       </Card>
 
+      <Card>
+        <CardContent className="grid gap-3 p-3">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <input
+                type="checkbox"
+                checked={isVisiblePageSelected}
+                disabled={!hasVisibleProducts}
+                onChange={toggleVisiblePageSelection}
+                className="size-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+              />
+              Pilih halaman ini
+            </label>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={filteredProducts.length === 0}
+                onClick={selectAllFilteredProducts}
+              >
+                Pilih semua hasil filter
+              </Button>
+              <Button type="button" variant="outline" size="sm" onClick={exportFilteredProductsCsv}>
+                <Download />
+                Export CSV
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                disabled={selectedCount === 0 || Boolean(bulkActionStatus)}
+                onClick={() => void updateSelectedPublicationStatus("published")}
+              >
+                <Send />
+                {bulkActionStatus === "published" ? "Publishing..." : "Publish selected"}
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                disabled={selectedCount === 0 || Boolean(bulkActionStatus)}
+                onClick={() => void updateSelectedPublicationStatus("draft")}
+              >
+                <FilePenLine />
+                {bulkActionStatus === "draft" ? "Mengubah..." : "Set draft"}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={selectedCount === 0 || Boolean(bulkActionStatus)}
+                onClick={clearSelection}
+              >
+                <X />
+                Clear
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+            <span>{selectedCount} produk dipilih</span>
+            {bulkActionError ? (
+              <span className="font-semibold text-red-700">{bulkActionError}</span>
+            ) : (
+              <span>Bulk publish/draft memakai satu request untuk semua produk terpilih.</span>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       {filteredProducts.length === 0 ? (
         <Card>
           <CardContent className="p-6">
@@ -258,18 +437,22 @@ export function AdminProductsList({ products, categories }: AdminProductsListPro
                     key={product.id}
                     deleting={deletingProductId === product.id}
                     product={product}
+                    selectedForBulk={selectedProductIds.has(product.id)}
                     selected={selectedProduct?.id === product.id}
                     onDelete={() => requestDelete(product)}
                     onClick={() => setSelectedProductId(product.id)}
+                    onToggleSelection={() => toggleProductSelection(product.id)}
                   />
                 ) : (
                   <ProductListItem
                     key={product.id}
                     deleting={deletingProductId === product.id}
                     product={product}
+                    selectedForBulk={selectedProductIds.has(product.id)}
                     selected={selectedProduct?.id === product.id}
                     onDelete={() => requestDelete(product)}
                     onClick={() => setSelectedProductId(product.id)}
+                    onToggleSelection={() => toggleProductSelection(product.id)}
                   />
                 ),
               )}
@@ -545,34 +728,47 @@ function ProductListItem({
   deleting,
   product,
   selected,
+  selectedForBulk,
   onDelete,
   onClick,
+  onToggleSelection,
 }: {
   deleting: boolean;
   product: Product;
   selected: boolean;
+  selectedForBulk: boolean;
   onDelete: () => void;
   onClick: () => void;
+  onToggleSelection: () => void;
 }) {
   return (
     <div
       className={cn(
-        "grid w-full gap-2 rounded-lg border bg-white p-2 text-left transition hover:border-sky-200 hover:shadow-soft sm:grid-cols-[3.5rem_1fr_auto] sm:items-center",
+        "grid w-full gap-2 rounded-lg border bg-white p-2 text-left transition hover:border-sky-200 hover:shadow-soft sm:grid-cols-[4.75rem_1fr_auto] sm:items-center",
         selected ? "border-sky-300 shadow-soft" : "border-slate-200",
       )}
     >
-      <button
-        type="button"
-        onClick={onClick}
-        className="relative aspect-square overflow-hidden rounded-md bg-sky-50 text-left"
-        aria-label={`Lihat detail ${product.name}`}
-      >
-        <ProductCardMedia
-          name={product.name}
-          mediaType={product.mediaType}
-          mediaUrl={product.mediaUrl}
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={selectedForBulk}
+          onChange={onToggleSelection}
+          aria-label={`Pilih ${product.name}`}
+          className="size-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
         />
-      </button>
+        <button
+          type="button"
+          onClick={onClick}
+          className="relative aspect-square flex-1 overflow-hidden rounded-md bg-sky-50 text-left"
+          aria-label={`Lihat detail ${product.name}`}
+        >
+          <ProductCardMedia
+            name={product.name}
+            mediaType={product.mediaType}
+            mediaUrl={product.mediaUrl}
+          />
+        </button>
+      </div>
       <button type="button" onClick={onClick} className="min-w-0 text-left">
         <span className="flex flex-wrap items-center gap-1.5">
           <Badge>{product.category}</Badge>
@@ -603,14 +799,18 @@ function ProductCardItem({
   deleting,
   product,
   selected,
+  selectedForBulk,
   onDelete,
   onClick,
+  onToggleSelection,
 }: {
   deleting: boolean;
   product: Product;
   selected: boolean;
+  selectedForBulk: boolean;
   onDelete: () => void;
   onClick: () => void;
+  onToggleSelection: () => void;
 }) {
   return (
     <div
@@ -619,6 +819,15 @@ function ProductCardItem({
         selected ? "border-sky-300 shadow-soft" : "border-slate-200",
       )}
     >
+      <div className="absolute left-2 top-2 z-10">
+        <input
+          type="checkbox"
+          checked={selectedForBulk}
+          onChange={onToggleSelection}
+          aria-label={`Pilih ${product.name}`}
+          className="size-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
+        />
+      </div>
       <div className="absolute right-2 top-2 z-10">
         <ProductQuickActions deleting={deleting} product={product} onDelete={onDelete} />
       </div>

@@ -20,6 +20,11 @@ export const productInputSchema = z.object({
   colors: z.array(z.string().trim().min(1)).default([]),
 });
 
+export const bulkPublicationUpdateSchema = z.object({
+  slugs: z.array(z.string().trim().min(1)).min(1, "Pilih minimal satu produk."),
+  publicationStatus: z.enum(["draft", "published"]),
+});
+
 export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),

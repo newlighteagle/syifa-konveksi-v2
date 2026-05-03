@@ -7,7 +7,7 @@ import {
   getMediaUrlPlaceholder,
   getPreviewMediaType,
 } from "@/lib/product-media-type";
-import { productInputSchema } from "@/lib/validation";
+import { bulkPublicationUpdateSchema, productInputSchema } from "@/lib/validation";
 
 const baseProductInput = {
   name: "Gamis Seragam Biru",
@@ -70,6 +70,27 @@ test("productInputSchema rejects unsupported media type", () => {
   const result = productInputSchema.safeParse({
     ...baseProductInput,
     mediaType: "audio",
+  });
+
+  assert.equal(result.success, false);
+});
+
+test("bulkPublicationUpdateSchema accepts product slugs and target status", () => {
+  const parsed = bulkPublicationUpdateSchema.parse({
+    slugs: ["baju-tani", "seragam-sekolah"],
+    publicationStatus: "draft",
+  });
+
+  assert.deepEqual(parsed, {
+    slugs: ["baju-tani", "seragam-sekolah"],
+    publicationStatus: "draft",
+  });
+});
+
+test("bulkPublicationUpdateSchema rejects empty selection", () => {
+  const result = bulkPublicationUpdateSchema.safeParse({
+    slugs: [],
+    publicationStatus: "published",
   });
 
   assert.equal(result.success, false);

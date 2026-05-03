@@ -12,7 +12,7 @@ Production: https://www.syifakonveksi.my.id
 - Inquiry tracking for product WhatsApp CTA clicks.
 - SEO metadata, structured data, sitemap, and robots rules for public pages.
 - Admin dashboard for catalog, visitor, view, inquiry, publication, stock metrics, and actionable insights.
-- Admin product management with publication status, category, color, stock status, and media controls.
+- Admin product management with publication status, category, color, stock status, media controls, bulk publication actions, and CSV export.
 - Admin category and color management screens.
 
 ## Tech Stack
@@ -132,6 +132,7 @@ Public and product routes:
 - `DELETE /api/products/:slug`
 - `GET /api/products/:slug/inquiries`
 - `POST /api/products/:slug/inquiries`
+- `PATCH /api/products/bulk-publication`
 
 Admin option routes:
 
@@ -204,7 +205,7 @@ Priority order:
 
 ## Milestones and Issue Status
 
-Last synced from GitHub Issues: after solving issue #22.
+Last synced from GitHub Issues: after solving issue #23.
 
 ### MVP Stabilization
 
@@ -251,7 +252,9 @@ Milestone result: complete. GitHub milestone is still open unless project owner 
 
 ### MVP Growth & Performance
 
-Status: 5 closed / 1 open
+Status: 6 closed / 0 open
+
+Milestone result: complete. GitHub milestone is still open unless project owner closes it.
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
@@ -260,7 +263,7 @@ Status: 5 closed / 1 open
 | [#20](https://github.com/newlighteagle/syifa-konveksi-v2/issues/20) | P1 | Closed | Improve homepage performance and media loading |
 | [#21](https://github.com/newlighteagle/syifa-konveksi-v2/issues/21) | P2 | Closed | Make public catalog filters shareable and add sorting |
 | [#22](https://github.com/newlighteagle/syifa-konveksi-v2/issues/22) | P2 | Closed | Add actionable admin dashboard insights |
-| [#23](https://github.com/newlighteagle/syifa-konveksi-v2/issues/23) | P2 | Open | Add bulk publish actions and CSV export for products |
+| [#23](https://github.com/newlighteagle/syifa-konveksi-v2/issues/23) | P2 | Closed | Add bulk publish actions and CSV export for products |
 
 ## Manual QA Checklist
 
