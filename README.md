@@ -187,7 +187,7 @@ Database and domain:
 
 ## GitHub Issue Workflow
 
-Selama MVP ini sampai milestone 3 selesai, development hanya menggunakan branch `main`. Jangan membuat branch fitur, branch eksperimen, atau branch PR terpisah kecuali project owner mengubah aturan ini secara eksplisit.
+Current owner rule: development hanya menggunakan branch `main`. Jangan membuat branch fitur, branch eksperimen, atau branch PR terpisah kecuali project owner mengubah aturan ini secara eksplisit.
 
 1. Pick one approved GitHub issue.
 2. Implement only the scope described in that issue.
@@ -206,7 +206,7 @@ Priority order:
 
 ## Milestones and Issue Status
 
-Last synced from GitHub Issues: after solving issue #23.
+Last synced from GitHub Issues: after creating milestone `Website Trust & Conversion Polish` and issues #24-#29.
 
 ### MVP Stabilization
 
@@ -255,7 +255,7 @@ Milestone result: complete. GitHub milestone is still open unless project owner 
 
 Status: 6 closed / 0 open
 
-Milestone result: complete. GitHub milestone is still open unless project owner closes it.
+Milestone result: complete and closed.
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
@@ -265,6 +265,23 @@ Milestone result: complete. GitHub milestone is still open unless project owner 
 | [#21](https://github.com/newlighteagle/syifa-konveksi-v2/issues/21) | P2 | Closed | Make public catalog filters shareable and add sorting |
 | [#22](https://github.com/newlighteagle/syifa-konveksi-v2/issues/22) | P2 | Closed | Add actionable admin dashboard insights |
 | [#23](https://github.com/newlighteagle/syifa-konveksi-v2/issues/23) | P2 | Closed | Add bulk publish actions and CSV export for products |
+
+### Website Trust & Conversion Polish
+
+Status: 0 closed / 6 open
+
+Milestone result: planned and open.
+
+Goal: improve visual trust, product content depth, social proof, navigation scalability, and brand asset polish for the public Syifa Konveksi website.
+
+| Issue | Priority | Status | Title |
+| --- | --- | --- | --- |
+| [#24](https://github.com/newlighteagle/syifa-konveksi-v2/issues/24) | P1 | Open | Add real product thumbnails for catalog cards |
+| [#25](https://github.com/newlighteagle/syifa-konveksi-v2/issues/25) | P1 | Open | Improve homepage hero with soft production background and primary WhatsApp CTA |
+| [#26](https://github.com/newlighteagle/syifa-konveksi-v2/issues/26) | P1 | Open | Add richer product specifications and size chart |
+| [#27](https://github.com/newlighteagle/syifa-konveksi-v2/issues/27) | P1 | Open | Add portfolio and testimonials section on homepage |
+| [#28](https://github.com/newlighteagle/syifa-konveksi-v2/issues/28) | P2 | Open | Make catalog category navigation more compact for many categories |
+| [#29](https://github.com/newlighteagle/syifa-konveksi-v2/issues/29) | P2 | Open | Polish brand assets, logo sharpness, and favicon set |
 
 ## Manual QA Checklist
 
