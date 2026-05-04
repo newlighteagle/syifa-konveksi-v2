@@ -27,11 +27,9 @@ import {
 } from "@/lib/whatsapp";
 
 const HERO_IMAGES = [
-  "/hero-konveksi-1.jpg",
-  "/hero-konveksi-2.jpg",
-  "/hero-konveksi-3.jpg",
-  "/hero-konveksi-4.jpg",
-  "/hero-konveksi-5.jpg",
+  "/hero-konveksi-1.jpeg",
+  "/hero-konveksi-2.jpeg",
+  "/hero-konveksi-3.jpeg",
 ];
 
 export function CatalogPage({
@@ -70,7 +68,9 @@ export function CatalogPage({
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
-      setActiveHeroIndex((currentIndex) => (currentIndex + 1) % HERO_IMAGES.length);
+      setActiveHeroIndex(
+        (currentIndex) => (currentIndex + 1) % HERO_IMAGES.length,
+      );
     }, 5000);
 
     return () => {
@@ -141,26 +141,39 @@ export function CatalogPage({
             Konveksi terpercaya untuk seragam, kaos, dan baju custom.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
-            Produksi berkualitas dari Syifa Konveksi — gamis, kemeja, seragam kantor, kaos
-            komunitas, dan berbagai model baju siap dipesan atau custom sesuai kebutuhan.
+            Produksi berkualitas dari Syifa Konveksi — gamis, kemeja, seragam
+            kantor, kaos komunitas, dan berbagai model baju siap dipesan atau
+            custom sesuai kebutuhan.
           </p>
           <div className="mx-auto mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             {heroCtaUrl ? (
-              <Button asChild size="lg" className="bg-green-600 text-base font-bold hover:bg-green-700">
+              <Button
+                asChild
+                size="lg"
+                className="bg-green-600 text-base font-bold hover:bg-green-700"
+              >
                 <a href={heroCtaUrl} target="_blank" rel="noopener noreferrer">
                   <MessageCircle />
                   Konsultasi Desain Gratis
                 </a>
               </Button>
             ) : null}
-            <Button asChild size="lg" variant="secondary" className="text-base font-bold">
+            <Button
+              asChild
+              size="lg"
+              variant="secondary"
+              className="text-base font-bold"
+            >
               <a href="#koleksi">Lihat Katalog</a>
             </Button>
           </div>
         </div>
       </section>
 
-      <section id="koleksi" className="container scroll-mt-24 pt-8 pb-16 sm:pt-10">
+      <section
+        id="koleksi"
+        className="container scroll-mt-24 pt-8 pb-16 sm:pt-10"
+      >
         <div className="mx-auto mb-6 flex w-full max-w-2xl items-center gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-airy">
           <Search className="ml-3 size-5 shrink-0 text-slate-400" />
           <Input
@@ -185,7 +198,9 @@ export function CatalogPage({
               Urutkan
               <select
                 value={filters.sort}
-                onChange={(event) => updateSort(event.target.value as CatalogSortValue)}
+                onChange={(event) =>
+                  updateSort(event.target.value as CatalogSortValue)
+                }
                 className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 outline-none transition hover:border-sky-300 focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
               >
                 {CATALOG_SORT_OPTIONS.map((option) => (
@@ -226,13 +241,16 @@ export function CatalogPage({
           </div>
         ) : (
           <div className="rounded-lg border border-dashed border-slate-200 bg-white p-8 text-center shadow-soft">
-            <p className="text-sm font-semibold text-sky-700">Produk belum ditemukan</p>
+            <p className="text-sm font-semibold text-sky-700">
+              Produk belum ditemukan
+            </p>
             <h3 className="mt-2 text-2xl font-bold text-slate-950">
               Coba kata kunci atau kategori lain.
             </h3>
             <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
-              Tidak ada produk yang cocok dengan filter saat ini. Tim Syifa Konveksi tetap bisa
-              bantu cek model, bahan, ukuran, dan kebutuhan custom.
+              Tidak ada produk yang cocok dengan filter saat ini. Tim Syifa
+              Konveksi tetap bisa bantu cek model, bahan, ukuran, dan kebutuhan
+              custom.
             </p>
             <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
               <Button variant="secondary" onClick={resetFilters}>
@@ -241,7 +259,11 @@ export function CatalogPage({
               </Button>
               {whatsappUrl ? (
                 <Button asChild>
-                  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Send />
                     Konsultasi WhatsApp
                   </a>
