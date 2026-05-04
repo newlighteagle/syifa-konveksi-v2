@@ -1,6 +1,6 @@
 # Syifa Konveksi v2
 
-Syifa Konveksi v2 adalah aplikasi katalog digital untuk menampilkan produk konveksi secara publik dan mengelola produk melalui admin portal. Project ini dikerjakan berbasis GitHub Issues: setiap perubahan fitur, bugfix, dan dokumentasi harus dimulai dari issue yang jelas, dikerjakan satu per satu, lalu diverifikasi sebelum push.
+Aplikasi katalog digital untuk menampilkan produk konveksi secara publik dan mengelola produk melalui admin portal. Project ini dikerjakan berbasis GitHub Issues: setiap perubahan fitur, bugfix, dan dokumentasi harus dimulai dari issue yang jelas, dikerjakan satu per satu, lalu diverifikasi sebelum push.
 
 Production: https://www.syifakonveksi.my.id
 
@@ -27,8 +27,6 @@ Production: https://www.syifakonveksi.my.id
 - Package manager: npm
 
 ## Quick Start
-
-Install dependencies and run the local dev server:
 
 ```bash
 npm install
@@ -61,11 +59,12 @@ Create `.env` from `.env.example`, then set the required values.
 
 After schema changes, run `npm run db:push` against the target database before deploying.
 
-Schema-backed MVP features:
+Schema-backed features:
 
 - Visitor dashboard metrics require the `site_visitors` table.
 - Product inquiry tracking requires the `products.inquiries` column.
 - Product publication status requires the `products.publication_status` column.
+- Product catalog thumbnails require the nullable `products.thumbnail_url` column.
 
 Production data changes must preserve existing seeded products unless an issue explicitly says otherwise.
 
@@ -77,7 +76,8 @@ Cara mengisi media produk:
 
 - Pilih `Foto` untuk media utama berupa URL gambar langsung.
 - Pilih `Video` untuk media utama berupa YouTube Shorts, Instagram Reel/post, atau URL video langsung.
-- Isi `Link Media Utama` dengan satu URL utama yang akan tampil sebagai media pertama di katalog dan halaman detail.
+- Isi `Link Media Utama` dengan satu URL utama yang akan tampil di halaman detail produk. Untuk produk foto tanpa thumbnail khusus, URL ini juga dipakai di katalog.
+- Isi `Link Thumbnail Katalog` secara opsional dengan URL foto produk asli. Katalog memakai thumbnail ini lebih dulu, terutama untuk produk yang media utamanya video.
 - Isi `Link Galeri Tambahan` hanya dengan foto tambahan, satu URL per baris.
 
 Format URL yang didukung:
@@ -115,12 +115,7 @@ Jika preview media tidak tampil, buka URL di tab browser baru. URL yang benar un
 - `public/`: static assets such as logo files.
 - `tests/`: Node test runner test files.
 
-Removed legacy prototype artifacts:
-
-- `prd.md`
-- `sample_frontend/`
-
-## Current API Routes
+## API Routes
 
 Public and product routes:
 
@@ -206,91 +201,71 @@ Priority order:
 
 ## Milestones and Issue Status
 
-Last synced from GitHub Issues: after creating milestone `Website Trust & Conversion Polish` and issues #24-#29.
+Last synced: 2026-05-04.
 
-### MVP Stabilization
+### MVP Stabilization (closed)
 
-Status: 5 closed / 0 open
+| Issue | Priority | Title |
+| --- | --- | --- |
+| #1 | P0 | Fix product media type persistence |
+| #2 | P1 | Add product detail view counter |
+| #3 | P1 | Require production AUTH_SECRET |
+| #4 | P2 | Add empty states for missing product attributes |
+| #5 | P2 | Add basic regression checklist for product CRUD |
 
-Milestone result: complete and closed.
+### MVP Conversion (closed)
 
-| Issue | Priority | Status | Title |
-| --- | --- | --- | --- |
-| [#1](https://github.com/newlighteagle/syifa-konveksi-v2/issues/1) | P0 | Closed | Fix product media type persistence |
-| [#2](https://github.com/newlighteagle/syifa-konveksi-v2/issues/2) | P1 | Closed | Add product detail view counter |
-| [#3](https://github.com/newlighteagle/syifa-konveksi-v2/issues/3) | P1 | Closed | Require production AUTH_SECRET |
-| [#4](https://github.com/newlighteagle/syifa-konveksi-v2/issues/4) | P2 | Closed | Add empty states for missing product attributes |
-| [#5](https://github.com/newlighteagle/syifa-konveksi-v2/issues/5) | P2 | Closed | Add basic regression checklist for product CRUD |
+| Issue | Priority | Title |
+| --- | --- | --- |
+| #6 | P0 | Connect Tanya Produk button to WhatsApp |
+| #7 | P1 | Add floating WhatsApp contact CTA |
+| #8 | P2 | Add share product button |
+| #9 | P1 | Add business contact section footer |
+| #10 | P2 | Add simple product inquiry tracking |
 
-### MVP Conversion
+### MVP Admin Operations (closed)
 
-Status: 5 closed / 0 open
+| Issue | Priority | Title |
+| --- | --- | --- |
+| #11 | P1 | Allow choosing image or video as main media |
+| #12 | P2 | Document external media workflow |
+| #13 | P2 | Add category and color management screens |
+| #14 | P2 | Improve delete confirmation with safer modal |
+| #15 | P2 | Add draft published product status |
+| #17 | P2 | Make admin dashboard more compact and clean |
 
-Milestone result: complete and closed.
+### MVP Growth & Performance (closed)
 
-| Issue | Priority | Status | Title |
-| --- | --- | --- | --- |
-| [#6](https://github.com/newlighteagle/syifa-konveksi-v2/issues/6) | P0 | Closed | Connect Tanya Produk button to WhatsApp |
-| [#7](https://github.com/newlighteagle/syifa-konveksi-v2/issues/7) | P1 | Closed | Add floating WhatsApp contact CTA |
-| [#8](https://github.com/newlighteagle/syifa-konveksi-v2/issues/8) | P2 | Closed | Add share product button |
-| [#9](https://github.com/newlighteagle/syifa-konveksi-v2/issues/9) | P1 | Closed | Add business contact section footer |
-| [#10](https://github.com/newlighteagle/syifa-konveksi-v2/issues/10) | P2 | Closed | Add simple product inquiry tracking |
+| Issue | Priority | Title |
+| --- | --- | --- |
+| #18 | P1 | Improve SEO metadata, structured data, sitemap, and robots |
+| #19 | P1 | Improve product detail conversion and WhatsApp CTA |
+| #20 | P1 | Improve homepage performance and media loading |
+| #21 | P2 | Make public catalog filters shareable and add sorting |
+| #22 | P2 | Add actionable admin dashboard insights |
+| #23 | P2 | Add bulk publish actions and CSV export for products |
 
-### MVP Admin Operations
+### Website Trust & Conversion Polish (active)
 
-Status: 6 closed / 0 open
-
-Milestone result: complete. GitHub milestone is still open unless project owner closes it.
-
-| Issue | Priority | Status | Title |
-| --- | --- | --- | --- |
-| [#11](https://github.com/newlighteagle/syifa-konveksi-v2/issues/11) | P1 | Closed | Allow choosing image or video as main media |
-| [#12](https://github.com/newlighteagle/syifa-konveksi-v2/issues/12) | P2 | Closed | Document external media workflow |
-| [#13](https://github.com/newlighteagle/syifa-konveksi-v2/issues/13) | P2 | Closed | Add category and color management screens |
-| [#14](https://github.com/newlighteagle/syifa-konveksi-v2/issues/14) | P2 | Closed | Improve delete confirmation with safer modal |
-| [#15](https://github.com/newlighteagle/syifa-konveksi-v2/issues/15) | P2 | Closed | Add draft published product status |
-| [#17](https://github.com/newlighteagle/syifa-konveksi-v2/issues/17) | P2 | Closed | Make admin dashboard more compact and clean |
-
-### MVP Growth & Performance
-
-Status: 6 closed / 0 open
-
-Milestone result: complete and closed.
+Goal: improve visual trust, product content depth, social proof, navigation scalability, and brand asset polish for the public website.
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
-| [#18](https://github.com/newlighteagle/syifa-konveksi-v2/issues/18) | P1 | Closed | Improve SEO metadata, structured data, sitemap, and robots |
-| [#19](https://github.com/newlighteagle/syifa-konveksi-v2/issues/19) | P1 | Closed | Improve product detail conversion and WhatsApp CTA |
-| [#20](https://github.com/newlighteagle/syifa-konveksi-v2/issues/20) | P1 | Closed | Improve homepage performance and media loading |
-| [#21](https://github.com/newlighteagle/syifa-konveksi-v2/issues/21) | P2 | Closed | Make public catalog filters shareable and add sorting |
-| [#22](https://github.com/newlighteagle/syifa-konveksi-v2/issues/22) | P2 | Closed | Add actionable admin dashboard insights |
-| [#23](https://github.com/newlighteagle/syifa-konveksi-v2/issues/23) | P2 | Closed | Add bulk publish actions and CSV export for products |
-
-### Website Trust & Conversion Polish
-
-Status: 0 closed / 6 open
-
-Milestone result: planned and open.
-
-Goal: improve visual trust, product content depth, social proof, navigation scalability, and brand asset polish for the public Syifa Konveksi website.
-
-| Issue | Priority | Status | Title |
-| --- | --- | --- | --- |
-| [#24](https://github.com/newlighteagle/syifa-konveksi-v2/issues/24) | P1 | Open | Add real product thumbnails for catalog cards |
-| [#25](https://github.com/newlighteagle/syifa-konveksi-v2/issues/25) | P1 | Open | Improve homepage hero with soft production background and primary WhatsApp CTA |
-| [#26](https://github.com/newlighteagle/syifa-konveksi-v2/issues/26) | P1 | Open | Add richer product specifications and size chart |
-| [#27](https://github.com/newlighteagle/syifa-konveksi-v2/issues/27) | P1 | Open | Add portfolio and testimonials section on homepage |
-| [#28](https://github.com/newlighteagle/syifa-konveksi-v2/issues/28) | P2 | Open | Make catalog category navigation more compact for many categories |
-| [#29](https://github.com/newlighteagle/syifa-konveksi-v2/issues/29) | P2 | Open | Polish brand assets, logo sharpness, and favicon set |
+| #24 | P1 | Open | Add real product thumbnails for catalog cards |
+| #25 | P1 | Open | Improve homepage hero with soft production background and primary WhatsApp CTA |
+| #26 | P1 | Open | Add richer product specifications and size chart |
+| #27 | P1 | Open | Add portfolio and testimonials section on homepage |
+| #28 | P2 | Open | Make catalog category navigation more compact for many categories |
+| #29 | P2 | Open | Polish brand assets, logo sharpness, and favicon set |
 
 ## Manual QA Checklist
 
-Use this checklist after issue implementation or before deployment. Run it against a local database that can be safely changed, not against production data.
+Use this checklist after issue implementation or before deployment.
 
 Required local env:
 
 - `DATABASE_URL`: points to a local/staging PostgreSQL database with Prisma schema applied via `npm run db:push`.
-- `AUTH_SECRET`: set to any long random value for local QA; production requires this value.
+- `AUTH_SECRET`: set to any long random value for local QA.
 - `NEXT_PUBLIC_WHATSAPP_NUMBER`: set to the business WhatsApp number so product inquiry links can be tested.
 - `SEED_ADMIN_EMAIL`: admin email used by `npm run db:seed`.
 - `SEED_ADMIN_PASSWORD`: admin password used by `npm run db:seed`.
