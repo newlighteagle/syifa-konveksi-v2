@@ -7,11 +7,14 @@ import {
   getMediaUrlPlaceholder,
   getPreviewMediaType,
 } from "@/lib/product-media-type";
-import { bulkPublicationUpdateSchema, productInputSchema } from "@/lib/validation";
+import {
+  bulkPublicationUpdateSchema,
+  productInputSchema,
+} from "@/lib/validation";
 
 const baseProductInput = {
-  name: "Gamis Seragam Biru",
-  category: "Gamis",
+  name: "Baju Tani Seragam Biru",
+  category: "Baju Tani",
   description: "Produk konveksi siap produksi.",
   mediaUrl: "https://example.com/foto-produk.jpg",
   galleryUrls: [],
@@ -119,12 +122,18 @@ test("bulkPublicationUpdateSchema rejects empty selection", () => {
 });
 
 test("media helper returns image-specific copy", () => {
-  assert.equal(getMediaUrlPlaceholder("image"), "https://example.com/foto-produk.jpg");
+  assert.equal(
+    getMediaUrlPlaceholder("image"),
+    "https://example.com/foto-produk.jpg",
+  );
   assert.match(getMediaUrlHelpText("image"), /URL gambar langsung/);
 });
 
 test("media helper returns video-specific copy", () => {
-  assert.equal(getMediaUrlPlaceholder("video"), "https://www.youtube.com/shorts/T9X5KVfryAY");
+  assert.equal(
+    getMediaUrlPlaceholder("video"),
+    "https://www.youtube.com/shorts/T9X5KVfryAY",
+  );
   assert.match(getMediaUrlHelpText("video"), /YouTube Shorts/);
 });
 

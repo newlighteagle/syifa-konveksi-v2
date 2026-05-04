@@ -141,9 +141,10 @@ export function CatalogPage({
             Konveksi terpercaya untuk seragam, kaos, dan baju custom.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
-            Produksi berkualitas dari Syifa Konveksi — gamis, kemeja, seragam
-            kantor, kaos komunitas, dan berbagai model baju siap dipesan atau
-            custom sesuai kebutuhan.
+            Produksi berkualitas dari Syifa Konveksi — baju tani, kaos
+            komunitas, dan berbagai model baju siap dipesan atau custom sesuai
+            kebutuhan. Desain cantik, kualitas terbaik, dan konsultasi gratis
+            untuk hasil memuaskan.
           </p>
           <div className="mx-auto mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             {heroCtaUrl ? (

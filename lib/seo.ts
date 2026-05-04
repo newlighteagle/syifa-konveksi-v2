@@ -1,11 +1,14 @@
 import { isDirectImageUrl } from "@/lib/media";
 import type { Product } from "@/lib/products";
-import { getBusinessWhatsAppNumber, normalizeWhatsAppNumber } from "@/lib/whatsapp";
+import {
+  getBusinessWhatsAppNumber,
+  normalizeWhatsAppNumber,
+} from "@/lib/whatsapp";
 
 export const SITE_URL = "https://www.syifakonveksi.my.id";
 export const SITE_NAME = "Syifa Konveksi";
 export const SITE_DESCRIPTION =
-  "Katalog digital Syifa Konveksi untuk melihat produk gamis, seragam, kaos, outer, dan rompi siap pesan.";
+  "Katalog digital Syifa Konveksi untuk melihat produk baju tani, seragam, kaos, outer, dan rompi siap pesan.";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/logo.png`;
 
 export function getCanonicalUrl(path = "/") {
@@ -29,7 +32,9 @@ export function getProductOgImage(product: Product) {
 }
 
 export function buildOrganizationJsonLd() {
-  const normalizedWhatsApp = normalizeWhatsAppNumber(getBusinessWhatsAppNumber());
+  const normalizedWhatsApp = normalizeWhatsAppNumber(
+    getBusinessWhatsAppNumber(),
+  );
 
   return {
     "@context": "https://schema.org",
@@ -79,7 +84,10 @@ export function buildProductJsonLd(product: Product, productUrl: string) {
   };
 }
 
-export function buildProductBreadcrumbJsonLd(product: Product, productUrl: string) {
+export function buildProductBreadcrumbJsonLd(
+  product: Product,
+  productUrl: string,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

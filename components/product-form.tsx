@@ -1,7 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Check, ChevronsUpDown, Eye, ImageIcon, Plus, Save, Video, X } from "lucide-react";
+import {
+  Check,
+  ChevronsUpDown,
+  Eye,
+  ImageIcon,
+  Plus,
+  Save,
+  Video,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { ProductDetailMedia } from "@/components/product-media";
@@ -17,7 +26,11 @@ import {
 } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import {
   DEFAULT_PRODUCT_MEDIA_TYPE,
@@ -59,8 +72,12 @@ export function ProductForm({
     product?.mediaType ?? DEFAULT_PRODUCT_MEDIA_TYPE,
   );
   const [categoryMode, setCategoryMode] = useState<"select" | "new">("select");
-  const [selectedCategory, setSelectedCategory] = useState(product?.category ?? "");
-  const [selectedColors, setSelectedColors] = useState<string[]>(product?.colors ?? []);
+  const [selectedCategory, setSelectedCategory] = useState(
+    product?.category ?? "",
+  );
+  const [selectedColors, setSelectedColors] = useState<string[]>(
+    product?.colors ?? [],
+  );
   const [colorSearch, setColorSearch] = useState("");
   const isEditing = Boolean(product);
 
@@ -71,7 +88,12 @@ export function ProductForm({
     setSelectedColors(product?.colors ?? []);
     setMediaType(product?.mediaType ?? DEFAULT_PRODUCT_MEDIA_TYPE);
     setColorSearch("");
-    setCategoryMode(product?.category && !categories.some((category) => category.name === product.category) ? "new" : "select");
+    setCategoryMode(
+      product?.category &&
+        !categories.some((category) => category.name === product.category)
+        ? "new"
+        : "select",
+    );
     if (product) {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -87,35 +109,36 @@ export function ProductForm({
     const monthValue = String(formData.get("periodeProduksi") ?? "");
     const [year, month] = monthValue.split("-");
 
-    const response = await fetch(isEditing ? `/api/products/${product?.id}` : "/api/products", {
-      method: isEditing ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formData.get("name"),
-        category:
-          categoryMode === "new"
-            ? formData.get("newCategory")
-            : formData.get("category"),
-        description: formData.get("description"),
-        mediaType,
-        mediaUrl: formData.get("mediaUrl"),
-        thumbnailUrl: formData.get("thumbnailUrl"),
-        galleryUrls: parseList(formData.get("galleryUrls")),
-        kodeProduksi: formData.get("kodeProduksi"),
-        periodeProduksi: month && year ? `${month}-${year}` : monthValue,
-        harga: formData.get("harga"),
-        stockStatus: formData.get("stockStatus"),
-        publicationStatus: formData.get("publicationStatus"),
-        material: formData.get("material"),
-        sizes: String(formData.get("sizes") ?? "")
-          .split(",")
-          .map((item) => item.trim())
-          .filter(Boolean),
-        colors: [
-          ...selectedColors,
-        ],
-      }),
-    });
+    const response = await fetch(
+      isEditing ? `/api/products/${product?.id}` : "/api/products",
+      {
+        method: isEditing ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.get("name"),
+          category:
+            categoryMode === "new"
+              ? formData.get("newCategory")
+              : formData.get("category"),
+          description: formData.get("description"),
+          mediaType,
+          mediaUrl: formData.get("mediaUrl"),
+          thumbnailUrl: formData.get("thumbnailUrl"),
+          galleryUrls: parseList(formData.get("galleryUrls")),
+          kodeProduksi: formData.get("kodeProduksi"),
+          periodeProduksi: month && year ? `${month}-${year}` : monthValue,
+          harga: formData.get("harga"),
+          stockStatus: formData.get("stockStatus"),
+          publicationStatus: formData.get("publicationStatus"),
+          material: formData.get("material"),
+          sizes: String(formData.get("sizes") ?? "")
+            .split(",")
+            .map((item) => item.trim())
+            .filter(Boolean),
+          colors: [...selectedColors],
+        }),
+      },
+    );
 
     const body = await response.json().catch(() => null);
 
@@ -126,7 +149,9 @@ export function ProductForm({
       return;
     }
 
-    setMessage(isEditing ? "Produk berhasil diperbarui." : "Produk berhasil disimpan.");
+    setMessage(
+      isEditing ? "Produk berhasil diperbarui." : "Produk berhasil disimpan.",
+    );
     if (!isEditing) {
       event.currentTarget.reset();
       setSelectedColors([]);
@@ -138,12 +163,17 @@ export function ProductForm({
   }
 
   return (
-    <form ref={formRef} key={product?.id ?? "new-product"} className="grid gap-5" onSubmit={onSubmit}>
+    <form
+      ref={formRef}
+      key={product?.id ?? "new-product"}
+      className="grid gap-5"
+      onSubmit={onSubmit}
+    >
       <div className="grid gap-5 md:grid-cols-2">
         <Field
           label="Nama Produk"
           id="name"
-          placeholder="Gamis Seragam Biru"
+          placeholder="Baju Tani Biru"
           defaultValue={product?.name}
           error={fieldErrors.name?.[0]}
         />
@@ -217,7 +247,12 @@ export function ProductForm({
         />
       </div>
       <div className="grid gap-5 md:grid-cols-3">
-        <SelectField label="Stok" id="stockStatus" options={["Ready", "Preorder", "Terbatas"]} defaultValue={product?.stockStatus} />
+        <SelectField
+          label="Stok"
+          id="stockStatus"
+          options={["Ready", "Preorder", "Terbatas"]}
+          defaultValue={product?.stockStatus}
+        />
         <SelectField
           label="Publikasi"
           id="publicationStatus"
@@ -269,8 +304,8 @@ export function ProductForm({
           />
         </div>
         <p className="text-xs leading-5 text-slate-500">
-          Pilih foto untuk URL gambar langsung, atau video untuk YouTube Shorts, Instagram Reel,
-          dan link video langsung.
+          Pilih foto untuk URL gambar langsung, atau video untuk YouTube Shorts,
+          Instagram Reel, dan link video langsung.
         </p>
         <FieldError message={fieldErrors.mediaType?.[0]} />
       </div>
@@ -296,8 +331,8 @@ export function ProductForm({
           defaultValue={product?.thumbnailUrl ?? undefined}
         />
         <p className="text-xs leading-5 text-slate-500">
-          Opsional. Isi foto produk asli agar kartu katalog tetap menampilkan gambar walaupun
-          media utama berupa YouTube, Instagram, atau video.
+          Opsional. Isi foto produk asli agar kartu katalog tetap menampilkan
+          gambar walaupun media utama berupa YouTube, Instagram, atau video.
         </p>
         <FieldError message={fieldErrors.thumbnailUrl?.[0]} />
       </div>
@@ -306,7 +341,9 @@ export function ProductForm({
         <Textarea
           id="galleryUrls"
           name="galleryUrls"
-          placeholder={"Satu link per baris, contoh:\nhttps://www.instagram.com/p/...\nhttps://example.com/foto-1.jpg\nhttps://example.com/foto-2.jpg"}
+          placeholder={
+            "Satu link per baris, contoh:\nhttps://www.instagram.com/p/...\nhttps://example.com/foto-1.jpg\nhttps://example.com/foto-2.jpg"
+          }
           defaultValue={product?.galleryUrls.join("\n")}
         />
         <p className="text-xs leading-5 text-slate-500">
@@ -318,7 +355,9 @@ export function ProductForm({
         <div className="grid gap-3 rounded-lg border border-sky-100 bg-sky-50/50 p-4">
           <p className="text-sm font-bold text-slate-950">Preview media</p>
           {previewMedia.length === 0 ? (
-            <p className="text-sm text-slate-500">Belum ada link media untuk dipreview.</p>
+            <p className="text-sm text-slate-500">
+              Belum ada link media untuk dipreview.
+            </p>
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
               {previewMedia.map((url, index) => (
@@ -345,7 +384,9 @@ export function ProductForm({
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button disabled={isLoading}>
           <Save />
-          {isLoading ? "Menyimpan..." : submitLabel ?? (isEditing ? "Update Produk" : "Simpan Produk")}
+          {isLoading
+            ? "Menyimpan..."
+            : (submitLabel ?? (isEditing ? "Update Produk" : "Simpan Produk"))}
         </Button>
         <Button
           type="button"
@@ -356,11 +397,13 @@ export function ProductForm({
             }
 
             const formData = new FormData(formRef.current);
-            setPreviewMedia([
-              String(formData.get("thumbnailUrl") ?? "").trim(),
-              String(formData.get("mediaUrl") ?? "").trim(),
-              ...parseList(formData.get("galleryUrls")),
-            ].filter(Boolean));
+            setPreviewMedia(
+              [
+                String(formData.get("thumbnailUrl") ?? "").trim(),
+                String(formData.get("mediaUrl") ?? "").trim(),
+                ...parseList(formData.get("galleryUrls")),
+              ].filter(Boolean),
+            );
             setShowPreview((value) => !value);
           }}
         >
@@ -394,7 +437,9 @@ function MediaTypeButton({
       type="button"
       className={cn(
         "flex h-9 items-center justify-center gap-2 rounded-md text-sm font-semibold transition [&_svg]:size-4",
-        active ? "bg-white text-sky-700 shadow-sm" : "text-slate-500 hover:text-slate-800",
+        active
+          ? "bg-white text-sky-700 shadow-sm"
+          : "text-slate-500 hover:text-slate-800",
       )}
       role="radio"
       aria-checked={active}
@@ -433,8 +478,12 @@ function ColorCombobox({
   );
   const canCreateColor =
     normalizedSearch.length > 0 &&
-    !colors.some((color) => color.name.toLowerCase() === normalizedSearch.toLowerCase()) &&
-    !selectedColors.some((color) => color.toLowerCase() === normalizedSearch.toLowerCase());
+    !colors.some(
+      (color) => color.name.toLowerCase() === normalizedSearch.toLowerCase(),
+    ) &&
+    !selectedColors.some(
+      (color) => color.toLowerCase() === normalizedSearch.toLowerCase(),
+    );
 
   function toggleColor(colorName: string) {
     setSelectedColors((current) =>
@@ -525,7 +574,9 @@ function ColorCombobox({
                 className="rounded-full text-slate-400 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-100"
                 aria-label={`Hapus warna ${color}`}
                 onClick={() => {
-                  setSelectedColors((current) => current.filter((item) => item !== color));
+                  setSelectedColors((current) =>
+                    current.filter((item) => item !== color),
+                  );
                 }}
               >
                 <X className="size-3" />
@@ -535,7 +586,8 @@ function ColorCombobox({
         </div>
       ) : (
         <p className="text-xs leading-5 text-slate-500">
-          Pilih beberapa warna dari daftar, atau ketik nama warna baru lalu pilih opsi buat warna.
+          Pilih beberapa warna dari daftar, atau ketik nama warna baru lalu
+          pilih opsi buat warna.
         </p>
       )}
     </div>
@@ -568,7 +620,13 @@ function Field({
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
-      <Input id={id} name={id} type={type} placeholder={placeholder} defaultValue={defaultValue} />
+      <Input
+        id={id}
+        name={id}
+        type={type}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+      />
       <FieldError message={error} />
     </div>
   );

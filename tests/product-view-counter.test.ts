@@ -11,7 +11,9 @@ test("incrementProductViews is a safe no-op without DATABASE_URL", async () => {
   const originalViews = products[0]?.views;
 
   try {
-    await assert.doesNotReject(() => incrementProductViews("gamis-safira-premium"));
+    await assert.doesNotReject(() =>
+      incrementProductViews("baju-tani-safira-premium"),
+    );
     assert.equal(products[0]?.views, originalViews);
   } finally {
     if (originalDatabaseUrl) {
@@ -26,10 +28,13 @@ test("POST /api/products/:slug/views records views as a safe no-op without DATAB
 
   try {
     const response = await POST(
-      new Request("https://www.syifakonveksi.my.id/api/products/gamis-safira-premium/views", {
-        method: "POST",
-      }),
-      { params: Promise.resolve({ slug: "gamis-safira-premium" }) },
+      new Request(
+        "https://www.syifakonveksi.my.id/api/products/baju-tani-safira-premium/views",
+        {
+          method: "POST",
+        },
+      ),
+      { params: Promise.resolve({ slug: "baju-tani-safira-premium" }) },
     );
 
     assert.equal(response.status, 204);

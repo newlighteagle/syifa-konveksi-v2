@@ -23,11 +23,11 @@ export type Product = {
 
 export const products: Product[] = [
   {
-    id: "gamis-safira-premium",
-    name: "Gamis Safira Premium",
-    category: "Gamis",
+    id: "baju-tani-safira-premium",
+    name: "Baju Tani Safira Premium",
+    category: "Baju Tani",
     description:
-      "Gamis elegan dengan bahan toyobo premium, jahitan rapi, dan cutting longgar untuk kebutuhan seragam komunitas maupun acara keluarga.",
+      "Baju tani elegan dengan bahan toyobo premium, jahitan rapi, dan cutting longgar untuk kebutuhan seragam komunitas maupun acara keluarga.",
     mediaType: "image",
     mediaUrl:
       "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=1200&q=80",
@@ -111,28 +111,6 @@ export const products: Product[] = [
     inquiries: 0,
   },
   {
-    id: "outer-linen-nadira",
-    name: "Outer Linen Nadira",
-    category: "Outer",
-    description:
-      "Outer linen ringan dengan siluet modern untuk layering harian. Cocok dipadukan dengan gamis, tunik, atau kemeja polos.",
-    mediaType: "video",
-    mediaUrl: "https://www.youtube.com/shorts/T9X5KVfryAY",
-    thumbnailUrl:
-      "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=1200&q=80",
-    galleryUrls: [],
-    kodeProduksi: "OTR-0824-07",
-    periodeProduksi: "08-2024",
-    harga: 135000,
-    stockStatus: "Ready",
-    publicationStatus: "published",
-    material: "Linen rayon",
-    sizes: ["All Size", "XL"],
-    colors: ["Cream", "Denim", "Terracotta"],
-    views: 642,
-    inquiries: 0,
-  },
-  {
     id: "rompi-event-utility",
     name: "Rompi Event Utility",
     category: "Rompi",
@@ -156,7 +134,10 @@ export const products: Product[] = [
   },
 ];
 
-export const categories = ["Semua", ...Array.from(new Set(products.map((product) => product.category)))];
+export const categories = [
+  "Semua",
+  ...Array.from(new Set(products.map((product) => product.category))),
+];
 
 export function getProduct(id: string) {
   return products.find((product) => product.id === id) ?? products[0];

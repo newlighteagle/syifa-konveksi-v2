@@ -10,7 +10,9 @@ test("incrementProductInquiries is a safe no-op without DATABASE_URL", async () 
   const originalInquiries = products[0]?.inquiries;
 
   try {
-    await assert.doesNotReject(() => incrementProductInquiries("gamis-safira-premium"));
+    await assert.doesNotReject(() =>
+      incrementProductInquiries("baju-tani-safira-premium"),
+    );
     assert.equal(products[0]?.inquiries, originalInquiries);
   } finally {
     if (originalDatabaseUrl) {
