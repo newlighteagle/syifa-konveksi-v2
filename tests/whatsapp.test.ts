@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   DEFAULT_WHATSAPP_NUMBER,
   buildGeneralContactMessage,
+  buildHeroCtaMessage,
   buildProductInquiryMessage,
   buildWhatsAppUrl,
   getBusinessWhatsAppNumber,
@@ -64,4 +65,10 @@ test("buildWhatsAppUrl returns encoded wa.me URL", () => {
 
 test("buildWhatsAppUrl returns null without phone number", () => {
   assert.equal(buildWhatsAppUrl({ phoneNumber: "", message: "Halo" }), null);
+});
+
+test("buildHeroCtaMessage asks for design consultation and custom order", () => {
+  const message = buildHeroCtaMessage();
+  assert.match(message, /konsultasi desain/);
+  assert.match(message, /pemesanan custom/);
 });

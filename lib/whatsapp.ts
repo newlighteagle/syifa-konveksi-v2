@@ -44,6 +44,10 @@ export function buildGeneralContactMessage() {
   return "Halo Syifa Konveksi, saya mau konsultasi produk konveksi.";
 }
 
+export function buildHeroCtaMessage() {
+  return "Halo Syifa Konveksi, saya tertarik konsultasi desain dan pemesanan custom. Bisa dibantu?";
+}
+
 export function buildWhatsAppUrl({
   phoneNumber,
   message,

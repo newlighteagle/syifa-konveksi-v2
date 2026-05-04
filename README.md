@@ -251,7 +251,7 @@ Goal: improve visual trust, product content depth, social proof, navigation scal
 
 | Issue | Priority | Status | Title |
 | --- | --- | --- | --- |
-| #24 | P1 | Open | Add real product thumbnails for catalog cards |
+| #24 | P1 | Closed | Add real product thumbnails for catalog cards |
 | #25 | P1 | Open | Improve homepage hero with soft production background and primary WhatsApp CTA |
 | #26 | P1 | Open | Add richer product specifications and size chart |
 | #27 | P1 | Open | Add portfolio and testimonials section on homepage |

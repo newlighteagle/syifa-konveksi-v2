@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { RotateCcw, Search, Send, Sparkles } from "lucide-react";
+import { MessageCircle, RotateCcw, Search, Send, Sparkles } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +21,7 @@ import {
 import type { Product } from "@/lib/products";
 import {
   buildGeneralContactMessage,
+  buildHeroCtaMessage,
   buildWhatsAppUrl,
   getBusinessWhatsAppNumber,
 } from "@/lib/whatsapp";
@@ -44,6 +45,10 @@ export function CatalogPage({
   const whatsappUrl = buildWhatsAppUrl({
     phoneNumber: getBusinessWhatsAppNumber(),
     message: buildGeneralContactMessage(),
+  });
+  const heroCtaUrl = buildWhatsAppUrl({
+    phoneNumber: getBusinessWhatsAppNumber(),
+    message: buildHeroCtaMessage(),
   });
 
   const filteredProducts = useMemo(() => {
@@ -92,29 +97,52 @@ export function CatalogPage({
 
   return (
     <>
-      <section className="container py-14 text-center sm:py-20">
-        <Badge className="gap-2 px-4 py-2">
-          <Sparkles className="size-4" />
-          Katalog digital Syifa Konveksi
-        </Badge>
-        <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-extrabold leading-tight text-slate-950 sm:text-5xl">
-          Temukan model baju produksi terbaru dengan cepat.
-        </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-          Cari baju tani, baju kaos, seragam, kemeja, dan produk konveksi lain
-          dengan tampilan cantik, kualitas terbaik, dan harga menarik.
-        </p>
-        <div className="mx-auto mt-10 flex max-w-2xl items-center gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-airy">
-          <Search className="ml-3 size-5 shrink-0 text-slate-400" />
-          <Input
-            value={draftQuery}
-            onChange={(event) => updateQuery(event.target.value)}
-            className="border-0 bg-transparent text-base focus-visible:ring-0"
-            placeholder="Cari nama produk, kategori, atau kode produksi..."
-          />
-          <Button className="hidden sm:inline-flex" aria-label="Cari produk">
-            Cari
-          </Button>
+      <section className="relative overflow-hidden">
+        <img
+          src="/hero-konveksi.jpg"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+          loading="eager"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/60 to-slate-900/80" />
+        <div className="container relative py-16 text-center sm:py-24">
+          <Badge className="gap-2 border-sky-400/30 bg-white/10 px-4 py-2 text-white backdrop-blur-sm">
+            <Sparkles className="size-4" />
+            Katalog digital Syifa Konveksi
+          </Badge>
+          <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-extrabold leading-tight text-white sm:text-5xl">
+            Konveksi terpercaya untuk seragam, kaos, dan baju custom.
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
+            Produksi berkualitas dari Syifa Konveksi — gamis, kemeja, seragam kantor, kaos
+            komunitas, dan berbagai model baju siap dipesan atau custom sesuai kebutuhan.
+          </p>
+          <div className="mx-auto mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            {heroCtaUrl ? (
+              <Button asChild size="lg" className="bg-green-600 text-base font-bold hover:bg-green-700">
+                <a href={heroCtaUrl} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle />
+                  Konsultasi Desain Gratis
+                </a>
+              </Button>
+            ) : null}
+            <Button asChild size="lg" variant="secondary" className="text-base font-bold">
+              <a href="#koleksi">Lihat Katalog</a>
+            </Button>
+          </div>
+          <div className="mx-auto mt-8 flex max-w-2xl items-center gap-2 rounded-lg border border-white/20 bg-white/95 p-2 shadow-airy backdrop-blur-sm">
+            <Search className="ml-3 size-5 shrink-0 text-slate-400" />
+            <Input
+              value={draftQuery}
+              onChange={(event) => updateQuery(event.target.value)}
+              className="border-0 bg-transparent text-base focus-visible:ring-0"
+              placeholder="Cari nama produk, kategori, atau kode produksi..."
+            />
+            <Button className="hidden sm:inline-flex" aria-label="Cari produk">
+              Cari
+            </Button>
+          </div>
         </div>
       </section>
 
