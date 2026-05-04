@@ -26,6 +26,14 @@ import {
   getBusinessWhatsAppNumber,
 } from "@/lib/whatsapp";
 
+const HERO_IMAGES = [
+  "/hero-konveksi-1.jpg",
+  "/hero-konveksi-2.jpg",
+  "/hero-konveksi-3.jpg",
+  "/hero-konveksi-4.jpg",
+  "/hero-konveksi-5.jpg",
+];
+
 export function CatalogPage({
   initialProducts,
   categories,
@@ -42,6 +50,7 @@ export function CatalogPage({
     [searchParamsSnapshot],
   );
   const [draftQuery, setDraftQuery] = useState(filters.query);
+  const [activeHeroIndex, setActiveHeroIndex] = useState(0);
   const whatsappUrl = buildWhatsAppUrl({
     phoneNumber: getBusinessWhatsAppNumber(),
     message: buildGeneralContactMessage(),
@@ -58,6 +67,16 @@ export function CatalogPage({
   useEffect(() => {
     setDraftQuery(filters.query);
   }, [filters.query]);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveHeroIndex((currentIndex) => (currentIndex + 1) % HERO_IMAGES.length);
+    }, 5000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
 
   const hasActiveFilters =
     filters.query !== "" ||
@@ -97,16 +116,23 @@ export function CatalogPage({
 
   return (
     <>
-      <section className="relative overflow-hidden">
-        <img
-          src="/hero-konveksi.jpg"
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover"
-          loading="eager"
-        />
+      <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden">
+        {HERO_IMAGES.map((imageSrc, imageIndex) => (
+          <img
+            key={imageSrc}
+            src={imageSrc}
+            alt=""
+            aria-hidden="true"
+            className={
+              imageIndex === activeHeroIndex
+                ? "absolute inset-0 h-full w-full object-cover opacity-100 transition-opacity duration-1000"
+                : "absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000"
+            }
+            loading={imageIndex === 0 ? "eager" : "lazy"}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-b from-slate-900/70 via-slate-900/60 to-slate-900/80" />
-        <div className="container relative py-16 text-center sm:py-24">
+        <div className="container relative flex min-h-[calc(100svh-4rem)] flex-col items-center justify-center py-16 text-center sm:py-24">
           <Badge className="gap-2 border-sky-400/30 bg-white/10 px-4 py-2 text-white backdrop-blur-sm">
             <Sparkles className="size-4" />
             Katalog digital Syifa Konveksi
@@ -131,22 +157,22 @@ export function CatalogPage({
               <a href="#koleksi">Lihat Katalog</a>
             </Button>
           </div>
-          <div className="mx-auto mt-8 flex max-w-2xl items-center gap-2 rounded-lg border border-white/20 bg-white/95 p-2 shadow-airy backdrop-blur-sm">
-            <Search className="ml-3 size-5 shrink-0 text-slate-400" />
-            <Input
-              value={draftQuery}
-              onChange={(event) => updateQuery(event.target.value)}
-              className="border-0 bg-transparent text-base focus-visible:ring-0"
-              placeholder="Cari nama produk, kategori, atau kode produksi..."
-            />
-            <Button className="hidden sm:inline-flex" aria-label="Cari produk">
-              Cari
-            </Button>
-          </div>
         </div>
       </section>
 
-      <section id="koleksi" className="container pb-16">
+      <section id="koleksi" className="container scroll-mt-24 pt-8 pb-16 sm:pt-10">
+        <div className="mx-auto mb-6 flex w-full max-w-2xl items-center gap-2 rounded-lg border border-slate-200 bg-white p-2 shadow-airy">
+          <Search className="ml-3 size-5 shrink-0 text-slate-400" />
+          <Input
+            value={draftQuery}
+            onChange={(event) => updateQuery(event.target.value)}
+            className="border-0 bg-transparent text-base focus-visible:ring-0"
+            placeholder="Cari nama produk, kategori, atau kode produksi..."
+          />
+          <Button className="hidden sm:inline-flex" aria-label="Cari produk">
+            Cari
+          </Button>
+        </div>
         <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-semibold text-sky-700">Koleksi Produk</p>

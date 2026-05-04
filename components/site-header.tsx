@@ -14,7 +14,7 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden items-center gap-7 text-sm font-semibold text-slate-600 md:flex">
           <Link className="text-sky-700" href="/">
-            Katalog
+            Home
           </Link>
           <a className="transition hover:text-sky-700" href="#koleksi">
             Koleksi
