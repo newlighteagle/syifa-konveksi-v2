@@ -42,9 +42,31 @@ test("productInputSchema accepts video media type", () => {
     ...baseProductInput,
     mediaType: "video",
     mediaUrl: "https://www.youtube.com/shorts/T9X5KVfryAY",
+    thumbnailUrl: "https://example.com/foto-thumbnail.jpg",
   });
 
   assert.equal(parsed.mediaType, "video");
+  assert.equal(parsed.thumbnailUrl, "https://example.com/foto-thumbnail.jpg");
+});
+
+test("productInputSchema accepts empty thumbnail URL as null", () => {
+  const parsed = productInputSchema.parse({
+    ...baseProductInput,
+    mediaType: "image",
+    thumbnailUrl: "",
+  });
+
+  assert.equal(parsed.thumbnailUrl, null);
+});
+
+test("productInputSchema rejects invalid thumbnail URL", () => {
+  const result = productInputSchema.safeParse({
+    ...baseProductInput,
+    mediaType: "video",
+    thumbnailUrl: "foto-thumbnail.jpg",
+  });
+
+  assert.equal(result.success, false);
 });
 
 test("productInputSchema defaults products to published", () => {

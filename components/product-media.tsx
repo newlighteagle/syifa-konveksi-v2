@@ -5,18 +5,32 @@ import {
   getEmbeddedMediaProvider,
   getInstagramEmbedUrl,
   getYoutubeEmbedUrl,
-  isDirectImageUrl,
   isDirectVideoUrl,
 } from "@/lib/media";
+import { getProductCardMediaSource } from "@/lib/product-card-media";
 
 type ProductMediaProps = {
   name: string;
   mediaType: "image" | "video";
   mediaUrl: string;
+  thumbnailUrl?: string | null;
   priority?: boolean;
 };
 
-export function ProductCardMedia({ name, mediaType, mediaUrl }: ProductMediaProps) {
+export function ProductCardMedia({ name, mediaType, mediaUrl, thumbnailUrl }: ProductMediaProps) {
+  const cardMedia = getProductCardMediaSource({ mediaType, mediaUrl, thumbnailUrl });
+
+  if (cardMedia.kind === "image") {
+    return (
+      <img
+        src={cardMedia.url}
+        alt={name}
+        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+        loading="lazy"
+      />
+    );
+  }
+
   const embeddedMediaProvider = getEmbeddedMediaProvider(mediaUrl);
 
   if (embeddedMediaProvider) {
@@ -28,25 +42,6 @@ export function ProductCardMedia({ name, mediaType, mediaUrl }: ProductMediaProp
         <p className="mt-4 text-sm font-bold text-slate-950">{embeddedMediaProvider} produk</p>
         <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-500">{name}</p>
       </div>
-    );
-  }
-
-  if (mediaType === "video" && isDirectVideoUrl(mediaUrl)) {
-    return (
-      <video className="h-full w-full object-cover" muted playsInline preload="none">
-        <source src={mediaUrl} />
-      </video>
-    );
-  }
-
-  if (mediaType === "image" && isDirectImageUrl(mediaUrl)) {
-    return (
-      <img
-        src={mediaUrl}
-        alt={name}
-        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-        loading="lazy"
-      />
     );
   }
 
@@ -112,7 +107,7 @@ export function ProductDetailMedia({
     );
   }
 
-  if (isDirectImageUrl(mediaUrl) || mediaType === "image") {
+  if (mediaType === "image") {
     return (
       <img
         src={mediaUrl}

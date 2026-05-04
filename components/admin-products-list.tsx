@@ -766,6 +766,7 @@ function ProductListItem({
             name={product.name}
             mediaType={product.mediaType}
             mediaUrl={product.mediaUrl}
+            thumbnailUrl={product.thumbnailUrl}
           />
         </button>
       </div>
@@ -841,6 +842,7 @@ function ProductCardItem({
           name={product.name}
           mediaType={product.mediaType}
           mediaUrl={product.mediaUrl}
+          thumbnailUrl={product.thumbnailUrl}
         />
       </button>
       <button type="button" onClick={onClick} className="block w-full p-2 text-left">

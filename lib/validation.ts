@@ -1,11 +1,26 @@
 import { z } from "zod";
 
+const optionalUrlSchema = z
+  .preprocess(
+    (value) => {
+      if (typeof value !== "string") {
+        return value;
+      }
+
+      const trimmed = value.trim();
+      return trimmed.length > 0 ? trimmed : null;
+    },
+    z.string().url("Link thumbnail harus berupa URL valid.").nullable(),
+  )
+  .optional();
+
 export const productInputSchema = z.object({
   name: z.string().trim().min(3, "Nama produk minimal 3 karakter."),
   category: z.string().trim().min(2, "Kategori wajib dipilih.").default("Katalog"),
   description: z.string().trim().min(3, "Deskripsi minimal 3 karakter."),
   mediaType: z.enum(["image", "video"]),
   mediaUrl: z.string().trim().url("Link media utama harus berupa URL valid."),
+  thumbnailUrl: optionalUrlSchema,
   galleryUrls: z.array(z.string().trim().url("Setiap link galeri harus berupa URL valid.")).default([]),
   kodeProduksi: z.string().trim().min(3, "Kode produksi minimal 3 karakter."),
   periodeProduksi: z

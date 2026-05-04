@@ -99,6 +99,7 @@ export function ProductForm({
         description: formData.get("description"),
         mediaType,
         mediaUrl: formData.get("mediaUrl"),
+        thumbnailUrl: formData.get("thumbnailUrl"),
         galleryUrls: parseList(formData.get("galleryUrls")),
         kodeProduksi: formData.get("kodeProduksi"),
         periodeProduksi: month && year ? `${month}-${year}` : monthValue,
@@ -287,6 +288,20 @@ export function ProductForm({
         <FieldError message={fieldErrors.mediaUrl?.[0]} />
       </div>
       <div className="space-y-2">
+        <Label htmlFor="thumbnailUrl">Link Thumbnail Katalog</Label>
+        <Input
+          id="thumbnailUrl"
+          name="thumbnailUrl"
+          placeholder="https://example.com/foto-thumbnail-produk.jpg"
+          defaultValue={product?.thumbnailUrl ?? undefined}
+        />
+        <p className="text-xs leading-5 text-slate-500">
+          Opsional. Isi foto produk asli agar kartu katalog tetap menampilkan gambar walaupun
+          media utama berupa YouTube, Instagram, atau video.
+        </p>
+        <FieldError message={fieldErrors.thumbnailUrl?.[0]} />
+      </div>
+      <div className="space-y-2">
         <Label htmlFor="galleryUrls">Link Galeri Tambahan</Label>
         <Textarea
           id="galleryUrls"
@@ -342,6 +357,7 @@ export function ProductForm({
 
             const formData = new FormData(formRef.current);
             setPreviewMedia([
+              String(formData.get("thumbnailUrl") ?? "").trim(),
               String(formData.get("mediaUrl") ?? "").trim(),
               ...parseList(formData.get("galleryUrls")),
             ].filter(Boolean));

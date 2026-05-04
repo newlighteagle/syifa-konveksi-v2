@@ -17,6 +17,7 @@ export function ProductCard({ product }: { product: Product }) {
           name={product.name}
           mediaType={product.mediaType}
           mediaUrl={product.mediaUrl}
+          thumbnailUrl={product.thumbnailUrl}
         />
         <div className="pointer-events-none absolute left-4 top-4 flex gap-2">
           <Badge>{product.category}</Badge>

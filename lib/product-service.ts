@@ -38,6 +38,7 @@ function fromPrisma(product: ProductWithEnums): Product {
     description: product.description,
     mediaType: product.mediaType,
     mediaUrl: product.mediaUrl,
+    thumbnailUrl: product.thumbnailUrl,
     galleryUrls: product.galleryUrls,
     kodeProduksi: product.kodeProduksi,
     periodeProduksi: product.periodeProduksi,

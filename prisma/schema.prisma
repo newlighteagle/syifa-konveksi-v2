@@ -44,6 +44,7 @@ model Product {
   description       String
   mediaType         MediaType   @map("media_type")
   mediaUrl          String      @map("media_url")
+  thumbnailUrl      String?     @map("thumbnail_url")
   galleryUrls       String[]    @default([]) @map("media_urls")
   kodeProduksi      String      @unique @map("kode_produksi")
   periodeProduksi   String      @map("periode_produksi")
